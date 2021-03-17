@@ -1,4 +1,10 @@
-# SoPra FS21 - Client Template
+<h1 align="center">
+  <br>
+   <img src="./src/img/dog_without_bg.png" width="auto" height="80"><img src="./src/img/remy's_best_without_bg.png" width="auto" height="80">
+  <br>
+  Remy's Best Client
+  <br>
+</h1>
 
 ## Getting started with React
 
