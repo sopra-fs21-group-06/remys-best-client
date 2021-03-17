@@ -10,7 +10,7 @@
     <img src="https://github.com/sopra-fs21-group-06/remys-best-client/workflows/Deploy%20Project/badge.svg"
          alt="Deployment Status">
   </a>
-  <a href="https://heroku-badge.herokuapp.com/?app=sopra-fs20-group-09-client"><img src="https://heroku-badge.herokuapp.com/?app=sopra-fs20-group-09-client&style=flat&svg=1"></a>
+  <a href="https://heroku-badge.herokuapp.com/?app=remys-best-client"><img src="https://heroku-badge.herokuapp.com/?app=remys-best-client&style=flat&svg=1"></a>
   <a href="https://sonarcloud.io/dashboard?id=sopra-fs21-group-06_remys-best-client">
       <img src="https://sonarcloud.io/api/project_badges/measure?project=sopra-fs21-group-06_remys-best-client&metric=alert_status">
   </a>
