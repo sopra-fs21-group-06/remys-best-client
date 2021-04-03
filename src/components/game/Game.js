@@ -64,6 +64,20 @@ class Game extends React.Component {
 
   render() {
     return (
+      <div className="marble">
+
+      </div>
+    );
+  }
+}
+
+export default withRouter(Game);
+
+
+
+/*
+render() {
+    return (
       <Container>
         <h2>Happy Coding! </h2>
         <p>Get all users from secure end point:</p>
@@ -93,6 +107,5 @@ class Game extends React.Component {
       </Container>
     );
   }
-}
 
-export default withRouter(Game);
+  */

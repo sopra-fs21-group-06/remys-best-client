@@ -1,0 +1,55 @@
+@mixin fullscreen {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+@mixin centerer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@mixin rotate-bg($deg) {
+    transform: translate(-50%, -50%) rotate($deg);
+    transition-timing-function: cubic-bezier(.8, 0, .2, 1);
+}
+
+@mixin marble-styles1($color) {
+    $size: 20px; // size / 25 -> 400px / 25
+    display: block;
+    background: darken($color, 20%);
+    border-radius: 100%;
+    height: $size;
+    width: $size;
+    margin: 0;
+    background: radial-gradient(circle at $size/3 $size/3, $color, darken($color, 20%));
+}
+
+@mixin marble-styles1($color) {
+    $size: 20px; // size / 25 -> 400px / 25
+    display: block;
+    background: darken($color, 20%);
+    border-radius: 100%;
+    height: $size;
+    width: $size;
+    margin: 0;
+    background: radial-gradient(circle at $size/3 $size/3, $color, darken($color, 20%));
+}
+
+@mixin marble-styles2($color) {
+    $size: 15px;
+    width: $size;
+    height: $size;
+    border-radius: 50%;
+    box-shadow: inset 0 0 $size/8 #fff,
+        inset $size/15 0 $size/3.75 $color,
+        inset (-$size/15) $size/7 $size/3 darken($color, 20%),
+        inset $size/15 0 $size $color,
+        inset (-$size/15) 0 $size darken($color, 20%) //0 0 $size/6 #fff,
+        //(-$size/30) 0 $size/3.75 $blue,
+        //$size/30 0 $size/3.75 #0ff
+    ;
+}
