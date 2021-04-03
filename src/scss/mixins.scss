@@ -53,3 +53,12 @@
         //$size/30 0 $size/3.75 #0ff
     ;
 }
+
+
+@mixin disappear {
+    @for $i from 1 through 5 {
+        &:nth-of-type(#{$i}) {
+            opacity: 1.2 - $i*0.2;
+        }
+    }
+}
