@@ -1,13 +1,8 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import Board from "../components/Board";
-import Hand from "../components/Hand";
-import NavigationLink from "../components/NavigationLink";
+import NavigationLink from "../../components/NavigationLink";
 
-import RoundFacts from "../components/RoundFacts";
-import Notifications from "../components/Notifications";
-
-class HomeScreen extends React.Component {
+class Home extends React.Component {
 
   constructor() {
     super();
@@ -41,8 +36,6 @@ class HomeScreen extends React.Component {
           <p>or just wait here to get invited</p>
         </div>
         
-
-
         <footer><p>Brändi Dog is a card game made by <a href="https://www.braendi.ch/">Stiftung Brändi</a></p></footer>
         <NavigationLink position="footer" name="About" to="/about" />
       </div>
@@ -50,4 +43,4 @@ class HomeScreen extends React.Component {
   }
 }
 
-export default withRouter(HomeScreen);
+export default withRouter(Home);
