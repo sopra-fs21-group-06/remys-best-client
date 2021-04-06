@@ -5,6 +5,7 @@ import GameRouter from "./GameRouter";
 import { LoginGuard } from "../routeProtectors/LoginGuard";
 import Login from "../../login/Login";
 import GameScreen from "../../../views/GameScreen";
+import HomeScreen from "../../../views/HomeScreen";
 
 
 /**
@@ -37,6 +38,13 @@ class AppRouter extends React.Component {
                 <LoginGuard>
                   <GameScreen />
                 </LoginGuard>
+              )}
+            />
+            <Route
+              path="/home"
+              exact
+              render={() => (
+                <HomeScreen />
               )}
             />
             <Route path="/" exact render={() => <Redirect to={"/game"} />} />

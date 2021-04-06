@@ -9,7 +9,20 @@ class App extends Component {
       <BackgroundProvider>
         <div className="foreground">
           <AppRouter />
-          <BackgroundContext.Consumer>
+        </div>
+      </BackgroundProvider>
+    );
+  }
+}
+
+export default App;
+
+
+
+/*
+
+
+<BackgroundContext.Consumer>
             {context => (
               <div>
                 <button onClick={() => context.dispatch({type: "blue-bottom"})}>Change blue</button>
@@ -19,10 +32,7 @@ class App extends Component {
               </div>
             )} 
           </BackgroundContext.Consumer>
-        </div>
-      </BackgroundProvider>
-    );
-  }
-}
 
-export default App;
+
+
+          */

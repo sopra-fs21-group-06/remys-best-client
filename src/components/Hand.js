@@ -1,4 +1,5 @@
 import React from "react";
+import dogCard from '../img/dog-card.png';
 
 const CARD_WIDTH = 60;
 const HAND_WIDTH = 300;
@@ -62,7 +63,7 @@ class Hand extends React.Component {
         return ypos;
     }
 
-    renderCards() {
+    renderCards(isMyHand) {
         let cards = [];
         let imgUrls = this.state.imgUrls;
 
@@ -95,16 +96,45 @@ class Hand extends React.Component {
                 transform: "rotate(" + rot + "deg)"
             };
 
-            cards.push(<img className="card" src={imgUrl} style={styles} />)
+            if(isMyHand) {
+                cards.push(<img className="card" src={imgUrl} style={styles} />)
+            } else {
+                cards.push(<img className="card" src={dogCard} style={styles} />)
+            }
         }
         return cards;
     }
 
-
     render() {
         return (
-            <div className="hand">
-                {this.renderCards()}
+            <div>
+                <div className="hand my-hand">
+                    {this.renderCards(true)}
+                </div>
+                <div className="hand left-hand">
+                    <div className="cards"> {this.renderCards(false)}</div>
+                    <div className="avatar">
+                        <div className="container">
+                            <div className="bg"></div>
+                            <div className="avatar-img yellow"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div className="hand right-hand">
+                    {this.renderCards(false)}
+                    <div className="avatar">
+                        <div className="container">
+                            <div className="bg"></div>
+                            <div className="avatar-img green"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div className="hand partner-hand">
+                    {this.renderCards(false)}
+                </div>
+                
             </div>
         );
     }

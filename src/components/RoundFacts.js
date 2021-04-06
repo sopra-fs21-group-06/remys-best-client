@@ -15,7 +15,7 @@ class RoundStats extends React.Component {
           <p className="subtitle">Round</p>
         </div>
         <div className="fact">
-          <p className="title">{this.props.activePlayer}</p>
+          <p className="title title-timer">{this.props.activePlayer} <span className="spacer"></span> <span className="timer">60</span></p>
           <p className="subtitle">Active Player</p>
         </div>
         <div className="fact">
