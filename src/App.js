@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import Header from "./views/Header";
-import AppRouter from "./components/shared/routers/AppRouter";
+import AppRouter from "./route/AppRouter";
 import BackgroundProvider, { BackgroundContext } from './components/Background';
 
 class App extends Component {

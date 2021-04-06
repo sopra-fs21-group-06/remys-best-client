@@ -1,17 +1,17 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import Board from "../components/Board";
-import Hand from "../components/Hand";
-import NavigationLink from "../components/NavigationLink";
-import {getDomain, isProduction} from "../helpers/getDomain";
+import Board from "../../components/Board";
+import Hand from "../../components/Hand";
+import NavigationLink from "../../components/NavigationLink";
+import {getDomain, isProduction} from "../../helpers/getDomain";
 
-import RoundFacts from "../components/RoundFacts";
-import Notifications from "../components/Notifications";
+import RoundFacts from "../../components/RoundFacts";
+import Notifications from "../../components/Notifications";
 
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-import sockClient from "../components/SockClient";
-import sessionManager from "../helpers/sessionManager";
+import sockClient from "../../components/SockClient";
+import sessionManager from "../../helpers/sessionManager";
 
 class GameScreen extends React.Component {
 
