@@ -3,65 +3,48 @@ import { withRouter, Link } from 'react-router-dom';
 import InputField from './InputField';
 import ButtonPrimary from './ButtonPrimary';
 
-class LoginForm extends React.Component {
+class ResetPasswordForm extends React.Component {
 
 	constructor() {
 		super();
 		this.state = {
-            usernameOrEmail: '',
-            password: '',
-            errorMessageUsernameOrEmail: null,
-            errorMessagePassword: null,
-            isUsernameOrEmailValid: true,
-            isPasswordValid: true
+            email: '',
+            errorMessageEmail: null,
+            isEmailValid: true
         };
         this.submit = this.submit.bind(this);
         this.isFormValid = this.isFormValid.bind(this);
-        this.login = this.login.bind(this);
+        this.login = this.resetPassword.bind(this);
     }
 
     submit(resolve) {
-         this.props.history.push('/home');
+        let emailValue = this.state.email;
 
-         
-        let usernameOrEmailValue = this.state.usernameOrEmail;
-        let passwordValue = this.state.password;
-
-        if(this.isFormValid(usernameOrEmailValue, passwordValue)) {
-            this.login(resolve, usernameOrEmailValue, passwordValue)
+        if(this.isFormValid(emailValue)) {
+            this.resetPassword(resolve, emailValue)
         } else {
 			resolve();
 		}
     }
 
-    isFormValid(usernameOrEmailValue, passwordValue) {
+    isFormValid(emailValue) {
         let isFormValid = true;
         this.setState({
-            isUsernameOrEmailValid: true,
-            isPasswordValid: true
+            isEmailValid: true
         });
 
-        if(!usernameOrEmailValue || usernameOrEmailValue === '') {
+        if(!emailValue || emailValue === '') {
 			this.setState({
-				errorMessageUsernameOrEmail: 'Please fill in this field',
-				isUsernameOrEmailValid: false,
+				errorMessageEmail: 'Please fill in this field',
+				isEmailValid: false,
             });
             isFormValid = false;
 		}
-        if(!passwordValue || passwordValue === '') {
-			this.setState({
-				errorMessagePassword: 'Please fill in this field',
-				isPasswordValid: false,
-            });
-            isFormValid = false;
-        } 
 
         return isFormValid;
     }
 
-    async login(resolve, usernameOrEmailValue, passwordValue) {
-
-       
+    async resetPassword(resolve, emailValue) {
         
         /*
         try {
@@ -88,19 +71,17 @@ class LoginForm extends React.Component {
         resolve();
     }
 
-
-    // TODO add link "forgot password?"
 	render() {
 		return (
-			<div className="login-form">
+			<div className="reset-password-form">
 				<InputField	
-                    type="text"
-                    label="Username or email"
-                    placeholder="Username or email"
-                    value={this.state.usernameOrEmail}
-                    isValid={this.state.isUsernameOrEmailValid}	
-                    errorMessage={this.state.errorMessageUsernameOrEmail}
-                    onChange={(e) => this.setState({usernameOrEmail: e.target.value})}	
+                    type="email"
+                    label="Email"
+                    placeholder="Email"
+                    value={this.state.email}
+                    isValid={this.state.isEmailValid}	
+                    errorMessage={this.state.errorMessageEmail}
+                    onChange={(e) => this.setState({email: e.target.value})}	
                 />
                 <InputField	
                     type="password"
@@ -112,13 +93,13 @@ class LoginForm extends React.Component {
                     onChange={(e) => this.setState({password: e.target.value})}	
                 />
                 <ButtonPrimary 
-                    value="Sign in" 
+                    value="Continue" 
                     submitFunction={this.submit}
                 />
-                <p className="below-btn">Don't have an account? <Link to="/register">Sign up</Link></p>
+                <p className="below-btn"><Link to="/login">Return to sign in</Link></p>
 			</div>
 		);
 	}
 }
 
-export default withRouter(LoginForm);
+export default withRouter(ResetPasswordForm);

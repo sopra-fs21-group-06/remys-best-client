@@ -2,7 +2,7 @@ import React from "react";
 import wood from '../img/board.png';
 import styled from 'styled-components';
 
-const SIZE = 500;
+const SIZE = 300;
 const LINE_LENGTH = 4;
 const FIELD_SIZE = SIZE/25;
 const FIELD_GAP = SIZE/25;

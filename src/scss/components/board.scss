@@ -162,7 +162,7 @@ $cardmult: 80;
                 padding: 4px 8px;
                 letter-spacing: -0.25px;
                 border-radius: 13px;
-                border: 1px solid lighten($black, 40%);
+                border: 1px solid $grey-light;
                 transition: max-width 1s;
 
                 &:after {
@@ -235,7 +235,7 @@ $cardmult: 80;
             width: 80px;
             height: 80px;
             border-radius: 30px;
-            border: 1px solid lighten($black, 40%);
+            border: 1px solid $grey-light;
             box-shadow: 0 5px 10px rgba(154, 160, 185, .05), 0 15px 40px rgba(166, 173, 201, .2);
         }
 
