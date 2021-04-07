@@ -8,6 +8,7 @@ import Home from "../views/auth/Home";
 import WaitingRoom from "../views/auth/WaitingRoom";
 import ChoosePlace from "../views/auth/ChoosePlace";
 import Game from "../views/auth/Game";
+import GameEnd from "../views/auth/GameEnd";
 
 class AppRouter extends React.Component {
   render() {
@@ -45,6 +46,11 @@ class AppRouter extends React.Component {
             <Route exact path="/game">
                 <AuthGuard>
                     <Game />
+                </AuthGuard>
+            </Route>
+            <Route exact path="/game-end">
+                <AuthGuard>
+                    <GameEnd />
                 </AuthGuard>
             </Route>
         </Switch>

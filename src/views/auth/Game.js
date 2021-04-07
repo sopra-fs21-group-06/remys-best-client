@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import Board from "../../components/Board";
 import Hand from "../../components/Hand";
 import {getDomain, isProduction} from "../../helpers/getDomain";
@@ -25,14 +25,20 @@ class Game extends React.Component {
     componentDidMount() {
       /*
         sessionManager.chat.clear();
-
         sockClient.onRegister(r => this.handleSocketRegister(r));
-       
         sockClient.connectAndRegister(this.props.authToken);*/
        
     }
 
   render() {
+    let gameEnd = {
+      pathname: '/game-end',
+      state: { 
+        title: "Sorry you lost!",
+        text: "Foo"
+      }
+    }
+
     return (
       <View className="game" isFooterInvisible={true} linkMode={viewLinks.BASIC}>
         <main>
@@ -40,6 +46,7 @@ class Game extends React.Component {
             <Notifications />
             <Board />
             <Hand />
+            <Link to={gameEnd}>Leave and return to Home</Link>
           </main>
       </View>
     );
