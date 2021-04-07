@@ -1,6 +1,7 @@
 import React from "react";
 import wood from '../img/board.png';
 import styled from 'styled-components';
+import {lightenOrDarkenColor} from '../helpers/remysBestUtils';
 
 const SIZE = 300;
 const LINE_LENGTH = 4;
@@ -55,43 +56,13 @@ const Marble = styled.div`
     left: ${({ left }) => left+3 }px;
     top: ${({ top }) => top+3 }px;
     display: block;
-    background: ${({ color }) => LightenDarkenColor(color, -70) };
+    background: ${({ color }) => lightenOrDarkenColor(color, -70) };
     border-radius: 100%;
     height: ${FIELD_SIZE}px;
     width: ${FIELD_SIZE}px;
     margin: 0;
-    background: radial-gradient(circle at ${FIELD_SIZE/3}px ${FIELD_SIZE/3}px, ${({ color }) => color }, ${({ color }) => LightenDarkenColor(color, -70) });
+    background: radial-gradient(circle at ${FIELD_SIZE/3}px ${FIELD_SIZE/3}px, ${({ color }) => color }, ${({ color }) => lightenOrDarkenColor(color, -70) });
 `;
-
-function LightenDarkenColor(col, amt) {
-  
-    var usePound = false;
-  
-    if (col[0] == "#") {
-        col = col.slice(1);
-        usePound = true;
-    }
- 
-    var num = parseInt(col,16);
- 
-    var r = (num >> 16) + amt;
- 
-    if (r > 255) r = 255;
-    else if  (r < 0) r = 0;
- 
-    var b = ((num >> 8) & 0x00FF) + amt;
- 
-    if (b > 255) b = 255;
-    else if  (b < 0) b = 0;
- 
-    var g = (num & 0x0000FF) + amt;
- 
-    if (g > 255) g = 255;
-    else if (g < 0) g = 0;
- 
-    return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
-  
-}
 
 
 class Board extends React.Component {
