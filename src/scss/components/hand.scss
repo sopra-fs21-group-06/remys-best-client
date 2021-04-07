@@ -1,0 +1,84 @@
+$cardmult: 80;
+
+.hand {
+    //width: 60%;
+    //width: 300px;
+    position: absolute;
+    //height: 5px * $cardmult;
+    display: block;
+    top: 10%;
+    //height: 50%;
+    //border: 1px solid black;
+
+
+
+    position: absolute;
+    /* height: 200px; */
+    display: block;
+    left: calc(50% - 170px);
+    top: 50%;
+    width: 335px;
+    height: 60%;
+    transform-origin: top center;
+}
+
+.left-hand {
+    transform: rotate(90deg);
+}
+
+.right-hand {
+    transform: rotate(270deg);
+}
+
+.partner-hand {
+    transform: rotate(180deg);
+}
+
+.card {
+    //width: 2.5px * $cardmult;
+    //height: 3.5px * $cardmult;
+    width: 100px;
+    height: 139px;
+    position: absolute;
+    display: block;
+    bottom: -100px;
+    //left: calc(50% - 2.5px * $cardmult);
+    left: calc(50% - 100px);
+    box-shadow: 0px 0px 8px 1px rgba($color: #000000, $alpha: 0.2);
+
+
+    border-radius: 5px;
+    //border: 3px solid $blue-light;
+
+    z-index: 1;
+    transition: 0.5s left ease, 0.5s bottom ease;
+    user-select: none;
+
+    &:hover {}
+
+    >span {
+        display: block;
+    }
+
+    .value {
+        font-weight: bolder;
+        font-size: 30px;
+        margin: 5px;
+    }
+
+    .suit {}
+}
+
+/*
+.hand {
+    @include centerer;
+    top: 90%;
+    width: 300px;
+
+}
+
+
+.card {
+    width: 100px;
+    height: auto;
+}*/

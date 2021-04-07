@@ -14,7 +14,7 @@ import Stomp from 'stompjs';
 import sockClient from "../../components/SockClient";
 import sessionManager from "../../helpers/sessionManager";
 
-class GameScreen extends React.Component {
+class Game extends React.Component {
 
   constructor() {
         super();
@@ -46,4 +46,4 @@ class GameScreen extends React.Component {
   }
 }
 
-export default withRouter(GameScreen);
+export default withRouter(Game);

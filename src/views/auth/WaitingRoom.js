@@ -4,6 +4,7 @@ import View from "../View";
 import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Box from '../../components/Box';
+import avatar from '../../img/avatar.png'
 
 class WaitingRoom extends React.Component {
 
@@ -25,7 +26,7 @@ class WaitingRoom extends React.Component {
                 <Avatar color="red" />
                 <Avatar color="blue" />
                 <Avatar color="yellow" />
-                <Avatar color="green" />
+                <Avatar color="green" img={avatar}/>
               </Box>
               <p className="below-players"><Link to="/home">Leave and return to Home</Link></p>
               <p className="below-players"><Link to="/choose-place">Choose Place</Link></p>

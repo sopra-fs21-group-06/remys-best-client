@@ -3,10 +3,10 @@ import { withRouter, Link } from 'react-router-dom';
 import View from "../View";
 import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
-import BlurredElement from '../../components/BlurredElement';
 //import { BackgroundContext } from './components/Background';
 import Board from "../../components/Board";
 import Box from "../../components/Box";
+import avatar from '../../img/avatar.png'
 
 class ChoosePlace extends React.Component {
 
@@ -15,6 +15,10 @@ class ChoosePlace extends React.Component {
     this.state = {
       username: "Sandro"
     };
+  }
+
+  choosePlace() {
+    console.log("place chosen")
   }
 
   // TODO board dynamic size
@@ -34,15 +38,16 @@ class ChoosePlace extends React.Component {
                 <p><span>You</span> – green</p>
                 <p><span>You</span> are with <span>Andrina</span></p>
               </Box>
-              <div className="below-box"><Link to="/game">Leave and return to Home</Link></div>
+              <div className="below-box"><Link to="/home">Leave and return to Home</Link></div>
+              <div className="below-box"><Link to="/game">Game</Link></div>
             </div>
             <div className="col-right">
               <div className="board-container" style={{width: 500, height: 500}}>
                 <Board size="300"/>
-                <Avatar color="blue" />
-                <Avatar color="green" />
-                <Avatar color="red" />
-                <Avatar color="yellow" />
+                <Avatar onClick={() => this.choosePlace()} color="blue" img={avatar} />
+                <Avatar onClick={() => this.choosePlace()} color="green" />
+                <Avatar onClick={() => this.choosePlace()} color="red" />
+                <Avatar onClick={() => this.choosePlace()} color="yellow" img={avatar}/>
               </div>
             </div>
           </main>

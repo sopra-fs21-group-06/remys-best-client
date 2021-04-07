@@ -1,5 +1,7 @@
 import React from "react";
 import dogCard from '../img/dog-card.png';
+import avatar from '../img/avatar.png'
+import Avatar from "../components/Avatar"
 
 const CARD_WIDTH = 60;
 const HAND_WIDTH = 300;
@@ -113,23 +115,11 @@ class Hand extends React.Component {
                 </div>
                 <div className="hand left-hand">
                     <div className="cards"> {this.renderCards(false)}</div>
-                    <div className="avatar">
-                        <div className="container">
-                            <div className="bg"></div>
-                            <div className="avatar-img yellow"></div>
-                        </div>
-
-                    </div>
+                    <Avatar size="80" color="yellow" img={avatar} />
                 </div>
                 <div className="hand right-hand">
                     {this.renderCards(false)}
-                    <div className="avatar">
-                        <div className="container">
-                            <div className="bg"></div>
-                            <div className="avatar-img green"></div>
-                        </div>
-
-                    </div>
+                    <Avatar size="80" color="green" img={avatar} />
                 </div>
                 <div className="hand partner-hand">
                     {this.renderCards(false)}
