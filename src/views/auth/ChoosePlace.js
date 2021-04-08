@@ -4,7 +4,7 @@ import View from "../View";
 import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 //import { BackgroundContext } from './components/Background';
-import Board from "../../components/Board";
+import Board from "../../components/ingame/Board";
 import Box from "../../components/Box";
 import avatar from '../../img/avatar.png'
 
@@ -43,7 +43,7 @@ class ChoosePlace extends React.Component {
             </div>
             <div className="col-right">
               <div className="board-container" style={{width: 500, height: 500}}>
-                <Board size="300"/>
+                <Board size={300}/>
                 <Avatar onClick={() => this.choosePlace()} color="blue" img={avatar} />
                 <Avatar onClick={() => this.choosePlace()} color="green" />
                 <Avatar onClick={() => this.choosePlace()} color="red" />

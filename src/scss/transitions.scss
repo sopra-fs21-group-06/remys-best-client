@@ -1,0 +1,27 @@
+.fadeInOut-enter {
+    animation: fadein 150ms ease-in forwards; // has to be the same amount as in FadeInOut.jsx
+}
+
+.fadeInOut-exit {
+    animation: fadeout 150ms ease-in forwards; // has to be the same amount as in FadeInOut.jsx
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeout {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

@@ -1,13 +1,15 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import Board from "../../components/Board";
-import Hand from "../../components/Hand";
+import Board from "../../components/ingame/Board";
+import MyHand from "../../components/ingame/MyHand";
+import Hand from "../../components/ingame/Hand";
+
 import {getDomain, isProduction} from "../../helpers/getDomain";
 import View from "../View";
-import { viewLinks } from "../../helpers/constants";
-
-import RoundFacts from "../../components/RoundFacts";
-import Notifications from "../../components/Notifications";
+import { viewLinks, gameEndModes } from "../../helpers/constants";
+import RoundFacts from "../../components/ingame/RoundFacts";
+import Notifications from "../../components/ingame/Notifications";
+import { handModes } from "../../helpers/constants"
 
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
@@ -34,8 +36,8 @@ class Game extends React.Component {
     let gameEnd = {
       pathname: '/game-end',
       state: { 
-        title: "Sorry you lost!",
-        text: "Foo"
+        mode: gameEndModes.ABORTED,
+        usernameWhichHasLeft: "Andrina"
       }
     }
 
@@ -44,9 +46,13 @@ class Game extends React.Component {
         <main>
             <RoundFacts roundNumber={1} activePlayer="You" nextRoundCardAmount={5} nextRoundBeginner="Andrina"/>
             <Notifications />
-            <Board />
-            <Hand />
-            <Link to={gameEnd}>Leave and return to Home</Link>
+            <Board size={500}/>
+            
+
+            <MyHand />
+
+
+            <Link to={gameEnd}>Game aborted</Link>
           </main>
       </View>
     );
@@ -54,3 +60,14 @@ class Game extends React.Component {
 }
 
 export default withRouter(Game);
+
+/*
+<Hand mode={handModes.LEFT_HAND}/>
+            <Hand mode={handModes.RIGHT_HAND}/>
+            <Hand mode={handModes.PARTNER_HAND}/>
+
+
+-> left play menu
+-> right play menu
+
+            */

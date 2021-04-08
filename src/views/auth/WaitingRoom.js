@@ -23,10 +23,10 @@ class WaitingRoom extends React.Component {
             <div className="queue">
               <p className="above-players">You are in the second place</p>
               <Box className="players">
-                <Avatar color="red" />
-                <Avatar color="blue" />
-                <Avatar color="yellow" />
-                <Avatar color="green" img={avatar}/>
+                <Avatar />
+                <Avatar />
+                <Avatar />
+                <Avatar img={avatar}/>
               </Box>
               <p className="below-players"><Link to="/home">Leave and return to Home</Link></p>
               <p className="below-players"><Link to="/choose-place">Choose Place</Link></p>

@@ -1,7 +1,5 @@
 import React from "react";
-import dogCard from '../img/dog-card.png';
-import avatar from '../img/avatar.png'
-import Avatar from "../components/Avatar"
+import Card from "./Card";
 
 const CARD_WIDTH = 60;
 const HAND_WIDTH = 300;
@@ -16,16 +14,22 @@ class Hand extends React.Component {
 
     constructor() {
         super();
-        this.state = {
-            imgUrls: [
-                "https://deckofcardsapi.com/static/img/KH.png", 
-            "https://deckofcardsapi.com/static/img/8C.png", 
-            "https://deckofcardsapi.com/static/img/3H.png",
-            "https://deckofcardsapi.com/static/img/9D.png",
-            "https://deckofcardsapi.com/static/img/QH.png"]
-        };
     }
 
+    componentDidMount() {
+        this.addCards(this.props.cardsToAdd);        
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.cardsToAdd !== prevProps.cardsToAdd) {
+            this.addCards(this.props.cardsToAdd);        
+        }
+        if (this.props.cardsToPlay !== prevProps.cardsToPlay) {
+            console.log("cards to play updated")
+            this.playCards(this.props.cards, this.props.cardsToPlay);        
+        }
+    }
+    
     getrotation(xpos){
         let ypos = this.getypos(xpos);
         if(xpos < h){
@@ -65,13 +69,36 @@ class Hand extends React.Component {
         return ypos;
     }
 
-    renderCards(isMyHand) {
-        let cards = [];
-        let imgUrls = this.state.imgUrls;
+    addCards(cardsToAdd) {
+        for(let i = 0; i < cardsToAdd.length; i++) {
+            setTimeout(function() {    
+                this.props.handleCardsUpdate([...this.props.cards, {
+                    code: cardsToAdd[i].code, 
+                    imgUrl: cardsToAdd[i].imgUrl,
+                    isRaised: cardsToAdd[i].isRaised
+                }])
+            }.bind(this), (i+1) * 300); 
+            setTimeout(function() {    
+                let alignedCards = this.alignCards(this.props.cards);
+                this.props.handleCardsUpdate(alignedCards)
+            }.bind(this), (i+1) * 350); 
+        }
+    }
 
-        for(let i = 0; i < imgUrls.length; i++) {
-            let imgUrl = imgUrls[i];
-            let count = imgUrls.length;
+    playCards(cards, cardsToPlay) {
+        let remainingCards = cards;
+        for(let i = 0; i < cardsToPlay.length; i++) {
+            remainingCards = cards.filter(card => !card.code.includes(cardsToPlay[i].code));
+        }
+        let alignedCards = this.alignCards(remainingCards);
+        this.props.handleCardsUpdate(alignedCards)
+    }
+
+    alignCards(cards) {
+        for(let i = 0; i < cards.length; i++) {
+            let card = cards[i];
+
+            let count = cards.length;
 
             let left = CARD_WIDTH * i / 2;
             let totalwidth = count * (CARD_WIDTH / 2) + CARD_WIDTH / 2;
@@ -93,27 +120,43 @@ class Hand extends React.Component {
 
             let bottom = (ypos / k) * CARD_HEIGHT / 4;
             let styles = {
-                left: left + "px",
-                bottom: bottom + "px",
-                transform: "rotate(" + rot + "deg)"
+                left: left,
+                bottom: bottom,
+                rot: rot
             };
 
-            if(isMyHand) {
-                cards.push(<img className="card" src={imgUrl} style={styles} />)
-            } else {
-                cards.push(<img className="card" src={dogCard} style={styles} />)
-            }
+            card.style = styles;
         }
+
         return cards;
     }
 
     render() {
-        return (
-            <div>
-                <div className="hand my-hand">
-                    {this.renderCards(true)}
+        return (  
+            <div className="hand-wrapper">
+                <div className={"hand " + this.props.mode}>
+                    {this.props.cards.map(card => {
+                        return (
+                            <Card 
+                                key={card.code} 
+                                card={card}
+                                onClickCard={this.props.onClickCard}
+                            />
+                        );
+                    })}
                 </div>
-                <div className="hand left-hand">
+            </div>  
+        );
+    }
+}
+
+export default Hand;
+
+
+
+/*
+
+<div className="hand left-hand">
                     <div className="cards"> {this.renderCards(false)}</div>
                     <Avatar size="80" color="yellow" img={avatar} />
                 </div>
@@ -124,10 +167,6 @@ class Hand extends React.Component {
                 <div className="hand partner-hand">
                     {this.renderCards(false)}
                 </div>
-                
-            </div>
-        );
-    }
-}
 
-export default Hand;
+
+                */
