@@ -15,7 +15,7 @@ export default class InputField extends React.Component {
         }
         
         return (
-            <div className="inputWrapper">
+            <div className="form-element">
                 {this.props.label ? <label>{this.props.label}</label> : null}
                 <span className={this.props.isClearable ? 'clearable' : ''}>
                     <input

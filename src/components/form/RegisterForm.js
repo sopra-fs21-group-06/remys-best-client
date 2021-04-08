@@ -129,7 +129,7 @@ class RegisterForm extends React.Component {
                     value="Sign up" 
                     submitFunction={this.submit}
                 />
-                <p>Have an account? <Link to="/login">Sign in</Link></p>
+                <p className="below-btn">Have an account? <Link to="/login">Sign in</Link></p>
 			</div>
 		);
 	}

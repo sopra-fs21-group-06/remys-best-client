@@ -22,6 +22,17 @@ a {
     }
 }
 
+p {
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 25px;
+    font-weight: $bold;
+    letter-spacing: 0.5px;
+}
+
 .background {
     position: fixed;
     z-index: -1;
@@ -50,6 +61,7 @@ a {
 
 .foreground {
     position: relative;
+    overflow: hidden;
     @include fullscreen;
 }
 
@@ -75,4 +87,70 @@ button {
 * {
     -webkit-font-smoothing: antialiased;
     box-sizing: border-box;
+}
+
+
+div.blurred-element {
+
+    .container {
+        position: relative;
+
+        .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 9;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.1);
+            // todo fallback browser support
+        }
+
+        .content {
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+div.avatar-box {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.green-bg {
+        background: rgba($green, 0.2);
+    }
+
+    &.red-bg {
+        background: rgba($red, 0.2);
+    }
+
+    &.blue-bg {
+        background: rgba($blue, 0.2);
+    }
+
+    &.yellow-bg {
+        background: rgba($yellow, 0.2);
+    }
+
+    img {
+        width: 28px;
+        height: 28px;
+        margin-bottom: 4px;
+    }
+}
+
+div.box {
+
+    .box-content {
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 17px 22px;
+    }
 }

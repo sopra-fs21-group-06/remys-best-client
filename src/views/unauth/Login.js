@@ -1,62 +1,31 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import LoginForm from '../../components/form/LoginForm';
+import View from "../View";
+import { viewLinks } from "../../helpers/constants"
 
 class Login extends React.Component {
 
-  constructor() {
-    super();
-    this.state = {
-      usernameOrEmail: '',
-      errorMessageUsernameOrEmail: null,
-      isUsernameOrEmailValid: true,
-    };
-  }
-
-  /*
-  async login() {
-    try {
-      const requestBody = JSON.stringify({
-        username: this.state.username,
-        name: this.state.name
-      });
-      const response = await api.post('/users', requestBody);
-
-      // Get the returned user and update a new object.
-      const user = new User(response.data);
-
-      // Store the token into the local storage.
-      localStorage.setItem('token', user.token);
-
-      // Login successfully worked --> navigate to the route /game in the GameRouter
-      this.props.history.push(`/game`);
-    } catch (error) {
-      alert(`Something went wrong during the login: \n${handleError(error)}`);
-    }
-  }*/
-
   render() {
     return (
-      <div>
-        <LoginForm />
-      </div>
+      <View className="login" isDogVisible={true} linkMode={viewLinks.BASIC}>
+          <main className="large side-by-side">
+            <div className="col">
+              <h1>Welcome to Brändi Dog Online</h1>
+              <p>Brändi Dog is an exciting board game that is played in two opponent teams and with bridge cards. The goal is to get your own marbles from the kennel to the finish zone.</p>
+              <br/>
+              <p>The cards you draw determine how you move forward. You are supported by your team partner and sent home by the other party. The winner is the team that cleverly teams up and is the first to bring the marbles to the finish zone.</p>
+              <br/>
+              <p>Sign up an play Brändi Dog online!</p>
+            </div>
+            <div className="col">
+              <h1>Sign in to your account</h1>
+              <LoginForm />
+            </div>
+          </main>
+      </View>
     );
   }
 }
 
 export default withRouter(Login);
-
-
-
-/*
-
-
-      <div>
-<div className="blue-marble"></div>
-<div className="green-marble"></div>
-<div className="red-marble"></div>
-<div className="yellow-marble"></div>
-      </div>
-
-
-      */

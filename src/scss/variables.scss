@@ -2,6 +2,8 @@
 $grey: #EAEAEA;
 $white: #FFFFFF;
 $black: #404040;
+$black-light: rgba($black, 0.7);
+$grey-light: lighten($black, 40%);
 
 $yellow: #EEBD41;
 $red: #D04F3A;

@@ -2,5 +2,10 @@
 @import 'variables';
 @import 'mixins';
 @import 'general';
+@import 'view';
+@import 'transitions';
+@import "components/form";
 @import "components/board";
+@import "components/hand";
+@import "components/facts";
 @import "components/notifications";
