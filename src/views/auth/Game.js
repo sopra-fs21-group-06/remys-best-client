@@ -16,11 +16,32 @@ import Stomp from 'stompjs';
 import sockClient from "../../components/SockClient";
 import sessionManager from "../../helpers/sessionManager";
 
+const CARDS = [{
+                code: "KH",
+                imgUrl: "https://deckofcardsapi.com/static/img/KH.png"
+            }, {
+                code: "8C",
+                imgUrl: "https://deckofcardsapi.com/static/img/8C.png"
+            }, {
+                code: "3H",
+                imgUrl: "https://deckofcardsapi.com/static/img/3H.png"
+            }, {
+                code: "9D",
+                imgUrl: "https://deckofcardsapi.com/static/img/9D.png"
+            }, {
+                code: "QH",
+                imgUrl: "https://deckofcardsapi.com/static/img/QH.png"
+            }
+        ]
+
 class Game extends React.Component {
 
   constructor() {
         super();
         this.connected = false;
+        this.state = {
+            cardsToPlay: []
+        }
        
     }
 
@@ -30,6 +51,12 @@ class Game extends React.Component {
         sockClient.onRegister(r => this.handleSocketRegister(r));
         sockClient.connectAndRegister(this.props.authToken);*/
        
+    }
+
+    playCard() {
+      this.setState({
+          cardsToPlay: [CARDS[Math.floor(Math.random() * 4)]]
+      });
     }
 
   render() {
@@ -44,9 +71,10 @@ class Game extends React.Component {
     return (
       <View className="game" isFooterInvisible={true} linkMode={viewLinks.BASIC}>
         <main>
+          <p onClick={() => this.playCard()}>play card</p>
             <RoundFacts roundNumber={1} activePlayer="You" nextRoundCardAmount={5} nextRoundBeginner="Andrina"/>
             <NotificationList />
-            <Board size={500}/>
+            <Board size={500} cardsToPlay={this.state.cardsToPlay}/>
             
 
             <MyHand />

@@ -5,6 +5,9 @@ import { lightenOrDarkenColor, computeFields } from '../../helpers/remysBestUtil
 import Marble from './Marble';
 import Field from './Field';
 import { colors } from '../../helpers/constants'
+import { PopInOrSlideDown } from '../transitions/PopInOrSlideDown';
+import { TransitionGroup } from 'react-transition-group';
+import Card from "./Card";
 
 class Board extends React.Component {
 
@@ -13,8 +16,26 @@ class Board extends React.Component {
         this.state = {
             size: this.props.size, // this.props.size? -> always width 100% make wrapper around each board with dynamic sizes? on resize recompute
             fields: [],
-            marbles: []
+            marbles: [],
+            playedCards: [],
+            cardsToPlay: []
         };
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.cardsToPlay !== prevState.cardsToPlay) {
+            // after getDerivedStateFromProps() has changed the state
+            let newPlayedCards = this.playCards(this.state.playedCards, this.state.cardsToPlay);
+            
+            this.setState({playedCards: newPlayedCards})
+        }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.cardsToPlay !== prevState.cardsToPlay) {
+            return {cardsToPlay: nextProps.cardsToPlay};
+        }
+        return null;
     }
 
     componentDidMount() {
@@ -50,7 +71,16 @@ class Board extends React.Component {
         })
     }
 
+    playCards(playedCards, cardsToPlay) {
+        for(let i = 0; i < cardsToPlay.length; i++) {
+            playedCards.push(cardsToPlay[i]);
+            console.log(playedCards)
+        }
+        return playedCards;
+    }
+
     render() {
+        
         return (
             <div className="board" style={{width: this.state.size, height: this.state.size}}>
                 <img className="wood" src={wood} />
@@ -76,6 +106,15 @@ class Board extends React.Component {
                         );
                     })}
                 </div>
+                <TransitionGroup className="played-card-list">
+                    {this.state.playedCards ? Object.keys(this.state.playedCards).reverse().map(key => {
+                        return (
+                            <PopInOrSlideDown key={key}>
+                                <Card card={this.state.playedCards[key]}/>
+                            </PopInOrSlideDown>
+                        );
+                    }) : null}
+                </TransitionGroup>
             </div>
         );
     }

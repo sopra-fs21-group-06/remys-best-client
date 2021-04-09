@@ -32,4 +32,8 @@
             @include marble-styles1($yellow);
         }
     }
+
+    .played-card-list {
+        @include centerer;
+    }
 }

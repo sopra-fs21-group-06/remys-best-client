@@ -50,19 +50,17 @@ class NotificationList extends React.Component {
     }
 
     render() {
-        const notificationList = Object.keys(this.state.notifications).reverse().map(key => {
-            return (
-                <PopInOrSlideDown key={key}>
-                    <Notification notification={this.state.notifications[key]} />
-                </PopInOrSlideDown>
-            );
-        });
-
         return (
             <div>
                 <p onClick={() => this.addNotification()}>add notification</p>
                 <TransitionGroup className="notification-list">
-                    {notificationList}
+                    {Object.keys(this.state.notifications).reverse().map(key => {
+                        return (
+                            <PopInOrSlideDown key={key}>
+                                <Notification notification={this.state.notifications[key]} />
+                            </PopInOrSlideDown>
+                        );
+                    })}
                 </TransitionGroup>
             </div>
         );
