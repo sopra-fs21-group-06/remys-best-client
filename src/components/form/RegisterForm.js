@@ -3,7 +3,7 @@ import { withRouter, Link } from 'react-router-dom';
 import InputField from './InputField';
 import ButtonPrimary from './ButtonPrimary';
 import User from "../shared/models/User";
-import {api} from "../../helpers/api";
+import {api, handleError} from "../../helpers/api";
 
 class RegisterForm extends React.Component {
 
@@ -18,7 +18,8 @@ class RegisterForm extends React.Component {
             errorMessagePassword: null,
             isUsernameValid: true,
             isEmailValid: true,
-            isPasswordValid: true
+            isPasswordValid: true,
+            serverError: ''
         };
         this.submit = this.submit.bind(this);
         this.isFormValid = this.isFormValid.bind(this);
@@ -42,7 +43,8 @@ class RegisterForm extends React.Component {
         this.setState({
             isUsernameValid: true,
             isEmailValid: true,
-            isPasswordValid: true
+            isPasswordValid: true,
+            serverError: null
         });
 
         if(!usernameValue || usernameValue === '') {
@@ -88,9 +90,9 @@ class RegisterForm extends React.Component {
             // Login successfully worked --> navigate to the route /game in the GameRouter
             this.props.history.push(`/home`);
         } catch (error) {
-            this.setState(Object.assign({}, {usernameOrEmailValue: this.state.usernameOrEmailValue}, {password: this.state.password},
-                {errorMessageUsernameOrEmail: error}, {errorMessagePassword: this.state.errorMessagePassword}, {isUsernameOrEmailValid: false},
-                {isPasswordValid: this.state.isPasswordValid}));
+            this.setState({
+                serverError: handleError(error)
+            })
         }
         finally{
             resolve();
@@ -100,6 +102,9 @@ class RegisterForm extends React.Component {
 	render() {
 		return (
 			<div>
+                {this.state.serverError ? 
+                    <p className="server-error">{this.state.serverError}</p> : null
+                }
 				<InputField	
                     type="text"
                     label="Username"
