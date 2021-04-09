@@ -1,9 +1,9 @@
 .fadeInOut-enter {
-    animation: fadein 150ms ease-in forwards; // has to be the same amount as in FadeInOut.jsx
+    animation: fadein 150ms ease-in forwards; // has to be the same amount as in FadeInOut.js
 }
 
 .fadeInOut-exit {
-    animation: fadeout 150ms ease-in forwards; // has to be the same amount as in FadeInOut.jsx
+    animation: fadeout 150ms ease-in forwards; // has to be the same amount as in FadeInOut.js
 }
 
 @keyframes fadein {
@@ -25,3 +25,38 @@
         opacity: 0;
     }
 }
+
+.pop-in-or-slide-down-enter {
+    opacity: 0;
+    transform: scale(0.5);
+    max-height: 0px;
+    transform-origin: center center;
+}
+
+.pop-in-or-slide-down-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 500ms ease-in;
+    max-height: 120px;
+}
+
+.pop-in-or-slide-down-enter-done {
+     transition: all 500ms ease-in;
+}
+
+
+/*
+.pop-in-or-slide-down-exit {
+    opacity: 1;
+}
+
+.pop-in-or-slide-down-exit-active {
+    opacity: 0;
+    transition: max-height 500ms ease-out, opacity 300ms ease-out;
+    max-height: 0;
+}
+
+.pop-in-or-slide-down-exit-active span {
+    //text-decoration: line-through;
+}
+*/

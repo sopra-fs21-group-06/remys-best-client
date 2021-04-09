@@ -85,6 +85,8 @@ class MyHand extends React.Component {
     render() {
         let raisedCard = this.state.cards.filter(card => {return card.isRaised})
         
+
+        // TODO maybe rewrite passing obejcts and method to children via react context
         return (
             <div className="hand-container">
                 <RaisedCardOptions raisedCard={raisedCard}/>

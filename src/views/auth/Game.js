@@ -8,7 +8,7 @@ import {getDomain, isProduction} from "../../helpers/getDomain";
 import View from "../View";
 import { viewLinks, gameEndModes } from "../../helpers/constants";
 import RoundFacts from "../../components/ingame/RoundFacts";
-import Notifications from "../../components/ingame/Notifications";
+import NotificationList from "../../components/ingame/NotificationList";
 import { handModes } from "../../helpers/constants"
 
 import SockJS from 'sockjs-client';
@@ -45,7 +45,7 @@ class Game extends React.Component {
       <View className="game" isFooterInvisible={true} linkMode={viewLinks.BASIC}>
         <main>
             <RoundFacts roundNumber={1} activePlayer="You" nextRoundCardAmount={5} nextRoundBeginner="Andrina"/>
-            <Notifications />
+            <NotificationList />
             <Board size={500}/>
             
 
