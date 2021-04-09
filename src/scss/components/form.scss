@@ -60,6 +60,16 @@ button {
 }
 
 
+.server-error {
+    border: 2px solid $red;
+    background-color: #FFF0F1;
+    color: $red;
+    padding: 10px;
+    border-radius: 10px;
+    width: calc(100% - 16px);
+    margin: 0 auto 32px auto;
+}
+
 
 .below-btn {
     text-align: center;

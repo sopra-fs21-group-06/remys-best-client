@@ -15,17 +15,15 @@ class LoginForm extends React.Component {
             errorMessageUsernameOrEmail: null,
             errorMessagePassword: null,
             isUsernameOrEmailValid: true,
-            isPasswordValid: true
+            isPasswordValid: true,
+            serverError: null
         };
         this.submit = this.submit.bind(this);
         this.isFormValid = this.isFormValid.bind(this);
         this.login = this.login.bind(this);
     }
 
-    submit(resolve) {
-         this.props.history.push('/home');
-
-         
+    submit(resolve) { 
         let usernameOrEmailValue = this.state.usernameOrEmail;
         let passwordValue = this.state.password;
 
@@ -40,7 +38,8 @@ class LoginForm extends React.Component {
         let isFormValid = true;
         this.setState({
             isUsernameOrEmailValid: true,
-            isPasswordValid: true
+            isPasswordValid: true,
+            serverError: null
         });
 
         if(!usernameOrEmailValue || usernameOrEmailValue === '') {
@@ -61,39 +60,39 @@ class LoginForm extends React.Component {
         return isFormValid;
     }
 
-        async login(resolve, usernameOrEmailValue, passwordValue){
-            try{
-                const requestBody = JSON.stringify({
-                    usernameOrEmail: usernameOrEmailValue,
-                    password: passwordValue
-                });
-                const response = await api.post(`/users/login`, requestBody);
-                // Get the returned user and update a new object.
-                const user = new User(response.data);
+    async login(resolve, usernameOrEmailValue, passwordValue){
+        try{
+            const requestBody = JSON.stringify({
+                usernameOrEmail: usernameOrEmailValue,
+                password: passwordValue
+            });
+            const response = await api.post(`/users/login`, requestBody);
+            // Get the returned user and update a new object.
+            const user = new User(response.data);
 
-                // Store the token into the local storage.
-                localStorage.setItem('token', user.token);
+            // Store the token into the local storage.
+            localStorage.setItem('token', user.token);
 
-                // Login successfully worked --> navigate to the route /game in the GameRouter
-                this.props.history.push(`/home`);
-            } catch (error) {
-                this.setState(Object.assign({}, {usernameOrEmailValue: this.state.usernameOrEmailValue}, {password: this.state.password},
-                    {errorMessageUsernameOrEmail: error}, {errorMessagePassword: this.state.errorMessagePassword}, {isUsernameOrEmailValid: false},
-                    {isPasswordValid: this.state.isPasswordValid}));
-            }
-            finally {
-                // return resolve after having received a response from the api
-                resolve();
-            }
+            // Login successfully worked --> navigate to the route /game in the GameRouter
+            this.props.history.push(`/home`);
+        } catch (error) {
+            this.setState({
+                serverError: handleError(error)
+            })
         }
+        finally {
+            // return resolve after having received a response from the api
+            resolve();
+        }
+    }
 
-
-
-
-    // TODO add link "forgot password?"
+    // TODO optional: add link "forgot password?"
 	render() {
 		return (
 			<div className="login-form">
+                {this.state.serverError ? 
+                    <p className="server-error">{this.state.serverError}</p> : null
+                }
 				<InputField	
                     type="text"
                     label="Username or email"
