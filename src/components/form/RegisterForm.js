@@ -2,6 +2,8 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import InputField from './InputField';
 import ButtonPrimary from './ButtonPrimary';
+import User from "../shared/models/User";
+import {api} from "../../helpers/api";
 
 class RegisterForm extends React.Component {
 
@@ -69,30 +71,30 @@ class RegisterForm extends React.Component {
     }
 
     async register(resolve, usernameValue, emailValue, passwordValue) {
-        
-        /*
         try {
-        const requestBody = JSON.stringify({
-            username: this.state.username,
-            name: this.state.name
-        });
-        const response = await api.post('/users', requestBody);
+            const requestBody = JSON.stringify({
+                email: emailValue,
+                username: usernameValue,
+                password: passwordValue
+            });
+            const response1 = await api.post('/users', requestBody);
 
-        // Get the returned user and update a new object.
-        const user = new User(response.data);
+            // Get the returned user and update a new object.
+            const user = new User(response1.data);
 
-        // Store the token into the local storage.
-        localStorage.setItem('token', user.token);
+            // Store the token into the local storage.
+            localStorage.setItem('token', user.token);
 
-        // Login successfully worked --> navigate to the route /game in the GameRouter
-        this.props.history.push(`/game`);
+            // Login successfully worked --> navigate to the route /game in the GameRouter
+            this.props.history.push(`/home`);
         } catch (error) {
-        alert(`Something went wrong during the login: \n${handleError(error)}`);
-        }*/
-
-
-        // return resolve after having received a response from the api
-        resolve();
+            this.setState(Object.assign({}, {usernameOrEmailValue: this.state.usernameOrEmailValue}, {password: this.state.password},
+                {errorMessageUsernameOrEmail: error}, {errorMessagePassword: this.state.errorMessagePassword}, {isUsernameOrEmailValid: false},
+                {isPasswordValid: this.state.isPasswordValid}));
+        }
+        finally{
+            resolve();
+        }
     }
 
 	render() {
