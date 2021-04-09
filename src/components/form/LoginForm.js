@@ -2,6 +2,8 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import InputField from './InputField';
 import ButtonPrimary from './ButtonPrimary';
+import {api, handleError} from "../../helpers/api";
+import User from "../shared/models/User";
 
 class LoginForm extends React.Component {
 
@@ -59,34 +61,33 @@ class LoginForm extends React.Component {
         return isFormValid;
     }
 
-    async login(resolve, usernameOrEmailValue, passwordValue) {
+        async login(resolve, usernameOrEmailValue, passwordValue){
+            try{
+                const requestBody = JSON.stringify({
+                    usernameOrEmail: usernameOrEmailValue,
+                    password: passwordValue
+                });
+                const response = await api.post(`/users/login`, requestBody);
+                // Get the returned user and update a new object.
+                const user = new User(response.data);
 
-       
-        
-        /*
-        try {
-        const requestBody = JSON.stringify({
-            username: this.state.username,
-            name: this.state.name
-        });
-        const response = await api.post('/users', requestBody);
+                // Store the token into the local storage.
+                localStorage.setItem('token', user.token);
 
-        // Get the returned user and update a new object.
-        const user = new User(response.data);
-
-        // Store the token into the local storage.
-        localStorage.setItem('token', user.token);
-
-        // Login successfully worked --> navigate to the route /game in the GameRouter
-        this.props.history.push(`/game`);
-        } catch (error) {
-        alert(`Something went wrong during the login: \n${handleError(error)}`);
-        }*/
+                // Login successfully worked --> navigate to the route /game in the GameRouter
+                this.props.history.push(`/home`);
+            } catch (error) {
+                this.setState(Object.assign({}, {usernameOrEmailValue: this.state.usernameOrEmailValue}, {password: this.state.password},
+                    {errorMessageUsernameOrEmail: error}, {errorMessagePassword: this.state.errorMessagePassword}, {isUsernameOrEmailValid: false},
+                    {isPasswordValid: this.state.isPasswordValid}));
+            }
+            finally {
+                // return resolve after having received a response from the api
+                resolve();
+            }
+        }
 
 
-        // return resolve after having received a response from the api
-        resolve();
-    }
 
 
     // TODO add link "forgot password?"
