@@ -8,6 +8,7 @@ import { colors } from '../../helpers/constants'
 import { ThrowIn } from '../transitions/ThrowIn';
 import { TransitionGroup } from 'react-transition-group';
 import Card from "./Card";
+import { createMarble } from '../../helpers/modelUtils'
 
 class Board extends React.Component {
 
@@ -58,13 +59,7 @@ class Board extends React.Component {
                 color = colors.YELLOW
             }
             
-            marbles.push({
-                id: i,
-                fieldId: 0 + (3*i),
-                color: color,
-                isMovable: false,
-                isVisible: true
-            });
+            marbles.push(createMarble(i, 0 + (3*i), color, false, true));
         }
        
         this.setState({
@@ -95,8 +90,8 @@ class Board extends React.Component {
         id = 5;
         this.setState(prevState => {
             const marbles = prevState.marbles.map(marble => {
-                if (marble.id == id) {
-                    marble.isVisible = false;
+                if (marble.getId() == id) {
+                    marble.setIsVisible(false);
                 } 
                 return marble;
             });
@@ -107,9 +102,9 @@ class Board extends React.Component {
         setTimeout(function(){ 
             this.setState(prevState => {
             const marbles = prevState.marbles.map(marble => {
-                if (marble.id == id) {
-                    marble.isVisible = true;
-                    marble.fieldId = marble.fieldId + 5
+                if (marble.getId() == id) {
+                    marble.setIsVisible(true);
+                    marble.setFieldId(marble.getFieldId() + 5);
                 } 
                 return marble;
                 });
@@ -126,7 +121,7 @@ class Board extends React.Component {
                     {this.state.fields.map(field => {
                         return (
                             <Field 
-                                key={field.id} 
+                                key={field.getId()} 
                                 field={field}
                             />
                         );
@@ -134,10 +129,10 @@ class Board extends React.Component {
                 </div>
                 <div className="marbles">
                     {this.state.marbles.map(marble => {
-                        let field = this.state.fields.find(field => field.id === marble.fieldId)
+                        let field = this.state.fields.find(field => field.getId() === marble.getFieldId())
                         return (
                             <Marble 
-                                key={marble.id}
+                                key={marble.getId()}
                                 marble={marble}
                                 field={field}                       
                             />

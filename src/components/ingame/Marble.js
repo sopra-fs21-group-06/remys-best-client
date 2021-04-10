@@ -6,16 +6,17 @@ import { PickUpAndDrop } from '../transitions/PickUpAndDrop';
 class Marble extends React.Component {
 
     render() {
-        console.log(this.props.marble)
-        let {color, isMovable, isVisible} = this.props.marble;
-        let {left, top, size} = this.props.field;
+        let {field, marble} = this.props;
         
         let scalePixels = 2;
-        left -= scalePixels/2;
-        top -= scalePixels/2;
-        size += scalePixels;
-
+        let left = field.getLeft() - scalePixels/2;
+        let top = field.getTop() - scalePixels/2;
+        let size = field.getSize() + scalePixels;
+        let color = marble.getColor();
         let colorDark = lightenOrDarkenColor(color, -70);
+        let isMovable = marble.getIsMovable();
+        let isVisible = marble.getIsVisible();
+
         let styles = {
             position: 'absolute',
             display: 'block',

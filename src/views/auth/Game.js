@@ -2,14 +2,10 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import Board from "../../components/ingame/Board";
 import MyHand from "../../components/ingame/MyHand";
-import Hand from "../../components/ingame/Hand";
-
-import {getDomain, isProduction} from "../../helpers/getDomain";
 import View from "../View";
 import { viewLinks, gameEndModes } from "../../helpers/constants";
 import RoundFacts from "../../components/ingame/RoundFacts";
 import NotificationList from "../../components/ingame/NotificationList";
-import { handModes } from "../../helpers/constants"
 
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';

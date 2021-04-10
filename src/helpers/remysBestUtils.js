@@ -1,4 +1,5 @@
 import { colors } from './constants'
+import { createField } from './modelUtils'
 
 export const lightenOrDarkenColor = (col, amt) => {
   
@@ -145,6 +146,12 @@ export const computeFields = (boardSize) => {
         fields[i].size = FIELD_SIZE;
         fields[i].borderWidth = COLORED_BORDER_WIDTH;
     }
+
+    // mapping to model
+    fields = fields.map(field => {
+        let fieldModel = createField(field.id, field.left, field.top, field.color, field.size, field.borderWidth);
+        return fieldModel;
+    })
 
     return fields;
 }
