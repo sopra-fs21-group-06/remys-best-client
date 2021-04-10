@@ -25,7 +25,6 @@ class Hand extends React.Component {
             this.addCards(this.props.cardsToAdd);        
         }
         if (this.props.cardsToPlay !== prevProps.cardsToPlay) {
-            console.log("cards to play updated")
             this.playCards(this.props.cards, this.props.cardsToPlay);        
         }
     }

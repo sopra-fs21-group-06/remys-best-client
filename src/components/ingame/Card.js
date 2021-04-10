@@ -7,16 +7,20 @@ class Card extends React.Component {
         
         let styles = {};
         if(style) {
-            styles.left = style.left + "px";
-            styles.bottom = style.bottom + "px";
-            styles.transform = "rotate(" + style.rot + "deg)";
-        } else {
-            styles.left = "calc(50% - 100px)";
-            styles.bottom = "-100px";
+            styles.left = style.left ? style.left + "px" : '';
+            styles.bottom = style.bottom ? style.bottom + "px" : '';
+            styles.transform = style.rot ? "rotate(" + style.rot + "deg)" : '';
         }
 
         return (
-            <img className="card" src={imgUrl} style={styles} onClick={this.props.onClickCard ? () => this.props.onClickCard(code) : null}/>
+            <div className="card-wrapper">
+                <img 
+                    className={"card " + (this.props.isRaisable ? "raisable" : '')} 
+                    src={imgUrl} 
+                    style={styles} 
+                    onClick={this.props.onClickCard ? () => this.props.onClickCard(code) : null}
+                />
+            </div>
         );
     }
 }

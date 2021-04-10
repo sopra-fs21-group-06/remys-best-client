@@ -15,25 +15,40 @@
     .marbles {
         z-index: 2;
 
-        .blue-marble {
-            position: absolute;
-            @include marble-styles1($blue);
+        .marble {
+            //transform: scale(1);
         }
 
-        .red-marble {
-            @include marble-styles1($red);
-        }
+        .movable {
+            transform: scale(1);
 
-        .green-marble {
-            @include marble-styles1($green);
-        }
+            &:hover {
+                cursor: pointer;
+            }
 
-        .yellow-marble {
-            @include marble-styles1($yellow);
+            &.blue {
+                @include pulse($blue);
+            }
+
+            &.green {
+                @include pulse($green);
+            }
+
+            &.red {
+                @include pulse($red);
+            }
+
+            &.yellow {
+                @include pulse($yellow);
+            }
         }
     }
 
-    .played-card-list {
+    .played-card-pile {
         @include centerer;
+
+        .card-wrapper {
+            @include centerer;
+        }
     }
 }

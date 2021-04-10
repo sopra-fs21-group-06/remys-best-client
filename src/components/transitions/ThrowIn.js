@@ -1,7 +1,7 @@
 import React from "react";
 import { CSSTransition } from 'react-transition-group';
 
-export class PopInOrSlideDown extends React.Component{
+export class ThrowIn extends React.Component{
     constructor() {
         super()
     }
@@ -9,8 +9,8 @@ export class PopInOrSlideDown extends React.Component{
     render() {
         const extendedProps = { 
             ...this.props,
-            timeout: 500,
-            classNames: "popInOrSlideDown",
+            timeout: 1000, // has to be the same amount as in fadeInOut.scss
+            classNames: "throwIn" ,
             unmountOnExit: true
         }
         return (

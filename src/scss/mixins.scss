@@ -67,7 +67,6 @@
     ;
 }
 
-
 @mixin disappear {
     @for $i from 1 through 5 {
         &:nth-of-type(#{$i}) {
@@ -128,3 +127,28 @@ https: //stackoverflow.com/questions/66696971/css3-increment-text-after-animatio
     -webkit-animation-fill-mode: forwards;
     animation-timing-function: cubic-bezier(0.280, 0.840, 0.420, 1);
 }*/
+
+
+
+@mixin pulse($color) {
+    $pulse-unique-name: unique-id() !global;
+
+    @keyframes #{$pulse-unique-name} {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(darken($color, 20%), 1);
+        }
+
+        70% {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 10px rgba(darken($color, 20%), 0);
+        }
+
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(darken($color, 20%), 0);
+        }
+    }
+
+    animation: $pulse-unique-name 2s infinite;
+}

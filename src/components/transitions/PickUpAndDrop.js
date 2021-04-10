@@ -1,7 +1,7 @@
 import React from "react";
 import { CSSTransition } from 'react-transition-group';
 
-export class PopInOrSlideDown extends React.Component{
+export class PickUpAndDrop extends React.Component{
     constructor() {
         super()
     }
@@ -10,14 +10,12 @@ export class PopInOrSlideDown extends React.Component{
         const extendedProps = { 
             ...this.props,
             timeout: 500,
-            classNames: "popInOrSlideDown",
+            classNames: "pickUpAndDrop",
             unmountOnExit: true
         }
         return (
             <CSSTransition {...extendedProps}>
-                <div>
-                    {this.props.children}
-                </div>
+                {this.props.children}
             </CSSTransition>
         )
     }

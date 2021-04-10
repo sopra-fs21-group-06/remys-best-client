@@ -1,10 +1,13 @@
 import React from "react";
-import { lightenOrDarkenColor } from '../../helpers/remysBestUtils';
+import { lightenOrDarkenColor, getKeyByValue } from '../../helpers/remysBestUtils';
+import {colors} from '../../helpers/constants';
+import { PickUpAndDrop } from '../transitions/PickUpAndDrop';
 
 class Marble extends React.Component {
 
     render() {
-        let {color} = this.props;
+        console.log(this.props.marble)
+        let {color, isMovable, isVisible} = this.props.marble;
         let {left, top, size} = this.props.field;
         
         let scalePixels = 2;
@@ -12,7 +15,7 @@ class Marble extends React.Component {
         top -= scalePixels/2;
         size += scalePixels;
 
-        let colorDark = lightenOrDarkenColor(this.props.color, -70);
+        let colorDark = lightenOrDarkenColor(color, -70);
         let styles = {
             position: 'absolute',
             display: 'block',
@@ -25,8 +28,16 @@ class Marble extends React.Component {
             background: `radial-gradient(circle at ${size/3}px ${size/3}px, ${color}, ${colorDark})`
         };
 
+        let movableClassNames;
+        if(isMovable) {
+            let colorName = getKeyByValue(colors, color).toLowerCase();
+            movableClassNames = `movable ${colorName}`;
+        }
+
         return (
-            <div className="marble" style={styles}></div>
+            <PickUpAndDrop in={isVisible}>
+                <div className={"marble " + (isMovable ? movableClassNames : '')} style={styles}></div>
+            </PickUpAndDrop>
         );
     }
 }
