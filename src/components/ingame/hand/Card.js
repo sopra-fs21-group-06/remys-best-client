@@ -3,7 +3,7 @@ import React from "react";
 class Card extends React.Component {
 
     render() {
-        let {imgUrl, style, code} = this.props.card;
+        let {imgUrl, style, code, isRaised} = this.props.card;
         
         let styles = {};
         if(style) {
@@ -12,13 +12,20 @@ class Card extends React.Component {
             styles.transform = style.rot ? "rotate(" + style.rot + "deg)" : '';
         }
 
+
+        if(isRaised) {
+            let raisingDistance = 30;
+            styles.bottom = (style.bottom + raisingDistance) + "px";
+        } 
+
+        //console.log(this.props.onCardClick)
         return (
             <div className="card-wrapper">
                 <img 
-                    className={"card " + (this.props.isRaisable ? "raisable" : '')} 
+                    className={"card " + (this.props.isMyTurn ? "raisable" : '')} 
                     src={imgUrl} 
                     style={styles} 
-                    onClick={this.props.onClickCard ? () => this.props.onClickCard(code) : null}
+                    onClick={this.props.onCardClick ? () => this.props.onCardClick(this.props.card) : null}
                 />
             </div>
         );

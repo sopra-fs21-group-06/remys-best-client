@@ -7,8 +7,9 @@ import Field from './Field';
 import { colors } from '../../helpers/constants'
 import { ThrowIn } from '../transitions/ThrowIn';
 import { TransitionGroup } from 'react-transition-group';
-import Card from "./Card";
+import Card from "./hand/Card";
 import { createMarble } from '../../helpers/modelUtils'
+import { GameContext } from '../../views/auth/Game';
 
 class Board extends React.Component {
 
@@ -18,11 +19,11 @@ class Board extends React.Component {
             size: this.props.size, // this.props.size? -> always width 100% make wrapper around each board with dynamic sizes? on resize recompute
             fields: [],
             marbles: [],
-            playedCards: [],
-            cardsToPlay: []
+            playedCards: []
         };
     }
 
+    /*
     componentDidUpdate(prevProps, prevState) {
         if (this.state.cardsToPlay !== prevState.cardsToPlay) {
             // after getDerivedStateFromProps() has changed the state
@@ -37,8 +38,9 @@ class Board extends React.Component {
             return {cardsToPlay: nextProps.cardsToPlay};
         }
         return null;
-    }
+    }*/
 
+    
     componentDidMount() {
         let fields = computeFields(this.state.size);
         let marbles = [];
@@ -68,26 +70,18 @@ class Board extends React.Component {
         })
     }
 
-    playCards(playedCards, cardsToPlay) {
-        for(let i = 0; i < cardsToPlay.length; i++) {
-            let card = cardsToPlay[i];
-            card.style = {
-                rot: (Math.random() * 31) -15
-            }
-            playedCards.push(cardsToPlay[i]);
+    throwInCard(card) {
+      this.setState(prevState => {
+        card.style = {
+          rot: (Math.random() * 31) -15
         }
-
-        setTimeout(function(){ 
-            this.updateMarble()
-        }.bind(this), 1000);
-
-
-        return playedCards;
+        return {playedCards: [...prevState.playedCards, card]};
+      });
     }
 
-    updateMarble() {
-        let id = Math.floor(Math.random() * 15) + 1;
-        id = 5;
+    moveMarble() {
+        //let id = Math.floor(Math.random() * 15) + 1;
+        let id = 5;
         this.setState(prevState => {
             const marbles = prevState.marbles.map(marble => {
                 if (marble.getId() == id) {
@@ -98,18 +92,17 @@ class Board extends React.Component {
             return {marbles: marbles};
         });
 
-        
         setTimeout(function(){ 
-            this.setState(prevState => {
+          this.setState(prevState => {
             const marbles = prevState.marbles.map(marble => {
-                if (marble.getId() == id) {
-                    marble.setIsVisible(true);
-                    marble.setFieldId(marble.getFieldId() + 5);
-                } 
-                return marble;
-                });
-                return {marbles: marbles};
+              if (marble.getId() == id) {
+                  marble.setIsVisible(true);
+                  marble.setFieldId(marble.getFieldId() + 5);
+              } 
+              return marble;
             });
+            return {marbles: marbles};
+          });
         }.bind(this), 1000);
     }
 
@@ -139,7 +132,6 @@ class Board extends React.Component {
                         );
                     })}
                 </div>
-                <p onClick={() => this.updateMarble()}>UpdateMarble</p>
                 <TransitionGroup className="played-card-pile">
                     {this.state.playedCards ? Object.keys(this.state.playedCards).map(key => {
                         return (
@@ -149,7 +141,7 @@ class Board extends React.Component {
                         );
                     }) : null}
                 </TransitionGroup>
-            </div>
+            </div>  
         );
     }
 }

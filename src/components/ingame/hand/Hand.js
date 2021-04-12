@@ -14,19 +14,9 @@ class Hand extends React.Component {
 
     constructor() {
         super();
-    }
-
-    componentDidMount() {
-        this.addCards(this.props.cardsToAdd);        
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.cardsToAdd !== prevProps.cardsToAdd) {
-            this.addCards(this.props.cardsToAdd);        
-        }
-        if (this.props.cardsToPlay !== prevProps.cardsToPlay) {
-            this.playCards(this.props.cards, this.props.cardsToPlay);        
-        }
+        this.state = {
+            cards: []
+        };
     }
     
     getrotation(xpos){
@@ -63,6 +53,36 @@ class Hand extends React.Component {
         }
     }
 
+    removeCard(cardToRemove) {
+        // remove card
+        let remainingCards = this.state.cards.filter(card => !card.code.includes(cardToRemove.code));
+        this.setState({cards: remainingCards});
+
+        // align cards
+        setTimeout(function() {  
+            let alignedCards = this.alignCards(this.state.cards);
+            this.setState({cards: alignedCards});
+        }.bind(this), 50); 
+    }
+
+    raiseCard(cardToRaise) {
+        this.setState(prevState => {
+            const cards = prevState.cards.map(card => {
+                if (card == cardToRaise) {
+                    if(card.isRaised) {
+                        card.isRaised = false;
+                    } else {
+                        card.isRaised = true;
+                    }
+                } else if(card.isRaised) {
+                    card.isRaised = false;
+                }
+                return card;
+            });
+            return {cards: cards};
+        });
+    }
+
     getypos(xpos){
         let ypos = a * Math.pow((xpos - h), 2) + k;
         return ypos;
@@ -70,20 +90,24 @@ class Hand extends React.Component {
 
     addCards(cardsToAdd) {
         for(let i = 0; i < cardsToAdd.length; i++) {
-            setTimeout(function() {    
-                this.props.handleCardsUpdate([...this.props.cards, {
-                    code: cardsToAdd[i].code, 
-                    imgUrl: cardsToAdd[i].imgUrl,
-                    isRaised: cardsToAdd[i].isRaised
-                }])
-            }.bind(this), (i+1) * 300); 
-            setTimeout(function() {    
-                let alignedCards = this.alignCards(this.props.cards);
-                this.props.handleCardsUpdate(alignedCards)
-            }.bind(this), (i+1) * 350); 
+
+            // add card
+            setTimeout(function() {  
+                this.setState(prevState => {
+                    let cardToAdd = cardsToAdd[i];
+                    return {cards: [...prevState.cards, cardToAdd]};
+                });
+            }.bind(this), i * 300);
+
+            // align cards
+            setTimeout(function() {  
+                let alignedCards = this.alignCards(this.state.cards);
+                this.setState({cards: alignedCards});
+            }.bind(this), i * 300 + 50); 
         }
     }
 
+    /*
     playCards(cards, cardsToPlay) {
         let remainingCards = cards;
         for(let i = 0; i < cardsToPlay.length; i++) {
@@ -91,7 +115,7 @@ class Hand extends React.Component {
         }
         let alignedCards = this.alignCards(remainingCards);
         this.props.handleCardsUpdate(alignedCards)
-    }
+    }*/
 
     alignCards(cards) {
         for(let i = 0; i < cards.length; i++) {
@@ -131,20 +155,22 @@ class Hand extends React.Component {
     }
 
     render() {
+        console.log(this.props)
         return (  
             <div className="hand-wrapper">
-                <div className={"hand " + this.props.mode}>
-                    {this.props.cards.map(card => {
+                <div className="hand">
+                    {this.state.cards.map(card => {
                         return (
                             <Card 
                                 key={card.code} 
                                 card={card}
-                                onClickCard={this.props.onClickCard}
+                                onCardClick={this.props.onCardClick}
+                                isMyTurn={this.props.isMyTurn}
                             />
                         );
                     })}
-                </div>
-            </div>  
+                </div>  
+            </div>
         );
     }
 }

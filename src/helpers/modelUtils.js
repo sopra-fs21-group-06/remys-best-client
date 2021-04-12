@@ -35,6 +35,22 @@ export const createMarble = (id, fieldId, color, isMovable, isVisible) => {
     });
 };
 
+export const createPlayer = (username, handRef) => {
+    // A variable defined in a factory or constructor function scope
+    // is private to that function.
+    let _username = username;
+    let _handRef = handRef;
+
+    return ({
+        // Any other functions defined in the same scope are privileged:
+        // These both have access to the private `count` variable
+        // defined anywhere in their scope chain (containing function
+        // scopes).
+        getUsername: () => _username,
+        getHandRef: () => _handRef,
+    });
+};
+
 export const createCard = () => {
     // A variable defined in a factory or constructor function scope
     // is private to that function.
