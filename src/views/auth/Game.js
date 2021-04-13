@@ -16,6 +16,17 @@ import Stomp from 'stompjs';
 import sockClient from "../../components/SockClient";
 import sessionManager from "../../helpers/sessionManager";
 
+
+/*
+TODO:
+- form validation with HOC
+- Throw in card with rotation from all sides
+- activate menus my card if is my turn
+- chose move on board for every card
+*/
+
+
+
 const MY_CARDS = [{
         code: "KH",
         imgUrl: "https://deckofcardsapi.com/static/img/KH.png"
@@ -60,7 +71,7 @@ class Game extends React.Component {
       this.state = {
         players: []
       }
-      this.playCard = this.playCard.bind(this);
+      this.playMyCard = this.playMyCard.bind(this);
       this.myHandRef = React.createRef();
       this.leftHandRef = React.createRef();
       this.rightHandRef = React.createRef();
@@ -77,26 +88,31 @@ class Game extends React.Component {
         sockClient.connectAndRegister(this.props.authToken);*/
 
         let players = [];
-        players.push(createPlayer("my player", this.myHandRef))
-        players.push(createPlayer("username2", this.leftHandRef))
-        players.push(createPlayer("username3", this.rightHandRef))
-        players.push(createPlayer("username4", this.partnerHandRef))
+        players.push(createPlayer("my player", this.myHandRef, 0, "blue"))
+        players.push(createPlayer("username2", this.leftHandRef, -90, "yellow"))
+        players.push(createPlayer("username3", this.rightHandRef, 90, "green"))
+        players.push(createPlayer("username4", this.partnerHandRef, 180, "red"))
         this.setState({players: players});
 
-        this.newRound();
+        this.handOutCards();
     }
 
-    playCard(handRef, card, move) {
-      handRef.current.removeCard(card)
+    playMyCard(card, move) {
+      this.playCard(this.state.players[0], card, move)
+    }
+
+    playCard(player, card, move) {
+      player.getHandRef().current.removeCard(card)
       setTimeout(function(){ 
-          this.boardRef.current.throwInCard(card);
+          // todo add player position for rotation
+          this.boardRef.current.throwInCard(player, card);
       }.bind(this), 300);
       setTimeout(function(){ 
           this.boardRef.current.moveMarble()
       }.bind(this), 1300);
     }
 
-    newRound() {
+    handOutCards() {
       this.myHandRef.current.addCards(MY_CARDS)
       this.leftHandRef.current.addCards(OPP_CARDS)
       this.rightHandRef.current.addCards(OPP_CARDS)
@@ -118,10 +134,10 @@ class Game extends React.Component {
                 <RoundFacts roundNumber={1} activePlayer="You" nextRoundCardAmount={5} nextRoundBeginner="Andrina"/>
                 <NotificationList />
                 <Board size={500} ref={this.boardRef} />
-                <p onClick={() => this.playCard(this.rightHandRef, OPP_CARDS[Math.floor(Math.random() * 6)] )}>play from right opponent</p>
-                <p onClick={() => this.playCard(this.leftHandRef, OPP_CARDS[Math.floor(Math.random() * 6)] )}>play from left opponent</p>
+                <p onClick={() => this.playCard(this.state.players[1], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from left opponent</p>
+                <p onClick={() => this.playCard(this.state.players[2], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from right opponent</p>
                 <HandContainer position="my">
-                  <MyHand handRef={this.myHandRef} playCard={this.playCard} isMyTurn={true}>
+                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} isMyTurn={true}>
                     <Hand ref={this.myHandRef} />
                   </MyHand>
                 </HandContainer>

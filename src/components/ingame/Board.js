@@ -70,12 +70,14 @@ class Board extends React.Component {
         })
     }
 
-    throwInCard(card) {
-      this.setState(prevState => {
-        card.style = {
-          rot: (Math.random() * 31) -15
-        }
-        return {playedCards: [...prevState.playedCards, card]};
+    throwInCard(player, card) {
+        this.setState(prevState => {
+            let handRot = player.getHandRot();
+            let randomCardRot = (Math.random() * 31) -15
+            card.style = {
+                rot: handRot + randomCardRot
+            }
+            return {playedCards: [...prevState.playedCards, card]};
       });
     }
 

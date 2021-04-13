@@ -23,7 +23,7 @@ class MyHand extends React.Component {
 
     play() {
         console.log("MyHand - play")
-        this.props.playCard(this.props.handRef, this.state.raisedCard, null)
+        this.props.playMyCard(this.state.raisedCard, null)
         /*
         this.handRef.current.props.playCard([this.state.raisedCard]);
         this.handRef.current.removeCard([this.state.raisedCard]);

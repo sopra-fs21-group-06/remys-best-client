@@ -176,22 +176,3 @@ class Hand extends React.Component {
 }
 
 export default Hand;
-
-
-
-/*
-
-<div className="hand left-hand">
-                    <div className="cards"> {this.renderCards(false)}</div>
-                    <Avatar size="80" color="yellow" img={avatar} />
-                </div>
-                <div className="hand right-hand">
-                    {this.renderCards(false)}
-                    <Avatar size="80" color="green" img={avatar} />
-                </div>
-                <div className="hand partner-hand">
-                    {this.renderCards(false)}
-                </div>
-
-
-                */

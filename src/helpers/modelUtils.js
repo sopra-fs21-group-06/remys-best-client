@@ -35,12 +35,14 @@ export const createMarble = (id, fieldId, color, isMovable, isVisible) => {
     });
 };
 
-export const createPlayer = (username, handRef) => {
+export const createPlayer = (username, handRef, handRot, color) => {
     // A variable defined in a factory or constructor function scope
     // is private to that function.
     let _username = username;
     let _handRef = handRef;
-
+    let _handRot = handRot;
+    let _color = color;
+   
     return ({
         // Any other functions defined in the same scope are privileged:
         // These both have access to the private `count` variable
@@ -48,6 +50,7 @@ export const createPlayer = (username, handRef) => {
         // scopes).
         getUsername: () => _username,
         getHandRef: () => _handRef,
+        getHandRot: () => _handRot
     });
 };
 
