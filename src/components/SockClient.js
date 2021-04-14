@@ -30,16 +30,14 @@ class SockClient {
         this.stomp.debug = this._debug;
         this.stomp.connect({}, () => {
             this._connected = true;
-            this.subscribe('/user/queue/register', r => this._handleRegister(r));
-            this.subscribe('/user/queue/disconnect', r => this.disconnect(r.reason));
-            this.subscribe('/user/queue/reconnect', r => this.reconnect(r.token));
+            this.subscribe('/queue/register', function(){console.log("Answered")});
             if (callback) {
                 callback();
             }
         });
         this.sock.onclose = r => {
             console.log("Socket closed!", r);
-            //this._handleDisconnect("Socket closed.");
+            this._handleDisconnect("Socket closed.");
         };
         this.sock.onerror = e => this._handleError(e);
     }
@@ -59,8 +57,8 @@ class SockClient {
         });*/
     }
 
-    register(token) {
-        this.send('/app/register', {token: token});
+    register() {
+        this.send('/app/register', {token: "Hello"});
     }
 
     reconnect(token) {

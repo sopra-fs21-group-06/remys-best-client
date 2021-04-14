@@ -5,6 +5,10 @@ import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Box from '../../components/Box';
 import avatar from '../../img/avatar.png'
+import SockClient from "../../components/SockClient";
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import ButtonPrimary from "../../components/form/ButtonPrimary";
 
 class WaitingRoom extends React.Component {
 
@@ -14,6 +18,15 @@ class WaitingRoom extends React.Component {
       username: "Sandro"
     };
   }
+
+ async componentDidMount() {
+     SockClient.connect();
+     await new Promise(resolve => setTimeout(resolve, 1000));
+     SockClient.register();
+ }
+
+
+
 
   render() {
     return (
