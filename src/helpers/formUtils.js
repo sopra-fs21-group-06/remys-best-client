@@ -60,10 +60,20 @@ export const ServerError = (props) => {
     );
 }
 
-export const ButtonPrimary = (props) => {
+export const SubmitButton = (props) => {
     const {
+        isSubmitting,
         value,
         onClick,
     } = props;
-    return <button onClick={() => onClick()} className="btn-primary">{value}</button>
+    return (
+        isSubmitting ? 
+            <button className="btn-primary loading">
+                <div className="loader-wrapper">
+                    <div className="loader"></div>
+                </div>
+            </button>
+            :   
+            <button onClick={() => onClick()} className="btn-primary">{value}</button> 
+    )
 }
