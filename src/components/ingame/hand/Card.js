@@ -18,7 +18,6 @@ class Card extends React.Component {
             styles.bottom = (style.bottom + raisingDistance) + "px";
         } 
 
-        //console.log(this.props.onCardClick)
         return (
             <div className="card-wrapper">
                 <img 

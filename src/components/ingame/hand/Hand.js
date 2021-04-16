@@ -155,7 +155,6 @@ class Hand extends React.Component {
     }
 
     render() {
-        console.log(this.props)
         return (  
             <div className="hand-wrapper">
                 <div className="hand">
