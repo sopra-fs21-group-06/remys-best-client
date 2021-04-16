@@ -21,18 +21,21 @@
         margin-bottom:16px;
     }
 
-    .errorMessage {
+    .error-message {
         color: $red;
-        margin-top: 1em;
-        margin-bottom: 0.5em;
+        margin-bottom: 1em;
         font-weight: 500;
         margin-left: 10px;
     }
 
-    .borderRed {
-        border-color: $red !important;
-        border-width: 2px !important;
-        background-color: #FFF0F1 !important;
+    &.invalid {
+
+        input {
+            border-color: $red;
+            border-width: 2px;
+            background-color: #FFF0F1;
+            margin-bottom: 0.5em;
+        }
     }
 }
 

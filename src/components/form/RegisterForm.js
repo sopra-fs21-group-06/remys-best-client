@@ -1,145 +1,101 @@
-import React from 'react';
+import { withFormValidation }  from './withFormValidation';
 import { withRouter, Link } from 'react-router-dom';
-import InputField from './InputField';
-import ButtonPrimary from './ButtonPrimary';
+import { api } from "../../helpers/api";
+import { ServerError, ButtonPrimary, ValidatedInput} from "../../helpers/formUtils"
 import User from "../shared/models/User";
-import {api, handleError} from "../../helpers/api";
 
-class RegisterForm extends React.Component {
+const RegisterFormSkeleton = (props) => {
+  const {
+    onFormValueChange,
+    onFormSubmit,
+    values,
+    fieldErrors,
+    serverError
+  } = props;
 
-	constructor() {
-		super();
-		this.state = {
-            username: '',
-            email: '',
-            password: '',
-            errorMessageUsername: null,
-            errorMessageEmail: null,
-            errorMessagePassword: null,
-            isUsernameValid: true,
-            isEmailValid: true,
-            isPasswordValid: true,
-            serverError: ''
-        };
-        this.submit = this.submit.bind(this);
-        this.isFormValid = this.isFormValid.bind(this);
-        this.register = this.register.bind(this);
-    }
-
-    submit(resolve) {
-        let usernameValue = this.state.username;
-        let emailValue = this.state.email;
-        let passwordValue = this.state.password;
-
-        if(this.isFormValid(usernameValue, emailValue, passwordValue)) {
-            this.register(resolve, usernameValue, emailValue, passwordValue)
-        } else {
-			resolve();
-		}
-    }
-
-    isFormValid(usernameValue, emailValue, passwordValue) {
-        let isFormValid = true;
-        this.setState({
-            isUsernameValid: true,
-            isEmailValid: true,
-            isPasswordValid: true,
-            serverError: null
-        });
-
-        if(!usernameValue || usernameValue === '') {
-			this.setState({
-				errorMessageUsername: 'Please fill in this field',
-				isUsernameValid: false,
-            });
-            isFormValid = false;
-		}
-        if(!emailValue || emailValue === '') {
-			this.setState({
-				errorMessageEmail: 'Please fill in this field',
-				isEmailValid: false,
-            });
-            isFormValid = false;
-		}
-        if(!passwordValue || passwordValue === '') {
-			this.setState({
-				errorMessagePassword: 'Please fill in this field',
-				isPasswordValid: false,
-            });
-            isFormValid = false;
-        } 
-
-        return isFormValid;
-    }
-
-    async register(resolve, usernameValue, emailValue, passwordValue) {
-        try {
-            const requestBody = JSON.stringify({
-                email: emailValue,
-                username: usernameValue,
-                password: passwordValue
-            });
-            const response1 = await api.post('/users', requestBody);
-
-            // Get the returned user and update a new object.
-            const user = new User(response1.data);
-
-            // Store the token into the local storage.
-            localStorage.setItem('token', user.token);
-
-            // Login successfully worked --> navigate to the route /game in the GameRouter
-            this.props.history.push(`/home`);
-        } catch (error) {
-            this.setState({
-                serverError: handleError(error)
-            })
-        }
-        finally{
-            resolve();
-        }
-    }
-
-	render() {
-		return (
-			<div>
-                {this.state.serverError ? 
-                    <p className="server-error">{this.state.serverError}</p> : null
-                }
-				<InputField	
-                    type="text"
-                    label="Username"
-                    placeholder="Username"
-                    value={this.state.username}
-                    isValid={this.state.isUsernameValid}	
-                    errorMessage={this.state.errorMessageUsername}
-                    onChange={(e) => this.setState({username: e.target.value})}	
-                />
-                <InputField	
-                    type="email"
-                    label="Email"
-                    placeholder="Email"
-                    value={this.state.email}
-                    isValid={this.state.isEmailValid}	
-                    errorMessage={this.state.errorMessageEmail}
-                    onChange={(e) => this.setState({email: e.target.value})}	
-                />
-                <InputField	
-                    type="password"
-                    label="Password"
-                    placeholder="Password"
-                    value={this.state.password}
-                    isValid={this.state.isPasswordValid}	
-                    errorMessage={this.state.errorMessagePassword}
-                    onChange={(e) => this.setState({password: e.target.value})}	
-                />
-                <ButtonPrimary 
-                    value="Sign up" 
-                    submitFunction={this.submit}
-                />
-                <p className="below-btn">Have an account? <Link to="/login">Sign in</Link></p>
-			</div>
-		);
-	}
+  return (
+    <div className="login-form">
+        <ServerError serverError={serverError}/>
+        <ValidatedInput 
+            type="text"
+            label="Username"
+            placeholder="Username"
+            error={fieldErrors.username}
+            onChange={onFormValueChange} 
+            value={values.username}
+            name="username"
+        />
+        <ValidatedInput 
+            type="email"
+            label="Email"
+            placeholder="Email"
+            error={fieldErrors.email}
+            onChange={onFormValueChange} 
+            value={values.email}
+            name="email"
+        />
+        <ValidatedInput 
+            type="password"
+            label="Password"
+            placeholder="Password"
+            error={fieldErrors.password}
+            onChange={onFormValueChange} 
+            value={values.password}
+            name="password"
+        />
+        <ButtonPrimary 
+            value="Sign up" 
+            onClick={onFormSubmit}
+        />
+        <p className="below-btn">Have an account? <Link to="/login">Sign in</Link></p>
+    </div>
+  )
 }
+
+const initialValues = {
+  username: '',
+  email: '',
+  password: '',
+};
+
+const rules = {
+  username: [
+    [value => value != '', 'Fill in a username'],
+  ],
+  email: [
+    [value => value != '', 'Fill in an email'],
+    // TODO add email validation rules
+  ],
+  password: [
+    [value => value != '', 'Fill in a password'],
+  ]
+};
+
+const handlers = {
+  // register on form submit
+  onFormSubmit: async (values) => {
+    try {
+      const requestBody = JSON.stringify({
+        username: values.username,
+        email: values.email,
+        password: values.password
+      });
+      const response = await api.post('/users', requestBody);
+
+      // Get the returned user and update a new object.
+      const user = new User(response.data);
+
+      // Store the token into the local storage.
+      localStorage.setItem('token', user.token);
+
+      // Login successfully worked --> navigate to the route /game in the GameRouter
+      this.props.history.push(`/home`);
+    } catch (error) {
+      return error;
+    }
+  }
+}
+
+const RegisterForm = withFormValidation(initialValues, rules, handlers, RegisterFormSkeleton);
 
 export default withRouter(RegisterForm);
