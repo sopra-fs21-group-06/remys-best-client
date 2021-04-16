@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-import {getDomain} from "../helpers/getDomain";
+import {getDomain} from "../helpers/domainUtils";
 import sessionManager from "../helpers/sessionManager";
 
 class SockClient {
