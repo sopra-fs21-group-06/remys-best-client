@@ -12,32 +12,24 @@ class Marble extends React.Component {
         let left = field.getLeft() - scalePixels/2;
         let top = field.getTop() - scalePixels/2;
         let size = field.getSize() + scalePixels;
-        let color = marble.getColor();
-        let colorDark = lightenOrDarkenColor(color, -70);
+        let colorName = marble.getColor().name;
+        let colorHex = marble.getColor().hex;
+        let colorHexDark = lightenOrDarkenColor(colorHex, -70);
         let isMovable = marble.getIsMovable();
         let isVisible = marble.getIsVisible();
 
         let styles = {
-            position: 'absolute',
-            display: 'block',
-            borderRadius: '100%',
             left: left + 'px',
             top: top + 'px',
             width: size + 'px',
             height: size + 'px',
-            background: colorDark,
-            background: `radial-gradient(circle at ${size/3}px ${size/3}px, ${color}, ${colorDark})`
+            background: colorHexDark,
+            background: `radial-gradient(circle at ${size/3}px ${size/3}px, ${colorHex}, ${colorHexDark})`
         };
-
-        let movableClassNames;
-        if(isMovable) {
-            let colorName = getKeyByValue(colors, color).toLowerCase();
-            movableClassNames = `movable ${colorName}`;
-        }
 
         return (
             <PickUpAndDrop in={isVisible}>
-                <div className={"marble " + (isMovable ? movableClassNames : '')} style={styles}></div>
+                <div className={`marble ${colorName}` + (isMovable ? ' movable' : '')} style={styles}></div>
             </PickUpAndDrop>
         );
     }

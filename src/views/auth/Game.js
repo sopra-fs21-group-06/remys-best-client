@@ -19,7 +19,6 @@ import sessionManager from "../../helpers/sessionManager";
 
 /*
 TODO:
-- form validation with HOC
 - Throw in card with rotation from all sides
 - activate menus my card if is my turn
 - chose move on board for every card

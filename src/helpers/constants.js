@@ -18,10 +18,22 @@ export const gameEndModes = {
 }
 
 export const colors = {
-	BLUE: "#5887F1",
-	RED: "#D04F3A",
-	YELLOW: "#EEBD41",
-	GREEN: "#63A557",
+	BLUE: {
+        name: "blue",
+        hex: "#5887F1"
+    },
+    GREEN: {
+        name: "green",
+        hex: "#63A557"
+    },
+	RED: {
+        name: "red",
+        hex: "#D04F3A"
+    },
+	YELLOW: {
+        name: "yellow",
+        hex: "#EEBD41"
+    }
 }
 
 export const handModes = {
