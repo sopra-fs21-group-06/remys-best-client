@@ -16,30 +16,33 @@
         z-index: 2;
 
         .marble {
-            //transform: scale(1);
-        }
-
-        .movable {
-            transform: scale(1);
-
-            &:hover {
-                cursor: pointer;
-            }
-
-            &.blue {
-                @include pulse($blue);
-            }
-
-            &.green {
-                @include pulse($green);
-            }
-
-            &.red {
-                @include pulse($red);
-            }
-
-            &.yellow {
-                @include pulse($yellow);
+            position: absolute;
+            display: block;
+            border-radius: 100%;
+            // position, size and color dynamically added by js
+            
+            &.movable {
+                transform: scale(1);
+    
+                &:hover {
+                    cursor: pointer;
+                }
+    
+                &.blue {
+                    @include pulse($blue);
+                }
+    
+                &.green {
+                    @include pulse($green);
+                }
+    
+                &.red {
+                    @include pulse($red);
+                }
+    
+                &.yellow {
+                    @include pulse($yellow);
+                }
             }
         }
     }

@@ -19,13 +19,9 @@ import sessionManager from "../../helpers/sessionManager";
 
 /*
 TODO:
-- form validation with HOC
-- Throw in card with rotation from all sides
 - activate menus my card if is my turn
 - chose move on board for every card
 */
-
-
 
 const MY_CARDS = [{
         code: "KH",
@@ -82,11 +78,9 @@ class Game extends React.Component {
     
     componentDidMount() {
 
-        /*
-        sessionManager.chat.clear();
-        sockClient.onRegister(r => this.handleSocketRegister(r));
-        sockClient.connectAndRegister(this.props.authToken);*/
+        // TODO
 
+       
         let players = [];
         players.push(createPlayer("my player", this.myHandRef, 0, "blue"))
         players.push(createPlayer("username2", this.leftHandRef, -90, "yellow"))

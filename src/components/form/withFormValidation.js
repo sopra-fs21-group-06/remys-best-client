@@ -26,7 +26,8 @@ export const withFormValidation = (initialValues, rules, handlers, FormSkeleton)
       this.state = {
         values: initialValues,
         fieldErrors: {},
-        serverError: null
+        serverError: null,
+        isSubmitting: false
       }
 
       this.onFormValueChange = this.onFormValueChange.bind(this)
@@ -99,10 +100,12 @@ export const withFormValidation = (initialValues, rules, handlers, FormSkeleton)
       // if there is no remaining field error call onFormSubmit from the passed handlers object
       let hasFieldErrors = Object.keys(this.state.fieldErrors).length != 0;
       if(!hasFieldErrors) {
+        this.setState({ isSubmitting: true })
         let serverError = await handlers.onFormSubmit(this.state.values);
         if(serverError) {
           this.setState({ serverError: handleError(serverError) })
         }
+        this.setState({ isSubmitting: false })
       }
     }
 

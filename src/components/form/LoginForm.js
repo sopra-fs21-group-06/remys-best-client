@@ -1,8 +1,8 @@
 import { withFormValidation }  from './withFormValidation';
 import { withRouter, Link } from 'react-router-dom';
 import { api } from "../../helpers/api";
-import { ServerError, ButtonPrimary, ValidatedInput} from "../../helpers/formUtils"
-import User from "../shared/models/User";
+import { ServerError, SubmitButton, ValidatedInput} from "../../helpers/formUtils"
+import User from "../models/shared/User";
 
 const LoginFormSkeleton = (props) => {
   const {
@@ -10,7 +10,8 @@ const LoginFormSkeleton = (props) => {
     onFormSubmit,
     values,
     fieldErrors,
-    serverError
+    serverError,
+    isSubmitting
   } = props;
 
   return (
@@ -34,7 +35,8 @@ const LoginFormSkeleton = (props) => {
             value={values.password}
             name="password"
         />
-        <ButtonPrimary 
+        <SubmitButton 
+            isSubmitting={isSubmitting}
             value="Sign in" 
             onClick={onFormSubmit}
         />

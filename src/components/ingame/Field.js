@@ -27,7 +27,7 @@ class Field extends React.Component {
             borderRadius: '100%',
             background: '#D0AE8B',
             boxShadow: 'inset 2px 2px 4px #ad9073, inset -2px -2px 4px #f3cca3',
-            border: (color && borderWidth) ? `${borderWidth}px solid ${color}` : ''
+            border: (color && borderWidth) ? `${borderWidth}px solid ${color.hex}` : ''
         };
 
         return (

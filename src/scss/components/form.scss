@@ -59,6 +59,54 @@ button {
         &:hover {
             background-color: darken($blue-light, 5%);
         }
+
+        &.loading {
+            position: relative;
+            height: 52px;
+
+            .loader-wrapper {
+                position: absolute;
+                top: calc(50% - 12px);
+                left: 50%;
+                transform: translate(-50%, -50%);
+
+                .loader,
+                .loader:before,
+                .loader:after {
+                    border-radius: 50%;
+                    width: 10px;
+                    height: 10px;
+                    animation-fill-mode: both;
+                    animation: loading 1s infinite ease-in-out;
+                }
+
+                .loader {
+                    color: #ffffff;
+                    font-size: 5px;
+                    margin: 0 auto;
+                    position: relative;
+                    text-indent: -9999em;
+                    transform: translateZ(0);
+                    animation-delay: -0.16s;
+
+                    &:before,
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                    }
+
+                    &:before {
+                        left: -3.5em;
+                        animation-delay: -0.3s;
+                    }
+
+                    &:after {
+                        left: 3.5em;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -95,3 +143,4 @@ button {
         }
     }
 }
+
