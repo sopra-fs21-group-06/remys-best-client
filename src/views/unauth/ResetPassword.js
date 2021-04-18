@@ -8,7 +8,7 @@ class ResetPassword extends React.Component {
 
   render() {
     return (
-      <View className="reset-password" title="Reset your password" isDogVisible={true} linkMode={viewLinks.BASIC}>
+      <View className="reset-password" title="Reset your password"  linkMode={viewLinks.BASIC}>
           <main className="small">
             <ResetPasswordForm />
           </main>

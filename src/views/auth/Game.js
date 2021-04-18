@@ -123,13 +123,18 @@ class Game extends React.Component {
       }
 
       return (
-          <View className="game" isFooterInvisible={true} linkMode={viewLinks.BASIC}>
+          <View className="game" withFooterHidden withDogImgHidden linkMode={viewLinks.BASIC}>
             <main>
                 <RoundFacts roundNumber={1} activePlayer="You" nextRoundCardAmount={5} nextRoundBeginner="Andrina"/>
                 <NotificationList />
                 <Board size={500} ref={this.boardRef} />
+                {/*
                 <p onClick={() => this.playCard(this.state.players[1], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from left opponent</p>
                 <p onClick={() => this.playCard(this.state.players[2], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from right opponent</p>
+                */}
+
+
+                
                 <HandContainer position="my">
                   <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} isMyTurn={true}>
                     <Hand ref={this.myHandRef} />

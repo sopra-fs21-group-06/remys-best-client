@@ -85,7 +85,7 @@ class ChoosePlace extends React.Component {
 
   render() {
     return (
-      <View className="choose-place" linkMode={viewLinks.BASIC}>
+      <View className="choose-place" withDogImgHidden linkMode={viewLinks.BASIC}>
         <main>
             <div className="col-left">
               <div className="above-box">

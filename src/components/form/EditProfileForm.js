@@ -4,7 +4,7 @@ import { api } from "../../helpers/api";
 import { ServerError, SubmitButton, ValidatedInput} from "../../helpers/formUtils"
 import User from "../models/shared/User";
 
-const RegisterFormSkeleton = (props) => {
+const EditProfileFormSkeleton = (props) => {
   const {
     onFormValueChange,
     onFormSubmit,
@@ -15,7 +15,7 @@ const RegisterFormSkeleton = (props) => {
   } = props;
 
   return (
-    <div className="login-form">
+    <div>
         <ServerError serverError={serverError}/>
         <ValidatedInput 
             type="text"
@@ -46,10 +46,10 @@ const RegisterFormSkeleton = (props) => {
         />
         <SubmitButton 
             isSubmitting={isSubmitting}
-            value="Sign up" 
+            value="Save changes" 
             onClick={onFormSubmit}
         />
-        <p className="below-btn">Have an account? <Link to="/login">Sign in</Link></p>
+        <p className="below-btn"><Link to="/home">Return to Home</Link></p>
     </div>
   )
 }
@@ -57,7 +57,7 @@ const RegisterFormSkeleton = (props) => {
 const initialValues = {
   username: '',
   email: '',
-  password: '',
+  password: ''
 };
 
 const rules = {
@@ -65,8 +65,7 @@ const rules = {
     [value => value != '', 'Fill in a username'],
   ],
   email: [
-    [value => value != '', 'Fill in an email'],
-    // TODO add email validation rules
+    [value => value != '', 'Fill in a email'],
   ],
   password: [
     [value => value != '', 'Fill in a password'],
@@ -74,29 +73,31 @@ const rules = {
 };
 
 const handlers = {
-  // register on form submit
+  // edit profile on submit
   onFormSubmit: async (values) => {
     try {
-      const requestBody = JSON.stringify({
-        username: values.username,
-        email: values.email,
-        password: values.password
-      });
-      const response = await api.post('/users', requestBody);
+        /*
+        TODO
+        const requestBody = JSON.stringify({
+            usernameOrEmail: values.usernameOrEmail,
+            password: values.password
+        });
+        const response = await api.post(`/users/login`, requestBody);
+        // Get the returned user and update a new object.
+        const user = new User(response.data);
 
-      // Get the returned user and update a new object.
-      const user = new User(response.data);
+        // Store the token into the local storage.
+        localStorage.setItem('token', user.token);
 
-      // Store the token into the local storage.
-      localStorage.setItem('token', user.token);
+        // Login successfully worked --> navigate to the route /game in the GameRouter*/
+        //history.push(`/home`);
     } catch (error) {
-      return error;
+        return error;
     }
   },
-  // Login successfully worked --> navigate to the route /game in the GameRouter
   routeOnSuccess: "/home"
 }
 
-const RegisterForm = withFormValidation(initialValues, rules, handlers, RegisterFormSkeleton);
+const EditProfileForm = withFormValidation(initialValues, rules, handlers, EditProfileFormSkeleton);
 
-export default withRouter(RegisterForm);
+export default withRouter(EditProfileForm);

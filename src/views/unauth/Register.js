@@ -8,7 +8,7 @@ class Register extends React.Component {
 
   render() {
     return (
-      <View className="register" title="Create your account" isDogVisible={true} linkMode={viewLinks.BASIC}>
+      <View className="register" title="Create your account" linkMode={viewLinks.BASIC}>
           <main className="small">
             <RegisterForm />
           </main>

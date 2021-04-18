@@ -52,7 +52,7 @@ class NotificationList extends React.Component {
     render() {
         return (
             <div>
-                <p onClick={() => this.addNotification()}>add notification</p>
+                {/*<p onClick={() => this.addNotification()}>add notification</p>*/}
                 <TransitionGroup className="notification-list">
                     {Object.keys(this.state.notifications).reverse().map(key => {
                         return (

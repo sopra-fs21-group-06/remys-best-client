@@ -24,7 +24,7 @@ class Home extends React.Component {
 
   render() {
     return (
-      <View title={"Welcome back, " + this.state.username} isDogVisible={true} linkMode={viewLinks.BASIC}>
+      <View title={"Welcome back, " + this.state.username}  linkMode={viewLinks.BASIC}>
         <main className="large side-by-side">
             <div className="col">
               <p className="above-box">How do you want to play Brändi Dog?</p>
@@ -48,6 +48,7 @@ class Home extends React.Component {
               <NavigationBox 
                 title="Edit Profile"
                 subtitle="Change your profile data"
+                onClick={() => this.props.history.push('/edit-profile')}
               />
             </div>
           </main>

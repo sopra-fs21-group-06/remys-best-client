@@ -8,7 +8,6 @@ import avatar from '../../img/avatar.png'
 import SockClient from "../../components/SockClient";
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-import ButtonPrimary from "../../components/form/ButtonPrimary";
 
 class WaitingRoom extends React.Component {
 
@@ -25,12 +24,9 @@ class WaitingRoom extends React.Component {
      SockClient.register();
  }
 
-
-
-
   render() {
     return (
-      <View className="waiting-room" title="Waiting Room" isDogVisible={true} linkMode={viewLinks.BASIC}>
+      <View className="waiting-room" title="Waiting Room"  linkMode={viewLinks.BASIC}>
         <main className="small">
             <p className="above-box">As soon as four players are ready, a new game will automatically be started. You could also be picked from an existing game session to fill up their game</p>      
             <div className="queue">
