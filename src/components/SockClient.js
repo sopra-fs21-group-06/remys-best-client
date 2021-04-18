@@ -10,6 +10,7 @@ class SockClient {
         this._disconnectCallbacks = [];
         this._registerCallbacks = [];
         this._messageCallbacks = {};
+        this.sessionId = "";
     }
 
     isConnected() {
@@ -30,7 +31,13 @@ class SockClient {
         this.stomp.debug = this._debug;
         this.stomp.connect({}, () => {
             this._connected = true;
-            this.subscribe('/queue/register', function(){console.log("Answered")});
+            let url = this.stomp.ws._transport.url;
+            /*let domainUrl = getDomain().toString();
+            let regex1 = /https*!/;
+            domainUrl = domainUrl.replace(regex1, "");
+            url = url.replace(/ws:)*/
+            this.subscribe('/topic/register', function(){console.log("Answered")});
+            this.subscribe("/user/queue/register", function(){console.log("Answered specific")});
             if (callback) {
                 callback();
             }
