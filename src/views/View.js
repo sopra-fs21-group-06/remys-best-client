@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import dog from "../img/dog-transparent.png"
 
+// TODO document.title = "In-Game - Frantic";
 class View extends React.Component {
 
   render() {

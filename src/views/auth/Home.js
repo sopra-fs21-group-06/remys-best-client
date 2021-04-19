@@ -13,15 +13,7 @@ class Home extends React.Component {
     };
   }
 
-  componentDidMount() {
-
-    // TODO websocket: connect 
-    /*
-        sessionManager.chat.clear();
-        sockClient.onRegister(r => this.handleSocketRegister(r));
-        sockClient.connectAndRegister(this.props.authToken);*/
-  }
-
+  // todo view withBasicLinks topLeftLink={} bottomRightLink={}
   render() {
     return (
       <View title={"Welcome back, " + this.state.username}  linkMode={viewLinks.BASIC}>
