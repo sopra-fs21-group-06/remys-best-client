@@ -3,7 +3,7 @@ import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Login from "../views/unauth/Login";
 import Register from "../views/unauth/Register";
-import WebsocketConnection from "../views/WebsocketConnection";
+import WebsocketProvider from "../views/WebsocketProvider";
 import Home from "../views/auth/Home";
 import EditProfile from "../views/auth/EditProfile";
 import WaitingRoom from "../views/auth/WaitingRoom";
@@ -25,7 +25,7 @@ class AppRouter extends React.Component {
                     { this.isAuthenticated() &&
                         <Route render={({ location }) => {
                             return (
-                                <WebsocketConnection>
+                                <WebsocketProvider>
                                     <FadingRoutes location={location}>
                                         <Route exact path='/home' component={Home} />
                                         <Route exact path='/edit-profile' component={EditProfile} />
@@ -35,7 +35,7 @@ class AppRouter extends React.Component {
                                         <Route exact path='/game-end' component={GameEnd} />
                                         <Redirect to="/home"/>
                                     </FadingRoutes>
-                                </WebsocketConnection>
+                                </WebsocketProvider>
                             )
                         }}/>
                     }
@@ -57,8 +57,8 @@ class AppRouter extends React.Component {
 const FadingRoutes = (props) => {
     return (
         <TransitionGroup>
-            <CSSTransition key={props.location.key} timeout={400} classNames="fade" appear>
-                <Switch>
+            <CSSTransition key={props.location.key} timeout={400} classNames="fade" exit={false} >
+                <Switch location={props.location}>
                     {props.children}
                 </Switch>
             </CSSTransition>
