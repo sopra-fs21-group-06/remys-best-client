@@ -87,14 +87,11 @@ export const createUser = () => {
 export const createChannel = (name, callback) => {
     let _name = name;
     let _callback = callback;
-    let _isSubscribed = false;
     let _unsubscribe;
 
     return ({
         getName: () => _name,
         getCallback: () => _callback,
-        getIsSubscribed: () => _isSubscribed,
-        setIsSubscribed: (isSubscribed) => _isSubscribed = isSubscribed,
         getUnsubscribe: () => _unsubscribe,
         setUnsubscribe: (unsubscribe) => _unsubscribe = unsubscribe,
     });

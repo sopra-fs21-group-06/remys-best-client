@@ -4,7 +4,7 @@ import { createSockClient } from "../helpers/SockClientRemy";
 
 export const WebsocketContext = React.createContext();
 
-export const withWebsocket = WrappedComponent => props => (
+export const withWebsocketContext = WrappedComponent => props => (
     <WebsocketContext.Consumer>
         {value => <WrappedComponent {...props} contextValue={value}/>}
     </WebsocketContext.Consumer>
@@ -41,23 +41,24 @@ class WebsocketProvider extends React.Component {
 
   handleSubscribe(channels) {
     channels.forEach(channel => {
-      let response = this.state.sockClient.subscribe(channel.getName(), channel.getCallback());
-      channel.setUnsubscribe(response.unsubscribe)
+      let subscribedChannel = this.state.sockClient.subscribe(channel.getName(), channel.getCallback());
+      channel.setUnsubscribe(subscribedChannel.unsubscribe)
       this.channels.push(channel)
     })
   }
 
   handleUnsubscribe(channels) {
-    let channelsToUnsubscribe = this.channels.filter(channel => {
-      for(let i = 0; i < channels.length; i++) {
-        if(channels[i].getName() === channel.getName()) {
-          return true
-        }
+    let channelsToUnsubscribe = this.channels.filter(c => {
+      if(channels.find(channel => c.getName() == channel.getName())) {
+        return true
       }
     })
 
     channelsToUnsubscribe.forEach(channel => {
       channel.getUnsubscribe()()
+      this.channels = this.channels.filter(c => { 
+          return c.getName() === channel.getName(); 
+      });
     })
   }
 

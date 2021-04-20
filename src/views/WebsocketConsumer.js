@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { withWebsocket } from './WebsocketProvider';
+import { withWebsocketContext } from './WebsocketProvider';
 
 /**
  * This component manages the subscription to websocket channels and represents a
@@ -23,11 +23,11 @@ class WebsocketConsumer extends React.Component {
     }
 
     subscribeChannels() {
-        this.props.contextValue.handleSubscribe(this.props.channelsToSubscribe)
+        this.props.contextValue.handleSubscribe(this.props.channels)
     }
 
     componentWillUnmount() {
-        this.props.contextValue.handleUnsubscribe(this.props.channelsToSubscribe)
+        this.props.contextValue.handleUnsubscribe(this.props.channels)
     }
 
     render() {
@@ -35,4 +35,4 @@ class WebsocketConsumer extends React.Component {
     }
 }
 
-export default withRouter(withWebsocket(WebsocketConsumer));
+export default withRouter(withWebsocketContext(WebsocketConsumer));

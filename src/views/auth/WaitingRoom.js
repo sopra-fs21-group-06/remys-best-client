@@ -5,7 +5,7 @@ import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Box from '../../components/Box';
 import avatar from '../../img/avatar.png'
-import { WebsocketContext, withWebsocket } from '../WebsocketProvider';
+import { WebsocketContext, withWebsocketContext } from '../WebsocketProvider';
 import WebsocketConsumer from '../WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
 
@@ -16,9 +16,9 @@ class WaitingRoom extends React.Component {
   constructor() {
     super();
 
-    let channels = []
-    channels.push(createChannel('/topic/register', (msg) => this.handleRegisterMessage(msg)))
-    this.channelsToSubscribe = channels
+    this.channels = []
+    this.channels.push(createChannel('/topic/register', (msg) => this.handleRegisterMessage(msg)))
+    this.channels.push(createChannel('/topic/foo', (msg) => this.handleRegisterMessage(msg)))
   }
 
   handleRegisterMessage(msg) {
@@ -32,7 +32,7 @@ class WaitingRoom extends React.Component {
 
   render() {
     return (
-      <WebsocketConsumer channelsToSubscribe={this.channelsToSubscribe}>
+      <WebsocketConsumer channels={this.channels}>
         <View className="waiting-room" title="Waiting Room"  linkMode={viewLinks.BASIC}>
           <main className="small">
               <p onClick={() => this.sendMsg()}>send message</p>
