@@ -8,7 +8,7 @@ class Login extends React.Component {
 
   render() {
     return (
-      <View className="login" isDogVisible={true} linkMode={viewLinks.BASIC}>
+      <View className="login"  linkMode={viewLinks.BASIC}>
           <main className="large side-by-side">
             <div className="col">
               <h1>Welcome to Brändi Dog Online</h1>

@@ -5,47 +5,55 @@ import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Box from '../../components/Box';
 import avatar from '../../img/avatar.png'
-import SockClient from "../../components/SockClient";
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
-import ButtonPrimary from "../../components/form/ButtonPrimary";
+import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
+import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
+import { createChannel } from '../../helpers/modelUtils';
 
 class WaitingRoom extends React.Component {
+
+  static contextType = WebsocketContext;
 
   constructor() {
     super();
     this.state = {
-      username: "Sandro"
+      users: ['testUser1']
     };
+
+    this.channels = [
+      createChannel('/topic/register', (msg) => this.handleWaitingRoomMessage(msg)),
+      createChannel('/topic/waiting-room', (msg) => this.handleWaitingRoomMessage(msg))
+    ]
   }
 
- async componentDidMount() {
-     SockClient.connect();
-     await new Promise(resolve => setTimeout(resolve, 1000));
-     SockClient.register();
- }
+  handleWaitingRoomMessage(msg) {
+    console.log("received message from server through /topic/waiting-room")
+    console.log(msg)
+    // TODO update state users with current users on message received
+  }
 
-
-
+  sendMsg() {
+    this.context.sockClient.send('/app/register', {message: "Hello from the waiting room"});
+  }
 
   render() {
     return (
-      <View className="waiting-room" title="Waiting Room" isDogVisible={true} linkMode={viewLinks.BASIC}>
-        <main className="small">
-            <p className="above-box">As soon as four players are ready, a new game will automatically be started. You could also be picked from an existing game session to fill up their game</p>      
-            <div className="queue">
-              <p className="above-players">You are in the second place</p>
-              <Box className="players">
-                <Avatar />
-                <Avatar />
-                <Avatar />
-                <Avatar img={avatar}/>
-              </Box>
-              <p className="below-players"><Link to="/home">Leave and return to Home</Link></p>
-              <p className="below-players"><Link to="/choose-place">Choose Place</Link></p>
-            </div>
-          </main>
-      </View>
+      <WebsocketConsumer channels={this.channels}>
+        <View className="waiting-room" title="Waiting Room"  linkMode={viewLinks.BASIC}>
+          <main className="small">
+              <p onClick={() => this.sendMsg()}>send message</p>
+              <p className="above-box">As soon as four players are ready, a new game will automatically be started. You could also be picked from an existing game session to fill up their game</p>      
+              <div className="queue">
+                <p className="above-players">You are in the second place</p>
+                <Box className="players">
+                  {this.state.users.map((index, user) => {
+                    return <Avatar key={index} img={avatar}/>
+                  })}
+                </Box>
+                <p className="below-players"><Link to="/home">Leave and return to Home</Link></p>
+              </div>
+            </main>
+        </View>
+      </WebsocketConsumer>
     );
   }
 }

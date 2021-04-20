@@ -2,9 +2,6 @@ import React from "react";
 import { CSSTransition } from 'react-transition-group';
 
 export class FadeInOut extends React.Component{
-    constructor() {
-        super()
-    }
     
     render() {
         const extendedProps = { 

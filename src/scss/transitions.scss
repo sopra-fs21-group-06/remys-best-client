@@ -92,3 +92,25 @@
     transform: scale(2);
     transition: all 500ms ease-out; // has to be the same amount as in FadeInOut.js
 }
+
+
+
+
+.fade-appear,
+.fade-enter {
+    opacity: 0;
+}
+
+.fade-appear-active,
+.fade-enter-active {
+    transition: opacity 0.4s linear;
+    opacity: 1;
+}
+
+.fade-exit {
+    opacity: 0;
+}
+
+.fade-exit-active {
+    opacity: 0;
+}

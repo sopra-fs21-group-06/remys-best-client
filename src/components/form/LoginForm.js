@@ -73,13 +73,12 @@ const handlers = {
 
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);
-
-      // Login successfully worked --> navigate to the route /game in the GameRouter
-      this.props.history.push(`/home`);
     } catch (error) {
       return error;
     }
-  }
+  },
+  // Login successfully worked --> navigate to the route /game in the GameRouter
+  routeOnSuccess: "/home"
 }
 
 const LoginForm = withFormValidation(initialValues, rules, handlers, LoginFormSkeleton);

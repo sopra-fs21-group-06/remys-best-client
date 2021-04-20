@@ -83,3 +83,16 @@ export const createUser = () => {
         getCount: () => count.toLocaleString()
     });
 };
+
+export const createChannel = (name, callback) => {
+    let _name = name;
+    let _callback = callback;
+    let _unsubscribe;
+
+    return ({
+        getName: () => _name,
+        getCallback: () => _callback,
+        getUnsubscribe: () => _unsubscribe,
+        setUnsubscribe: (unsubscribe) => _unsubscribe = unsubscribe,
+    });
+};

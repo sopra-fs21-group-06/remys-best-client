@@ -8,7 +8,7 @@ class Notification extends React.Component {
         let {username, action, card} = this.props.notification;
        
         return (
-            <div className="noti">
+            <div>
                 <BlurredElement className="notification-container" borderRadius={15} hasBorder={true}>
                     <div className="notification">
                         {username && action && card ? 

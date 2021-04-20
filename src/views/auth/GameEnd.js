@@ -32,7 +32,7 @@ class GameEnd extends React.Component {
     } 
 
     return (
-      <View className="game-end" title={title} isDogVisible={true} linkMode={viewLinks.BASIC}>
+      <View className="game-end" title={title}  linkMode={viewLinks.BASIC}>
         <main className="small">
             <p>{text}</p>      
             <Link to="/home">Leave and return to Home</Link>

@@ -1,62 +1,69 @@
 import React from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import AuthGuard from "./guards/AuthGuard";
-import UnauthGuard from "./guards/UnauthGuard";
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Login from "../views/unauth/Login";
 import Register from "../views/unauth/Register";
+import WebsocketProvider from "../components/websocket/WebsocketProvider";
 import Home from "../views/auth/Home";
+import EditProfile from "../views/auth/EditProfile";
 import WaitingRoom from "../views/auth/WaitingRoom";
 import ChoosePlace from "../views/auth/ChoosePlace";
 import Game from "../views/auth/Game";
 import GameEnd from "../views/auth/GameEnd";
 
 class AppRouter extends React.Component {
-  render() {
+
+    isAuthenticated() {
+        // TODO check if it is a valid token on the backend
+        return localStorage.getItem("token") != null;
+    }
+
+    render() {      
+        return (
+            <BrowserRouter>
+                <Switch> 
+                    { this.isAuthenticated() &&
+                        <Route render={({ location }) => {
+                            return (
+                                <WebsocketProvider>
+                                    <FadingRoutes location={location}>
+                                        <Route exact path='/home' component={Home} />
+                                        <Route exact path='/edit-profile' component={EditProfile} />
+                                        <Route exact path='/waiting-room' component={WaitingRoom} />
+                                        <Route exact path='/choose-place' component={ChoosePlace} />
+                                        <Route exact path='/game' component={Game} />
+                                        <Route exact path='/game-end' component={GameEnd} />
+                                        <Redirect to="/home"/>
+                                    </FadingRoutes>
+                                </WebsocketProvider>
+                            )
+                        }}/>
+                    }
+                    <Route render={({ location }) => {
+                        return (
+                            <FadingRoutes location={location}>
+                                <Route exact path='/login' component={Login} />
+                                <Route exact path='/register' component={Register} />
+                                <Redirect to="/login"/> 
+                            </FadingRoutes>
+                        )
+                    }}/>
+                </Switch>
+            </BrowserRouter>
+        );
+    }
+}
+
+const FadingRoutes = (props) => {
     return (
-      <BrowserRouter>
-        <Switch>
-            <Route exact path="/login">
-                <UnauthGuard>
-                    <Login />
-                </UnauthGuard>
-            </Route>
-            <Route exact path="/register">
-                <UnauthGuard>
-                    <Register />
-                </UnauthGuard>
-            </Route>
-            <Route exact path="/">
-                <Redirect to={"/home"} />
-            </Route>
-            <Route exact path="/home">
-                <AuthGuard>
-                    <Home />
-                </AuthGuard>
-            </Route>
-            <Route exact path="/waiting-room">
-                <AuthGuard>
-                    <WaitingRoom />
-                </AuthGuard>
-            </Route>
-            <Route exact path="/choose-place">
-                <AuthGuard>
-                    <ChoosePlace />
-                </AuthGuard>
-            </Route>
-            <Route exact path="/game">
-                <AuthGuard>
-                    <Game />
-                </AuthGuard>
-            </Route>
-            <Route exact path="/game-end">
-                <AuthGuard>
-                    <GameEnd />
-                </AuthGuard>
-            </Route>
-        </Switch>
-      </BrowserRouter>
-    );
-  }
+        <TransitionGroup>
+            <CSSTransition key={props.location.key} timeout={400} classNames="fade" exit={false} >
+                <Switch location={props.location}>
+                    {props.children}
+                </Switch>
+            </CSSTransition>
+        </TransitionGroup>
+    )
 }
 
 export default AppRouter;
