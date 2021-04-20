@@ -3,7 +3,6 @@ import { withRouter, Link } from 'react-router-dom';
 import View from "../View";
 import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
-//import { BackgroundContext } from './components/Background';
 import Board from "../../components/ingame/Board";
 import Box from "../../components/Box";
 import { colors } from "../../helpers/constants";
@@ -39,11 +38,13 @@ class ChoosePlace extends React.Component {
     };
 
     this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
+
+    // TODO subscribe to channel with the specific game id (compare waiting room), received by props
   }
 
   componentDidMount() {
-    // TODO websockets: subscribe to /topic/game/:id/colors
-    // update internal state (see below)
+    // receive game id via router
+    console.log(this.props.location.state.gameId)
   }
 
   handleChangeColor(pickedColorName) {

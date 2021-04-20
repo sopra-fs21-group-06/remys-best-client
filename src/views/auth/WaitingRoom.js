@@ -5,8 +5,8 @@ import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Box from '../../components/Box';
 import avatar from '../../img/avatar.png'
-import { WebsocketContext, withWebsocketContext } from '../WebsocketProvider';
-import WebsocketConsumer from '../WebsocketConsumer';
+import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
+import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
 
 class WaitingRoom extends React.Component {
@@ -15,19 +15,24 @@ class WaitingRoom extends React.Component {
 
   constructor() {
     super();
+    this.state = {
+      users: ['testUser1']
+    };
 
-    this.channels = []
-    this.channels.push(createChannel('/topic/register', (msg) => this.handleRegisterMessage(msg)))
-    this.channels.push(createChannel('/topic/foo', (msg) => this.handleRegisterMessage(msg)))
+    this.channels = [
+      createChannel('/topic/register', (msg) => this.handleWaitingRoomMessage(msg)),
+      createChannel('/topic/waiting-room', (msg) => this.handleWaitingRoomMessage(msg))
+    ]
   }
 
-  handleRegisterMessage(msg) {
-    console.log("received from server through topic/register ")
+  handleWaitingRoomMessage(msg) {
+    console.log("received message from server through /topic/waiting-room")
     console.log(msg)
+    // TODO update state users with current users on message received
   }
 
   sendMsg() {
-    this.context.sockClient.send('/app/register', {token: "Hello from the waiting room"});
+    this.context.sockClient.send('/app/register', {message: "Hello from the waiting room"});
   }
 
   render() {
@@ -40,13 +45,11 @@ class WaitingRoom extends React.Component {
               <div className="queue">
                 <p className="above-players">You are in the second place</p>
                 <Box className="players">
-                  <Avatar />
-                  <Avatar />
-                  <Avatar />
-                  <Avatar img={avatar}/>
+                  {this.state.users.map((index, user) => {
+                    return <Avatar key={index} img={avatar}/>
+                  })}
                 </Box>
                 <p className="below-players"><Link to="/home">Leave and return to Home</Link></p>
-                <p className="below-players"><Link to="/choose-place">Choose Place</Link></p>
               </div>
             </main>
         </View>

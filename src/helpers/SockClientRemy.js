@@ -53,8 +53,6 @@ export const createSockClient = () => {
 
             state.stomp.connect({}, () => {
                 state.isConnected = true;
-                //subscribe('/topic/register', function(){console.log("Answered")});
-                subscribe("/user/queue/register", function(){console.log("Answered specific")});
                 if (callback) {
                     callback();
                 }
@@ -83,6 +81,9 @@ export const createSockClient = () => {
 
 
 
+/*
+
+FRANTIC'S SOCK CLIENT
 
 class SockClient {
     constructor() {
@@ -91,7 +92,6 @@ class SockClient {
         this._disconnectCallbacks = [];
         this._registerCallbacks = [];
         this._messageCallbacks = {};
-        this.sessionId = "";
     }
 
     isConnected() {
@@ -112,13 +112,9 @@ class SockClient {
         this.stomp.debug = this._debug;
         this.stomp.connect({}, () => {
             this._connected = true;
-            //let url = this.stomp.ws._transport.url;
-            /*let domainUrl = getDomain().toString();
-            let regex1 = /https*!/;
-            domainUrl = domainUrl.replace(regex1, "");
-            url = url.replace(/ws:)*/
-            this.subscribe('/topic/register', function(){console.log("Answered")});
-            this.subscribe("/user/queue/register", function(){console.log("Answered specific")});
+            this.subscribe('/user/queue/register', r => this._handleRegister(r));
+            this.subscribe('/user/queue/disconnect', r => this.disconnect(r.reason));
+            this.subscribe('/user/queue/reconnect', r => this.reconnect(r.token));
             if (callback) {
                 callback();
             }
@@ -138,15 +134,13 @@ class SockClient {
     }
 
     connectAndRegister(token) {
-         this.connect(() => {console.log("hi")});
-        /*
         this.connect(() => {
             this.register(token);
-        });*/
+        });
     }
 
-    register() {
-        this.send('/app/register', {token: "Hello"});
+    register(token) {
+        this.send('/app/register', {token: token});
     }
 
     reconnect(token) {
@@ -215,8 +209,8 @@ class SockClient {
         this._registered = true;
         sessionManager.lobbyId = response.lobbyId;
 
-        this.stomp.subscribe(`/user/queue/lobby/${response.lobbyId}/*`, r => this._handleMessage(r));
-        this.stomp.subscribe(`/user/queue/lobby/${response.lobbyId}/*/*`, r => this._handleMessage(r));
+        this.stomp.subscribe(`/user/queue/lobby/${response.lobbyId}`, r => this._handleMessage(r));
+        this.stomp.subscribe(`/user/queue/lobby/${response.lobbyId}`, r => this._handleMessage(r));
 
         for (let callback of this._registerCallbacks) {
             callback(response);
@@ -237,9 +231,16 @@ class SockClient {
         }
     }
 
-   
+    _stripResponse(response) {
+        return JSON.parse(response.body);
+    }
 
-   
+    _debug(message) {
+        // only output debug messages if we're not in the production environment
+        if (!isProduction()) {
+            console.log(message);
+        }
+    }
 }
 
-export default new SockClient();
+*/

@@ -3,7 +3,7 @@ import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Login from "../views/unauth/Login";
 import Register from "../views/unauth/Register";
-import WebsocketProvider from "../views/WebsocketProvider";
+import WebsocketProvider from "../components/websocket/WebsocketProvider";
 import Home from "../views/auth/Home";
 import EditProfile from "../views/auth/EditProfile";
 import WaitingRoom from "../views/auth/WaitingRoom";
@@ -14,7 +14,7 @@ import GameEnd from "../views/auth/GameEnd";
 class AppRouter extends React.Component {
 
     isAuthenticated() {
-        // TODO check if it is a valid token
+        // TODO check if it is a valid token on the backend
         return localStorage.getItem("token") != null;
     }
 

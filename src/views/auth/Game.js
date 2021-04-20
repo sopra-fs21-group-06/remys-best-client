@@ -11,12 +11,6 @@ import { viewLinks, gameEndModes } from "../../helpers/constants";
 import RoundFacts from "../../components/ingame/RoundFacts";
 import NotificationList from "../../components/ingame/NotificationList";
 
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
-import sockClient from "../../components/SockClient";
-import sessionManager from "../../helpers/sessionManager";
-
-
 /*
 TODO:
 - activate menus my card if is my turn
