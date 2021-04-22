@@ -27,12 +27,27 @@ class WebsocketProvider extends React.Component {
       },
       handleUnsubscribe: (channels) => {
         this.handleUnsubscribe(channels)
+      },
+      connect: () => {
+        this.connect()
       }
     };    
     this.subscribedChannels = [];
   }
 
   componentDidMount() {
+    if(this.props.isAuthOnMount) {
+      this.connect();
+    }
+  }
+
+  componentWillUnmount() {
+    if(this.state.isConnected) {
+      this.disconnect();
+    }
+  }
+
+  connect() {
     const onConnected = () => {
       this.setState({isConnected: true})
       let myPrivateChannel = createChannel("/user/queue/private", (msg) => this.handlePrivateMessage(msg))
@@ -41,7 +56,7 @@ class WebsocketProvider extends React.Component {
     this.state.sockClient.connect(() => onConnected());
   }
 
-  componentWillUnmount() {
+  disconnect() {
     this.state.sockClient.disconnect();
   }
 

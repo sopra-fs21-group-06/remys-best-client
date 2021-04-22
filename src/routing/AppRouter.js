@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Login from "../views/unauth/Login";
 import Register from "../views/unauth/Register";
@@ -10,6 +10,8 @@ import WaitingRoom from "../views/auth/WaitingRoom";
 import ChoosePlace from "../views/auth/ChoosePlace";
 import Game from "../views/auth/Game";
 import GameEnd from "../views/auth/GameEnd";
+import AuthRoute from "./routes/AuthRoute";
+import UnauthRoute from "./routes/UnauthRoute";
 
 class AppRouter extends React.Component {
 
@@ -21,34 +23,25 @@ class AppRouter extends React.Component {
     render() {      
         return (
             <BrowserRouter>
-                <Switch> 
-                    { this.isAuthenticated() &&
-                        <Route render={({ location }) => {
-                            return (
-                                <WebsocketProvider>
-                                    <FadingRoutes location={location}>
-                                        <Route exact path='/home' component={Home} />
-                                        <Route exact path='/edit-profile' component={EditProfile} />
-                                        <Route exact path='/waiting-room' component={WaitingRoom} />
-                                        <Route exact path='/choose-place' component={ChoosePlace} />
-                                        <Route exact path='/game' component={Game} />
-                                        <Route exact path='/game-end' component={GameEnd} />
-                                        <Redirect to="/home"/>
-                                    </FadingRoutes>
-                                </WebsocketProvider>
-                            )
-                        }}/>
-                    }
-                    <Route render={({ location }) => {
-                        return (
+                <Route render={({ location }) => {
+                    let isAuth = this.isAuthenticated()
+                    return (
+                        <WebsocketProvider isAuthOnMount={isAuth}>
                             <FadingRoutes location={location}>
-                                <Route exact path='/login' component={Login} />
-                                <Route exact path='/register' component={Register} />
-                                <Redirect to="/login"/> 
+                                <Switch location={location}>
+                                    <UnauthRoute exact path='/login' component={Login} isAuth={isAuth}/>
+                                    <UnauthRoute exact path='/register' component={Register} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/home' component={Home} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/edit-profile' component={EditProfile} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/waiting-room' component={WaitingRoom} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/choose-place' component={ChoosePlace} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/game' component={Game} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/game-end' component={GameEnd} isAuth={isAuth}/>
+                                </Switch>
                             </FadingRoutes>
-                        )
-                    }}/>
-                </Switch>
+                        </WebsocketProvider>
+                    )
+                }}/>
             </BrowserRouter>
         );
     }
@@ -58,9 +51,7 @@ const FadingRoutes = (props) => {
     return (
         <TransitionGroup>
             <CSSTransition key={props.location.key} timeout={400} classNames="fade" exit={false} >
-                <Switch location={props.location}>
-                    {props.children}
-                </Switch>
+                {props.children}
             </CSSTransition>
         </TransitionGroup>
     )

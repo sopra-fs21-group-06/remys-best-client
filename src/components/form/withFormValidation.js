@@ -105,16 +105,19 @@ export const withFormValidation = (initialValues, rules, handlers, FormSkeleton)
         this.setState({ isSubmitting: false })
         if(serverError) {
           this.setState({ serverError: handleError(serverError) })
-        } else {
-          this.props.history.push(handlers.routeOnSuccess);
+          throw Error('Server Error');
         }
+        // SUCCESS
+        return;
       }
+      throw Error('Field Errors');
     }
 
     render() {
       return (
         <FormSkeleton 
           {...this.state} 
+          {...this.props} 
           onFormSubmit={this.onFormSubmit} 
           onFormValueChange={this.onFormValueChange} 
         />

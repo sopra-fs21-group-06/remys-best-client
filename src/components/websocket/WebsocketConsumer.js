@@ -9,7 +9,7 @@ import { withWebsocketContext } from './WebsocketProvider';
 class WebsocketConsumer extends React.Component {
 
     componentDidMount() {
-        // in case of switching between pages within the websocket provider (connection already established)
+        // in case of switching between pages (connection already established)
         if(this.props.contextValue.isConnected) {
             this.subscribeChannels()
         }
