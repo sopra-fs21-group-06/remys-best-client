@@ -102,11 +102,9 @@ const handlers = {
       });
       const response = await api.post('/users', requestBody);
 
-      // Get the returned user and update a new object.
-      const user = new User(response.data);
-
       // Store the token into the local storage.
-      localStorage.setItem('token', user.token);
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('username', response.data.username);
     } catch (error) {
       return error;
     }

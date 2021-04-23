@@ -7,6 +7,8 @@ import Board from "../../components/ingame/Board";
 import Box from "../../components/Box";
 import { colors } from "../../helpers/constants";
 import { createChannel } from '../../helpers/modelUtils';
+import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
+import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 
 import avatar from '../../img/avatar.png'
 
@@ -27,47 +29,58 @@ const COLOR_CHANGED3 = {
 
 class ChoosePlace extends React.Component {
 
-  constructor() {
-    super();
+  static contextType = WebsocketContext;
+
+  constructor(props) {
+    super(props);
+
+    console.log("constructor")
+    console.log(this.props.location.state.gameId)
+    console.log(this.props.location.state.players)
+
     this.state = {
-      players: [
+      players: this.props.location.state.players
+
+      // this.props.players??
+      /*players: [
         {playername: "Andrina", colorName: null, avatar: avatar},
         {playername: "Siddhant", colorName: null, avatar: avatar},
         {playername: "Pascal", colorName: null, avatar: avatar},
         {playername: "Edi", colorName: null, avatar: avatar}
-      ]
+      ]*/
     };
 
-    this.channels = [
-      createChannel('/topic/choose-place', (msg) => this.handleChoosePlaceMessage(msg)),
-      //createChannel("/user/queue/waiting-room", (msg) => this.handlePrivateMessage(msg))
-    ]
-
     this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
+    this.channels = [
+      createChannel(`/topic/game/${this.props.location.state.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg))
+    ]
   }
 
   componentDidMount() {
     // receive game id via router
     console.log("game id received")
-    console.log(this.props.location.state.gameId)
+    //console.log(this.props.location.state.gameId)
+
+
   }
 
   handleChangeColor(pickedColorName) {
     // TODO websockets: publish data to endpoint /app/game/:id/choose-color
-    this.setState((currentState, props) => {
+    /*this.setState((currentState, props) => {
       const nextState = {...currentState}
-      this.getMyPlayer(currentState.players).colorName = pickedColorName;
+      this.getMyPlayer(currentState.players).color = pickedColorName;
       return nextState
-    });
+    });*/
+    this.context.sockClient.send(`/app/game/${this.props.location.state.gameId}/choose-color`, {color: pickedColorName});
   }
 
   getMyPlayer(players) {
-    let myPlayername = "Pascal" // TODO get from local storage after having logged in
-    return players.find(player => player.playername == myPlayername)
+    let myPlayername = localStorage.getItem("username") // TODO improvements?
+    return players.find(player => player.playerName == myPlayername)
   }
 
   getAvatarFromColor(colorName) {
-    let correspondingPlayer = this.state.players.find(player => player.colorName == colorName)
+    let correspondingPlayer = this.state.players.find(player => player.color == colorName)
     return correspondingPlayer ? correspondingPlayer.avatar : null
   }
 
@@ -76,59 +89,61 @@ class ChoosePlace extends React.Component {
     let myPlayer = this.getMyPlayer(players)
     let myPartner;
 
-    if(myPlayer.colorName == colors.BLUE.name) {
-      myPartner = players.find(player => player.colorName == colors.RED.name)
-    } else if(myPlayer.colorName == colors.GREEN.name) {
-      myPartner = players.find(player => player.colorName == colors.YELLOW.name)
-    } else if(myPlayer.colorName == colors.RED.name) {
-      myPartner = players.find(player => player.colorName == colors.BLUE.name)
-    } else if(myPlayer.colorName == colors.YELLOW.name) {
-      myPartner = players.find(player => player.colorName == colors.GREEN.name)
+    if(myPlayer.color == colors.BLUE.name) {
+      myPartner = players.find(player => player.color == colors.RED.name)
+    } else if(myPlayer.color == colors.GREEN.name) {
+      myPartner = players.find(player => player.color == colors.YELLOW.name)
+    } else if(myPlayer.color == colors.RED.name) {
+      myPartner = players.find(player => player.color == colors.BLUE.name)
+    } else if(myPlayer.color == colors.YELLOW.name) {
+      myPartner = players.find(player => player.color == colors.GREEN.name)
     }
 
-    return myPartner ? myPartner.playername : "nobody yet";
+    return myPartner ? myPartner.playerName : "nobody yet";
   }
 
   render() {
     return (
-      <View className="choose-place" withDogImgHidden linkMode={viewLinks.BASIC}>
-        <main>
-            <div className="col-left">
-              <div className="above-box">
-                <h1>Choose your place</h1>
-                <p className="intro">Almost done! A new game will be started after everybody has picked a place. Choose your color by clicking on a seat.</p>  
+      <WebsocketConsumer channels={this.channels}>
+        <View className="choose-place" withDogImgHidden linkMode={viewLinks.BASIC}>
+          <main>
+              <div className="col-left">
+                <div className="above-box">
+                  <h1>Choose your place</h1>
+                  <p className="intro">Almost done! A new game will be started after everybody has picked a place. Choose your color by clicking on a seat.</p>  
+                </div>
+                <Box>
+                  {this.state.players.map(player => {
+                      return (
+                          <p key={player.playerName}>
+                            <span>{player.playerName}</span> – {player.color ? player.color : "not chosen yet"} 
+                            {player.color ? <span className="remove" onClick={() => this.handleChangeColor(null)}></span> : null}
+                          </p>
+                      );
+                  })}
+                  <p><span>You</span> are with <span>{this.getMyPartner()}</span></p>
+                </Box>
+                <div className="below-box"><Link to="/home">Leave and return to Home</Link></div>
+                <div className="below-box"><Link to="/game">Game</Link></div>
               </div>
-              <Box>
-                {this.state.players.map(player => {
-                    return (
-                        <p key={player.playername}>
-                          <span>{player.playername}</span> – {player.colorName ? player.colorName : "not chosen yet"} 
-                          {player.colorName ? <span className="remove" onClick={() => this.handleChangeColor(null)}></span> : null}
-                        </p>
-                    );
-                })}
-                <p><span>You</span> are with <span>{this.getMyPartner()}</span></p>
-              </Box>
-              <div className="below-box"><Link to="/home">Leave and return to Home</Link></div>
-              <div className="below-box"><Link to="/game">Game</Link></div>
-            </div>
-            <div className="col-right">
-              <div className="board-container" style={{width: 500, height: 500}}>
-                <Board size={300}/>
-                {this.avatarColorNames.map(colorName => {
-                    return (
-                        <Avatar 
-                          key={colorName}
-                          colorName={colorName} 
-                          img={this.getAvatarFromColor(colorName)} 
-                          onClick={() => this.handleChangeColor(colorName)} 
-                        />
-                    );
-                })}
+              <div className="col-right">
+                <div className="board-container" style={{width: 500, height: 500}}>
+                  <Board size={300}/>
+                  {this.avatarColorNames.map(colorName => {
+                      return (
+                          <Avatar 
+                            key={colorName}
+                            colorName={colorName} 
+                            img={this.getAvatarFromColor(colorName)} 
+                            onClick={() => this.handleChangeColor(colorName)} 
+                          />
+                      );
+                  })}
+                </div>
               </div>
-            </div>
-          </main>
-      </View>
+            </main>
+        </View>
+      </WebsocketConsumer>
     );
   }
 }

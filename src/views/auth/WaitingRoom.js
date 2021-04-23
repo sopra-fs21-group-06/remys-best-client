@@ -33,11 +33,11 @@ class WaitingRoom extends React.Component {
     )
     let isConnected = await this.context.isConnected
     console.log(isConnected)
-    this.context.sockClient.send('/app/waiting-room/register', {token: localStorage.getItem('token')});
+    this.context.sockClient.send('/app/waiting-room/register', {}); // token is sent implicitly
   }
   
   componentWillUnmount() {
-    this.context.sockClient.send('/app/waiting-room/unregister', {token: localStorage.getItem('token')});
+    this.context.sockClient.send('/app/waiting-room/unregister', {}); // token is sent implicitly
   }
 
   handleWaitingRoomMessage(msg) {
@@ -49,9 +49,12 @@ class WaitingRoom extends React.Component {
   handlePrivateMessage(msg) {
     console.log("private message received waiting room")
     console.log(msg)
-    this.props.history.push({pathname: '/choose-place', state: {gameId: msg.gameId}})
-  }
 
+    this.props.history.push({pathname: '/choose-place', state: {
+      gameId: msg.gameId,
+      players: msg.players
+    }})
+  }
 
   render() {
     return (

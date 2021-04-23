@@ -15,6 +15,7 @@ export const createSockClient = () => {
     }
 
     const send = (destination, body) => {
+        body.token = localStorage.getItem('token');
         state.stomp.send(destination, {}, JSON.stringify(body ? body : {}));
     }
 
