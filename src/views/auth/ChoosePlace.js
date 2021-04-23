@@ -6,6 +6,7 @@ import Avatar from "../../components/Avatar"
 import Board from "../../components/ingame/Board";
 import Box from "../../components/Box";
 import { colors } from "../../helpers/constants";
+import { createChannel } from '../../helpers/modelUtils';
 
 import avatar from '../../img/avatar.png'
 
@@ -37,13 +38,17 @@ class ChoosePlace extends React.Component {
       ]
     };
 
-    this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
+    this.channels = [
+      createChannel('/topic/choose-place', (msg) => this.handleChoosePlaceMessage(msg)),
+      //createChannel("/user/queue/waiting-room", (msg) => this.handlePrivateMessage(msg))
+    ]
 
-    // TODO subscribe to channel with the specific game id (compare waiting room), received by props
+    this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
   }
 
   componentDidMount() {
     // receive game id via router
+    console.log("game id received")
     console.log(this.props.location.state.gameId)
   }
 
