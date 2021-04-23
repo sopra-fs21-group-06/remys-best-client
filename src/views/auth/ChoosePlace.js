@@ -9,23 +9,8 @@ import { colors } from "../../helpers/constants";
 import { createChannel } from '../../helpers/modelUtils';
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
-
-import avatar from '../../img/avatar.png'
-
-const COLOR_CHANGED = {
-  playername: "Andrina",
-  color: "blue"
-}
-
-const COLOR_CHANGED2 = {
-  playername: "Andrina",
-  color: null
-}
-
-const COLOR_CHANGED3 = {
-  playername: "Andrina",
-  color: "yellow"
-}
+import avatar from '../../img/avatar.png';
+import { getGameId } from "../../helpers/sessionManager";
 
 class ChoosePlace extends React.Component {
 
@@ -34,49 +19,39 @@ class ChoosePlace extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log("constructor")
-    console.log(this.props.location.state.gameId)
-    console.log(this.props.location.state.players)
-
     this.state = {
       players: this.props.location.state.players
-
-      // this.props.players??
-      /*players: [
-        {playername: "Andrina", colorName: null, avatar: avatar},
-        {playername: "Siddhant", colorName: null, avatar: avatar},
-        {playername: "Pascal", colorName: null, avatar: avatar},
-        {playername: "Edi", colorName: null, avatar: avatar}
-      ]*/
     };
 
     this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
+    this.gameId = getGameId();
+
+    // TODO store gameId in session Manager
     this.channels = [
-      createChannel(`/topic/game/${this.props.location.state.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg))
+      createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
+      createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
     ]
   }
 
-  componentDidMount() {
-    // receive game id via router
-    console.log("game id received")
-    //console.log(this.props.location.state.gameId)
-
-
-  }
-
   handleChoosePlaceMessage(msg){
-    console.log("ChoosePlace message received")
-    console.log(msg);
+    var players = msg.players;
+
+    // inject dummy avatar
+    players.forEach(player => {
+      player.avatar = avatar
+    })
+
+    this.setState({
+      players: players
+    });
   }
 
-  handleChangeColor(pickedColorName) {
-    // TODO websockets: publish data to endpoint /app/game/:id/choose-color
-    /*this.setState((currentState, props) => {
-      const nextState = {...currentState}
-      this.getMyPlayer(currentState.players).color = pickedColorName;
-      return nextState
-    });*/
-    this.context.sockClient.send(`/app/game/${this.props.location.state.gameId}/choose-color`, {color: pickedColorName});
+  handleStartGameMessage(){
+    this.props.history.push('/game')
+  }
+
+  handleChangeColor(pickedColorName) {    
+    this.context.sockClient.send(`/app/game/${this.gameId}/choose-color`, { color: pickedColorName });
   }
 
   getMyPlayer(players) {

@@ -1,9 +1,25 @@
 /**
- * This file manages our sessionStorage in a more centralized way.
+ * The sessionStorage exists only within the current browser tab.
+ * The data survives page refresh, but not closing/opening the tab.
  */
-import settingsManager from "./settingsManager";
 
+export const getGameId = () => {
+    return sessionStorage.getItem('gameId');
+}
+
+export const setGameId = (gameId) => {
+    if (gameId === undefined) {
+        sessionStorage.removeItem('gameId');
+    }
+    sessionStorage.setItem('gameId', gameId);
+}
+
+
+/* FRANTIC
 export default {
+    
+
+    
     get lobbyId() {
         return sessionStorage.getItem('lobbyId');
     },
@@ -145,3 +161,4 @@ export default {
         sessionStorage.clear();
     }
 };
+*/
