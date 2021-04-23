@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import View from "../View";
 import { viewLinks } from "../../helpers/constants";
+import { setGameId } from "../../helpers/sessionManager";
 
 class GameEnd extends React.Component {
 
@@ -10,6 +11,7 @@ class GameEnd extends React.Component {
     this.state = {
       username: "Sandro"
     };
+    setGameId(null)
   }
 
   render() {

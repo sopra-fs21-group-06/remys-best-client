@@ -8,6 +8,7 @@ import avatar from '../../img/avatar.png'
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
+import { setGameId } from "../../helpers/sessionManager";
 
 class WaitingRoom extends React.Component {
 
@@ -47,13 +48,8 @@ class WaitingRoom extends React.Component {
   }
 
   handlePrivateMessage(msg) {
-    console.log("private message received waiting room")
-    console.log(msg)
-
-    this.props.history.push({pathname: '/choose-place', state: {
-      gameId: msg.gameId,
-      players: msg.players
-    }})
+    setGameId(msg.gameId)
+    this.props.history.push({pathname: '/choose-place', state: {players: msg.players}})
   }
 
   render() {

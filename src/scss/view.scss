@@ -210,22 +210,22 @@
                     position: relative;
                     margin: 0 auto;
 
-                    .avatar-blue {
+                    .avatar-BLUE {
                         @include centerer(true, false);
                         bottom: 0;
                     }
 
-                    .avatar-green {
+                    .avatar-GREEN {
                         @include centerer(false, true);
                         right: 0;
                     }
 
-                    .avatar-red {
+                    .avatar-RED {
                         @include centerer(true, false);
                         top: 0;
                     }
 
-                    .avatar-yellow {
+                    .avatar-YELLOW {
                         @include centerer(false, true);
                         left: 0;
                     }

@@ -41,19 +41,19 @@ h1 {
     opacity: 0.6;
     transform-origin: center center;
 
-    &.blue-bottom {
+    &.BLUE-bottom {
         @include rotate-bg(0deg);
     }
 
-    &.green-bottom {
+    &.GREEN-bottom {
         @include rotate-bg(90deg);
     }
 
-    &.red-bottom {
+    &.RED-bottom {
         @include rotate-bg(180deg);
     }
 
-    &.yellow-bottom {
+    &.YELLOW-bottom {
         @include rotate-bg(-90deg);
     }
 }
@@ -123,19 +123,19 @@ div.avatar-box {
     justify-content: center;
     align-items: center;
 
-    &.green-bg {
+    &.GREEN-bg {
         background: rgba($green, 0.2);
     }
 
-    &.red-bg {
+    &.RED-bg {
         background: rgba($red, 0.2);
     }
 
-    &.blue-bg {
+    &.BLUE-bg {
         background: rgba($blue, 0.2);
     }
 
-    &.yellow-bg {
+    &.YELLOW-bg {
         background: rgba($yellow, 0.2);
     }
 

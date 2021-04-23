@@ -28,19 +28,19 @@
                     cursor: pointer;
                 }
     
-                &.blue {
+                &.BLUE {
                     @include pulse($blue);
                 }
     
-                &.green {
+                &.GREEN {
                     @include pulse($green);
                 }
     
-                &.red {
+                &.RED {
                     @include pulse($red);
                 }
     
-                &.yellow {
+                &.YELLOW {
                     @include pulse($yellow);
                 }
             }
