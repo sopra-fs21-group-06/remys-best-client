@@ -16,37 +16,54 @@ class WaitingRoom extends React.Component {
   constructor() {
     super();
     this.state = {
-      users: ['testUser1']
+      currentUsers: []
     };
 
     this.channels = [
-      createChannel('/topic/register', (msg) => this.handleWaitingRoomMessage(msg)),
-      createChannel('/topic/waiting-room', (msg) => this.handleWaitingRoomMessage(msg))
+      createChannel('/topic/waiting-room', (msg) => this.handleWaitingRoomMessage(msg)),
+      createChannel("/user/queue/waiting-room", (msg) => this.handlePrivateMessage(msg))
     ]
   }
 
-  handleWaitingRoomMessage(msg) {
-    console.log("received message from server through /topic/waiting-room")
-    console.log(msg)
-    // TODO update state users with current users on message received
+  // TODO wait for isConnected, on reload or first screen
+  async componentDidMount() {
+    // TODO rewrite
+    await new Promise(
+      resolve => setTimeout(resolve, 300)
+    )
+    let isConnected = await this.context.isConnected
+    console.log(isConnected)
+    this.context.sockClient.send('/app/waiting-room/register', {token: localStorage.getItem('token')});
+  }
+  
+  componentWillUnmount() {
+    this.context.sockClient.send('/app/waiting-room/unregister', {token: localStorage.getItem('token')});
   }
 
-  sendMsg() {
-    this.context.sockClient.send('/app/register', {message: "Hello from the waiting room"});
+  handleWaitingRoomMessage(msg) {
+    this.setState({
+      currentUsers: msg.currentUsers
+    })
   }
+
+  handlePrivateMessage(msg) {
+    console.log("private message received waiting room")
+    console.log(msg)
+    this.props.history.push({pathname: '/choose-place', state: {gameId: msg.gameId}})
+  }
+
 
   render() {
     return (
       <WebsocketConsumer channels={this.channels}>
         <View className="waiting-room" title="Waiting Room"  linkMode={viewLinks.BASIC}>
           <main className="small">
-              <p onClick={() => this.sendMsg()}>send message</p>
               <p className="above-box">As soon as four players are ready, a new game will automatically be started. You could also be picked from an existing game session to fill up their game</p>      
               <div className="queue">
                 <p className="above-players">You are in the second place</p>
                 <Box className="players">
-                  {this.state.users.map((index, user) => {
-                    return <Avatar key={index} img={avatar}/>
+                  {this.state.currentUsers.map(user => {
+                    return <Avatar key={user.username} img={avatar}/>
                   })}
                 </Box>
                 <p className="below-players"><Link to="/home">Leave and return to Home</Link></p>
