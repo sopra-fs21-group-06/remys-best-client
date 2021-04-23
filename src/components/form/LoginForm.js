@@ -91,6 +91,7 @@ const handlers = {
 
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);
+      localStorage.setItem('username', user.username);
     } catch (error) {
       return error;
     }
