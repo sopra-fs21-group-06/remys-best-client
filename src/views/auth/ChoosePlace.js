@@ -64,6 +64,11 @@ class ChoosePlace extends React.Component {
 
   }
 
+  handleChoosePlaceMessage(msg){
+    console.log("ChoosePlace message received")
+    console.log(msg);
+  }
+
   handleChangeColor(pickedColorName) {
     // TODO websockets: publish data to endpoint /app/game/:id/choose-color
     /*this.setState((currentState, props) => {

@@ -19,19 +19,19 @@ export const gameEndModes = {
 
 export const colors = {
 	BLUE: {
-        name: "blue",
+        name: "BLUE",
         hex: "#5887F1"
     },
     GREEN: {
-        name: "green",
+        name: "GREEN",
         hex: "#63A557"
     },
 	RED: {
-        name: "red",
+        name: "RED",
         hex: "#D04F3A"
     },
 	YELLOW: {
-        name: "yellow",
+        name: "YELLOW",
         hex: "#EEBD41"
     }
 }
