@@ -1,8 +1,10 @@
+import React, { useContext } from 'react'
 import { withFormValidation }  from './withFormValidation';
 import { withRouter, Link } from 'react-router-dom';
 import { api } from "../../helpers/api";
 import { ServerError, SubmitButton, ValidatedInput} from "../../helpers/formUtils"
 import User from "../models/shared/User";
+import { WebsocketContext } from '../websocket/WebsocketProvider';
 
 const RegisterFormSkeleton = (props) => {
   const {
@@ -11,8 +13,24 @@ const RegisterFormSkeleton = (props) => {
     values,
     fieldErrors,
     serverError,
-    isSubmitting
+    isSubmitting,
+    history
   } = props;
+  
+  const websocketContext = useContext(WebsocketContext);
+
+  const handleOnFormSubmit = async () => {
+    try {
+      await onFormSubmit();
+
+      // go to home & establish websocket connection
+      history.push("/home");
+      websocketContext.connect();
+
+    } catch (e) {
+      // errors are handled directly in onFormSubmit
+    }
+  }
 
   return (
     <div className="login-form">
@@ -47,7 +65,7 @@ const RegisterFormSkeleton = (props) => {
         <SubmitButton 
             isSubmitting={isSubmitting}
             value="Sign up" 
-            onClick={onFormSubmit}
+            onClick={handleOnFormSubmit}
         />
         <p className="below-btn">Have an account? <Link to="/login">Sign in</Link></p>
     </div>
@@ -92,9 +110,7 @@ const handlers = {
     } catch (error) {
       return error;
     }
-  },
-  // Login successfully worked --> navigate to the route /game in the GameRouter
-  routeOnSuccess: "/home"
+  }
 }
 
 const RegisterForm = withFormValidation(initialValues, rules, handlers, RegisterFormSkeleton);
