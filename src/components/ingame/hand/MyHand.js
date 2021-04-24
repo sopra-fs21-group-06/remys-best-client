@@ -1,13 +1,19 @@
 import React from "react";
 import { FadeInOut } from '../../transitions/FadeInOut';
+import { roundModes } from '../../../helpers/constants';
+import { WebsocketContext } from '../../websocket/WebsocketProvider';
+import sessionManager from "../../../helpers/sessionManager";
 
 class MyHand extends React.Component {
+
+    static contextType = WebsocketContext;
 
     constructor() {
         super();
         this.state = {
             raisedCard: null
         };
+        this.gameId = sessionManager.getGameId();
         this.handleRaiseCard = this.handleRaiseCard.bind(this);
     }
 
@@ -37,7 +43,7 @@ class MyHand extends React.Component {
     render() {
         return (
             <div>
-                <div className="raised-card-options">
+                <div className="card-options">
                     <FadeInOut in={this.state.raisedCard ? true : false}>
                         <p>forwards</p>
                         <p>4 backwards</p>
@@ -49,8 +55,11 @@ class MyHand extends React.Component {
                 <div className="my-hand-wrapper">
                     {React.cloneElement(this.props.children, { onCardClick: this.handleRaiseCard})}
                 </div>
-                <div className="raised-card-menu">
-                    <FadeInOut in={true}>
+                <div className="card-menu">
+                    <FadeInOut in={this.state.raisedCard != null && this.props.mode === roundModes.EXCHANGE}>
+                        <p onClick={() => this.props.exchange(this.state.raisedCard)}>{this.state.raisedCard && "Send " + this.state.raisedCard.getName()}</p>
+                    </FadeInOut>
+                    <FadeInOut in={this.props.mode === roundModes.MY_TURN}>
                         <p>Choose Move</p>
                         <p>Choose Marble</p>
                         <p onClick={() => this.play()}>Play</p>

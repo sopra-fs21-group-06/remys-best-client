@@ -13,7 +13,7 @@ export const createSockClient = () => {
         return state.stomp.subscribe(channel, r => callback(stripResponse(r)));
     }
 
-   const send = (destination, body) => {
+    const send = (destination, body) => {
         body.token = localStorage.getItem('token');
         state.stomp.send(destination, {}, JSON.stringify(body ? body : {}));
     }

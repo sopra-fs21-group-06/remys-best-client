@@ -11,72 +11,11 @@ import { viewLinks, gameEndModes, cardImages } from "../../helpers/constants";
 import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
-import { createChannel } from '../../helpers/modelUtils';
+import { createChannel, createCard } from '../../helpers/modelUtils';
+import { generateUUID } from '../../helpers/remysBestUtils';
 import sessionManager from "../../helpers/sessionManager";
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
-
-/*
-TODO:
-- activate menus my card if is my turn
-- chose move on board for every card
-*/
-
-const MY_CARDS = [{
-        code: "KH",
-        imgUrl: "https://deckofcardsapi.com/static/img/KH.png"
-    }, {
-        code: "8C",
-        imgUrl: "https://deckofcardsapi.com/static/img/8C.png"
-    }, {
-        code: "3H",
-        imgUrl: "https://deckofcardsapi.com/static/img/3H.png"
-    }, {
-        code: "9D",
-        imgUrl: "https://deckofcardsapi.com/static/img/9D.png"
-    }, {
-        code: "QH",
-        imgUrl: "https://deckofcardsapi.com/static/img/QH.png"
-    }
-]
-
-const OPP_CARDS = [{
-        code: "1",
-        imgUrl: dogCard
-    }, {
-        code: "2",
-        imgUrl: dogCard
-    }, {
-        code: "3",
-        imgUrl: dogCard
-    }, {
-        code: "4",
-        imgUrl: dogCard
-    }, {
-        code: "5",
-        imgUrl: dogCard
-    }
-]
-
-
-const NOTIFICATIONS = [{
-            action: 'Card exchange'
-        }, {
-            username: 'You',
-            action: 'sent',
-            card: 'Heart King'
-        }, {
-            username: 'You',
-            action: 'received',
-            card: 'Joker'
-        }, {
-            username: 'Siddhant',
-            action: 'played',
-            card: 'Clubs Queen'
-        }, {
-            username: 'Andrina',
-            action: 'played',
-            card: 'Diamonds Ace'
-        }]
+import { roundModes } from '../../helpers/constants';
 
 class Game extends React.Component {
 
@@ -86,10 +25,11 @@ class Game extends React.Component {
       super();
       this.connected = false;
       this.state = {
-        players: [],
+        players: [], // TODO get players from sessionManager?? (via choose color screen?) or from startGame topic??
         facts: [],
         notifications: [],
-        allCards: []
+        allCards: [],
+        mode: roundModes.IDLE
       }
       this.playMyCard = this.playMyCard.bind(this);
       this.myHandRef = React.createRef();
@@ -105,30 +45,18 @@ class Game extends React.Component {
         //createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
       ]
 
-
-      this.counter = 0;
+      this.exchange = this.exchange.bind(this)
     }
 
-    generateOtherCards(amount) {
-/*
-      {
-code: "1",
-        imgUrl: dogCard
-    }*/
-
-    }
-
-    
     componentDidMount() {
       let allCards = Object.keys(cardImages).map(cardCode => {
-        // TODO load img in memory
-        return {
-          "code": cardCode,
-          "imgUrl": cardImages[cardCode]
-        }
+        // TODO load img in memory, cache images
+        return createCard(cardCode, cardImages[cardCode])
       })
       this.setState({allCards: allCards});
        
+
+      // TODO assign player to color and HAND
       let players = [];
       players.push(createPlayer("my player", this.myHandRef, 0, "blue"))
       players.push(createPlayer("username2", this.leftHandRef, -90, "yellow"))
@@ -137,25 +65,22 @@ code: "1",
       this.setState({players: players});
     }
 
-    addNotification() {
-        let notification = NOTIFICATIONS[this.counter];
-        notification.key = +new Date()
-
-        this.setState({
-            notifications: [
-                ...this.state.notifications,
-                notification
-            ],
-        });
-        this.counter += 1
+    generateOtherCards(cardAmount) {
+      let otherCards = [];
+      for(let i = 0; i < cardAmount; i++) {
+        otherCards.push(createCard(generateUUID(), dogCard))
+      }
+      return otherCards;
     }
 
     handleFactsMessage(msg) {
       this.setState({ facts: msg.facts })
+
+      this.setState({ mode: roundModes.EXCHANGE })
     } 
 
     handleNotificationMessage(msg) {
-      let notification = msg.notificataion;
+      let notification = msg;
       notification.key = +new Date()
 
       this.setState({
@@ -169,13 +94,14 @@ code: "1",
     handleCardsReceivedMessage(msg) {
       let allCards = this.state.allCards;
       let myCards = msg.cards.map(card => {
-        return allCards.find(allCardsCard => allCardsCard.code === card.code)
+        return allCards.find(allCardsCard => allCardsCard.getCode() === card.code)
       })
-  
+
       this.myHandRef.current.addCards(myCards)
-      this.leftHandRef.current.addCards(OPP_CARDS)
-      this.rightHandRef.current.addCards(OPP_CARDS)
-      this.partnerHandRef.current.addCards(OPP_CARDS)
+      let cardAmount = myCards.length;
+      this.leftHandRef.current.addCards(this.generateOtherCards(cardAmount))
+      this.rightHandRef.current.addCards(this.generateOtherCards(cardAmount))
+      this.partnerHandRef.current.addCards(this.generateOtherCards(cardAmount))
     }
 
     playMyCard(card, move) {
@@ -195,6 +121,12 @@ code: "1",
 
     sendReady() {
      this.context.sockClient.send(`/app/game/${this.gameId}/ready`, {});
+    }
+
+    exchange(cardToExchange) {
+      console.log("exchange")
+      this.myHandRef.current.removeCard(cardToExchange)
+      this.context.sockClient.send(`/app/game/${this.gameId}/card-exchange`, {code: cardToExchange.getCode()}); 
     }
 
     render() {
@@ -218,11 +150,10 @@ code: "1",
                 <p onClick={() => this.playCard(this.state.players[2], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from right opponent</p>
                 */}
 
-                <p onClick={() => this.addNotification()}>add notification</p>
 
-                
+            
                 <HandContainer position="my">
-                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} isMyTurn={true}>
+                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange}>
                     <Hand ref={this.myHandRef} />
                   </MyHand>
                 </HandContainer>
