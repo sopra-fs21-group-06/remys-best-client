@@ -7,7 +7,7 @@ import dogCard from "../../img/dog-card.png"
 import HandContainer from "../../components/ingame/hand/HandContainer";
 import { createPlayer } from '../../helpers/modelUtils'
 import View from "../View";
-import { viewLinks, gameEndModes } from "../../helpers/constants";
+import { viewLinks, gameEndModes, cardImages } from "../../helpers/constants";
 import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
@@ -89,7 +89,7 @@ class Game extends React.Component {
         players: [],
         facts: [],
         notifications: [],
-        cards: []
+        allCards: []
       }
       this.playMyCard = this.playMyCard.bind(this);
       this.myHandRef = React.createRef();
@@ -109,21 +109,32 @@ class Game extends React.Component {
       this.counter = 0;
     }
 
+    generateOtherCards(amount) {
+/*
+      {
+code: "1",
+        imgUrl: dogCard
+    }*/
+
+    }
+
     
     componentDidMount() {
-      
-    
-
-        // TODO
-        
+      let allCards = Object.keys(cardImages).map(cardCode => {
+        // TODO load img in memory
+        return {
+          "code": cardCode,
+          "imgUrl": cardImages[cardCode]
+        }
+      })
+      this.setState({allCards: allCards});
        
-        let players = [];
-        players.push(createPlayer("my player", this.myHandRef, 0, "blue"))
-        players.push(createPlayer("username2", this.leftHandRef, -90, "yellow"))
-        players.push(createPlayer("username3", this.rightHandRef, 90, "green"))
-        players.push(createPlayer("username4", this.partnerHandRef, 180, "red"))
-        this.setState({players: players});
-
+      let players = [];
+      players.push(createPlayer("my player", this.myHandRef, 0, "blue"))
+      players.push(createPlayer("username2", this.leftHandRef, -90, "yellow"))
+      players.push(createPlayer("username3", this.rightHandRef, 90, "green"))
+      players.push(createPlayer("username4", this.partnerHandRef, 180, "red"))
+      this.setState({players: players});
     }
 
     addNotification() {
@@ -156,10 +167,12 @@ class Game extends React.Component {
     }
 
     handleCardsReceivedMessage(msg) {
-
-
-
-      this.myHandRef.current.addCards(msg.cards)
+      let allCards = this.state.allCards;
+      let myCards = msg.cards.map(card => {
+        return allCards.find(allCardsCard => allCardsCard.code === card.code)
+      })
+  
+      this.myHandRef.current.addCards(myCards)
       this.leftHandRef.current.addCards(OPP_CARDS)
       this.rightHandRef.current.addCards(OPP_CARDS)
       this.partnerHandRef.current.addCards(OPP_CARDS)

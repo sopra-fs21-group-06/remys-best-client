@@ -22,7 +22,7 @@ class Card extends React.Component {
             <div className="card-wrapper">
                 <img 
                     className={"card " + (this.props.isMyTurn ? "raisable" : '')} 
-                    src={imgUrl} 
+                    src={this.props.card.imgUrl} 
                     style={styles} 
                     onClick={this.props.onCardClick ? () => this.props.onCardClick(this.props.card) : null}
                 />
