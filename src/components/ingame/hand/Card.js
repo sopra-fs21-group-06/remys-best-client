@@ -3,7 +3,11 @@ import React from "react";
 class Card extends React.Component {
 
     render() {
-        let {imgUrl, style, code, isRaised} = this.props.card;
+        let {card} = this.props;
+
+        let imgUrl = card.getImgUrl();
+        let isRaised = card.getIsRaised();
+        let style = card.getStyle();
         
         let styles = {};
         if(style) {
@@ -22,7 +26,7 @@ class Card extends React.Component {
             <div className="card-wrapper">
                 <img 
                     className={"card " + (this.props.isMyTurn ? "raisable" : '')} 
-                    src={this.props.card.imgUrl} 
+                    src={imgUrl} 
                     style={styles} 
                     onClick={this.props.onCardClick ? () => this.props.onCardClick(this.props.card) : null}
                 />

@@ -1,6 +1,22 @@
 import { colors } from './constants'
 import { createField } from './modelUtils'
 
+export const generateUUID = () => { // Public Domain/MIT
+    var d = new Date().getTime(); //Timestamp
+    var d2 = (performance && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16;//random number between 0 and 16
+        if(d > 0){//Use timestamp until depleted
+            r = (d + r)%16 | 0;
+            d = Math.floor(d/16);
+        } else {//Use microseconds since page-load if supported
+            r = (d2 + r)%16 | 0;
+            d2 = Math.floor(d2/16);
+        }
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+}
+
 export const lightenOrDarkenColor = (col, amt) => {
   
     var usePound = false;
@@ -25,6 +41,58 @@ export const lightenOrDarkenColor = (col, amt) => {
     else if (g < 0) g = 0;
  
     return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
+}
+
+export const getCardNameFromCode = (code) => {
+    if(code === "X1" || code === "X2") {
+        return "Joker"
+    }
+
+    let cardName = ""
+    let value = code.slice(0, 1)
+    let suit = code.slice(1, 2)
+
+    if(suit === "C") {
+        cardName += "Clubs"
+    } else if(suit === "D") {
+        cardName += "Diamonds"
+    } else if(suit === "H") {
+        cardName += "Hearts"
+    } else if(suit === "S") {
+        cardName += "Spades"
+    }
+
+    cardName += " "
+
+    if(value === "2") {
+        cardName += "Two"
+    } else if(value === "3") {
+        cardName += "Three"
+    } else if(value === "4") {
+        cardName += "Four"
+    } else if(value === "5") {
+        cardName += "Five"
+    } else if(value === "6") {
+        cardName += "Six"
+    } else if(value === "7") {
+        cardName += "Seven"
+    } else if(value === "8") {
+        cardName += "Eight"
+    } else if(value === "9") {
+        cardName += "Nine"
+    } else if(value === "0") {
+        cardName += "Ten"
+    } else if(value === "J") {
+        cardName += "Jack"
+    } else if(value === "Q") {
+        cardName += "Queen"
+    } else if(value === "K") {
+        cardName += "King"
+    } else if(value === "A") {
+        cardName += "Ace"
+    } 
+
+    return cardName;
 }
 
 export const computeFields = (boardSize) => {

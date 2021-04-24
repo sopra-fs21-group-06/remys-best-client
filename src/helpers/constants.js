@@ -11,6 +11,12 @@ export const viewLinks = {
     }
 }
 
+export const roundModes = {
+    EXCHANGE: "EXCHANGE",
+    MY_TURN: "MY_TURN",
+	IDLE: "IDLE",
+}
+
 export const gameEndModes = {
     WON: "won",
     LOST: "lost",

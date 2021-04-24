@@ -55,7 +55,7 @@ class Hand extends React.Component {
 
     removeCard(cardToRemove) {
         // remove card
-        let remainingCards = this.state.cards.filter(card => !card.code.includes(cardToRemove.code));
+        let remainingCards = this.state.cards.filter(card => !card.getCode().includes(cardToRemove.getCode()));
         this.setState({cards: remainingCards});
 
         // align cards
@@ -69,13 +69,13 @@ class Hand extends React.Component {
         this.setState(prevState => {
             const cards = prevState.cards.map(card => {
                 if (card == cardToRaise) {
-                    if(card.isRaised) {
-                        card.isRaised = false;
+                    if(card.getIsRaised()) {
+                        card.setIsRaised(false);
                     } else {
-                        card.isRaised = true;
+                        card.setIsRaised(true);
                     }
-                } else if(card.isRaised) {
-                    card.isRaised = false;
+                } else if(card.getIsRaised()) {
+                    card.setIsRaised(false);
                 }
                 return card;
             });
@@ -148,7 +148,7 @@ class Hand extends React.Component {
                 rot: rot
             };
 
-            card.style = styles;
+            card.setStyle(styles)
         }
 
         return cards;
@@ -161,7 +161,7 @@ class Hand extends React.Component {
                     {this.state.cards.map(card => {
                         return (
                             <Card 
-                                key={card.code} 
+                                key={card.getCode()} 
                                 card={card}
                                 onCardClick={this.props.onCardClick}
                                 isMyTurn={this.props.isMyTurn}
