@@ -10,7 +10,7 @@ class Facts extends React.Component {
             return (
                 <div className="fact" key={index}>
                   <p className="title">{fact.title}</p>
-                  <p className="subtitle">{fact.subtitle}</p>
+                  <p className="subtitle">{fact.subTitle}</p>
                 </div>
             );
         })}

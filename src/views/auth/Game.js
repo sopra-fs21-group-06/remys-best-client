@@ -13,6 +13,7 @@ import Notifications from "../../components/ingame/Notifications";
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
 import sessionManager from "../../helpers/sessionManager";
+import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 
 /*
 TODO:
@@ -79,13 +80,16 @@ const NOTIFICATIONS = [{
 
 class Game extends React.Component {
 
+    static contextType = WebsocketContext;
+
     constructor() {
       super();
       this.connected = false;
       this.state = {
         players: [],
         facts: [],
-        notifications: []
+        notifications: [],
+        cards: []
       }
       this.playMyCard = this.playMyCard.bind(this);
       this.myHandRef = React.createRef();
@@ -107,6 +111,7 @@ class Game extends React.Component {
 
     
     componentDidMount() {
+      
     
 
         // TODO
@@ -151,6 +156,9 @@ class Game extends React.Component {
     }
 
     handleCardsReceivedMessage(msg) {
+
+
+
       this.myHandRef.current.addCards(msg.cards)
       this.leftHandRef.current.addCards(OPP_CARDS)
       this.rightHandRef.current.addCards(OPP_CARDS)
