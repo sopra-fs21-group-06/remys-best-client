@@ -42,3 +42,10 @@ export const handModes = {
 	RIGHT_HAND: "right-hand",
 	PARTNER_HAND: "partner-hand",
 }
+
+export const cardImages = {
+	"2C": "https://deckofcardsapi.com/static/img/2C.png",
+	"2D": "https://deckofcardsapi.com/static/img/2D.png",
+	"2H": "https://deckofcardsapi.com/static/img/2H.png",
+	"2S": "https://deckofcardsapi.com/static/img/2S.png",
+}
