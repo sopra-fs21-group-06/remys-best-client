@@ -8,7 +8,7 @@ import avatar from '../../img/avatar.png'
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
-import { setGameId } from "../../helpers/sessionManager";
+import sessionManager from "../../helpers/sessionManager";
 
 class WaitingRoom extends React.Component {
 
@@ -25,36 +25,27 @@ class WaitingRoom extends React.Component {
       createChannel("/user/queue/waiting-room", (msg) => this.handlePrivateMessage(msg))
     ]
   }
-
-  // TODO wait for isConnected, on reload or first screen
-  async componentDidMount() {
-    // TODO rewrite
-    await new Promise(
-      resolve => setTimeout(resolve, 300)
-    )
-    let isConnected = await this.context.isConnected
-    console.log(isConnected)
-    this.context.sockClient.send('/app/waiting-room/register', {}); // token is sent implicitly
-  }
   
   componentWillUnmount() {
-    this.context.sockClient.send('/app/waiting-room/unregister', {}); // token is sent implicitly
+    this.context.sockClient.send('/app/waiting-room/unregister', {});
+  }
+
+  register() {
+    this.context.sockClient.send('/app/waiting-room/register', {});
   }
 
   handleWaitingRoomMessage(msg) {
-    this.setState({
-      currentUsers: msg.currentUsers
-    })
+    this.setState({ currentUsers: msg.currentUsers })
   }
 
   handlePrivateMessage(msg) {
-    setGameId(msg.gameId)
+    sessionManager.setGameId(msg.gameId)
     this.props.history.push({pathname: '/choose-place', state: {players: msg.players}})
   }
 
   render() {
     return (
-      <WebsocketConsumer channels={this.channels}>
+      <WebsocketConsumer channels={this.channels} connectionCallback={() => this.register()}>
         <View className="waiting-room" title="Waiting Room"  linkMode={viewLinks.BASIC}>
           <main className="small">
               <p className="above-box">As soon as four players are ready, a new game will automatically be started. You could also be picked from an existing game session to fill up their game</p>      

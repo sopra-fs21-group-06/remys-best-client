@@ -1,7 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { createSockClient } from "../../helpers/SockClientRemy";
-import { createChannel } from '../../helpers/modelUtils';
 
 export const WebsocketContext = React.createContext();
 
@@ -50,8 +49,6 @@ class WebsocketProvider extends React.Component {
   connect() {
     const onConnected = () => {
       this.setState({isConnected: true})
-      let myPrivateChannel = createChannel("/user/queue/private", (msg) => this.handlePrivateMessage(msg))
-      this.subscribe(myPrivateChannel)
     }
     this.state.sockClient.connect(() => onConnected());
   }
@@ -73,24 +70,18 @@ class WebsocketProvider extends React.Component {
     });
   }
 
+  // passed to websocket consumer
   handleSubscribe(channels) {
     channels.forEach(channel => { 
       this.subscribe(channel) 
     })
   }
 
+  // passed to websocket consumer
   handleUnsubscribe(channels) {
     channels.forEach(channel => {
       this.unsubscribe(channel)
     })
-  }
-
-  handlePrivateMessage() {
-    // TODO: filter the message depending on the private message type and switch/case the types
-    console.log("private message received")
-
-    // TODO if message has type user is added to new game (4 players in waiting room), then redirect to the choose place screen with the game id
-    // this.props.history.push({pathname: '/choose-place', state: {gameId: '<uuid received from server>'}})
   }
 
   render() {

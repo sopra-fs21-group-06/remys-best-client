@@ -8,8 +8,11 @@ import HandContainer from "../../components/ingame/hand/HandContainer";
 import { createPlayer } from '../../helpers/modelUtils'
 import View from "../View";
 import { viewLinks, gameEndModes } from "../../helpers/constants";
-import RoundFacts from "../../components/ingame/RoundFacts";
-import NotificationList from "../../components/ingame/NotificationList";
+import Facts from "../../components/ingame/Facts";
+import Notifications from "../../components/ingame/Notifications";
+import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
+import { createChannel } from '../../helpers/modelUtils';
+import sessionManager from "../../helpers/sessionManager";
 
 /*
 TODO:
@@ -53,13 +56,36 @@ const OPP_CARDS = [{
     }
 ]
 
+
+const NOTIFICATIONS = [{
+            action: 'Card exchange'
+        }, {
+            username: 'You',
+            action: 'sent',
+            card: 'Heart King'
+        }, {
+            username: 'You',
+            action: 'received',
+            card: 'Joker'
+        }, {
+            username: 'Siddhant',
+            action: 'played',
+            card: 'Clubs Queen'
+        }, {
+            username: 'Andrina',
+            action: 'played',
+            card: 'Diamonds Ace'
+        }]
+
 class Game extends React.Component {
 
     constructor() {
       super();
       this.connected = false;
       this.state = {
-        players: []
+        players: [],
+        facts: [],
+        notifications: []
       }
       this.playMyCard = this.playMyCard.bind(this);
       this.myHandRef = React.createRef();
@@ -67,13 +93,24 @@ class Game extends React.Component {
       this.rightHandRef = React.createRef();
       this.partnerHandRef = React.createRef();
       this.boardRef = React.createRef();
+      this.gameId = sessionManager.getGameId();
+      this.channels = [
+        createChannel(`/topic/game/${this.gameId}/facts`, (msg) => this.handleFactsMessage(msg)),
+        createChannel(`/topic/game/${this.gameId}/notification`, (msg) => this.handleNotificationMessage(msg)),
+        createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg))
+        //createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
+      ]
+
+
+      this.counter = 0;
     }
 
     
     componentDidMount() {
+    
 
         // TODO
-
+        
        
         let players = [];
         players.push(createPlayer("my player", this.myHandRef, 0, "blue"))
@@ -82,7 +119,42 @@ class Game extends React.Component {
         players.push(createPlayer("username4", this.partnerHandRef, 180, "red"))
         this.setState({players: players});
 
-        this.handOutCards();
+    }
+
+    addNotification() {
+        let notification = NOTIFICATIONS[this.counter];
+        notification.key = +new Date()
+
+        this.setState({
+            notifications: [
+                ...this.state.notifications,
+                notification
+            ],
+        });
+        this.counter += 1
+    }
+
+    handleFactsMessage(msg) {
+      this.setState({ facts: msg.facts })
+    } 
+
+    handleNotificationMessage(msg) {
+      let notification = msg.notificataion;
+      notification.key = +new Date()
+
+      this.setState({
+          notifications: [
+              ...this.state.notifications,
+              notification
+          ],
+      });
+    }
+
+    handleCardsReceivedMessage(msg) {
+      this.myHandRef.current.addCards(msg.cards)
+      this.leftHandRef.current.addCards(OPP_CARDS)
+      this.rightHandRef.current.addCards(OPP_CARDS)
+      this.partnerHandRef.current.addCards(OPP_CARDS)
     }
 
     playMyCard(card, move) {
@@ -100,11 +172,8 @@ class Game extends React.Component {
       }.bind(this), 1300);
     }
 
-    handOutCards() {
-      this.myHandRef.current.addCards(MY_CARDS)
-      this.leftHandRef.current.addCards(OPP_CARDS)
-      this.rightHandRef.current.addCards(OPP_CARDS)
-      this.partnerHandRef.current.addCards(OPP_CARDS)
+    sendReady() {
+     this.context.sockClient.send(`/app/game/${this.gameId}/ready`, {});
     }
 
     render() {
@@ -117,16 +186,18 @@ class Game extends React.Component {
       }
 
       return (
+        <WebsocketConsumer channels={this.channels} connectionCallback={() => this.sendReady()}>
           <View className="game" withFooterHidden withDogImgHidden linkMode={viewLinks.BASIC}>
             <main>
-                <RoundFacts roundNumber={1} activePlayer="You" nextRoundCardAmount={5} nextRoundBeginner="Andrina"/>
-                <NotificationList />
+                <Facts facts={this.state.facts}/>
+                <Notifications notifications={this.state.notifications} />
                 <Board size={500} ref={this.boardRef} />
                 {/*
                 <p onClick={() => this.playCard(this.state.players[1], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from left opponent</p>
                 <p onClick={() => this.playCard(this.state.players[2], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from right opponent</p>
                 */}
 
+                <p onClick={() => this.addNotification()}>add notification</p>
 
                 
                 <HandContainer position="my">
@@ -146,6 +217,7 @@ class Game extends React.Component {
                 <Link to={gameEnd}>Game aborted</Link>
             </main>
           </View>     
+        </WebsocketConsumer>
       );
     }
 }

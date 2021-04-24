@@ -1,7 +1,6 @@
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import { getDomain, isProduction } from "../helpers/domainUtils";
-import sessionManager from "../helpers/sessionManager";
 
 export const createSockClient = () => {
     var state = {

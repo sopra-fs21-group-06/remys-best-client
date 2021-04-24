@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Login from "../views/unauth/Login";
 import Register from "../views/unauth/Register";
@@ -37,6 +37,7 @@ class AppRouter extends React.Component {
                                     <AuthRoute exact path='/choose-place' component={ChoosePlace} isAuth={isAuth}/>
                                     <AuthRoute exact path='/game' component={Game} isAuth={isAuth}/>
                                     <AuthRoute exact path='/game-end' component={GameEnd} isAuth={isAuth}/>
+                                    <Redirect to="/login" />
                                 </Switch>
                             </FadingRoutes>
                         </WebsocketProvider>
