@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,200;0,400;0,500;0,700;1,200;1,400;1,500;1,700&display=swap');
+
+/**
+This file contains the general and shared style of the application.
+ */
+body {
+    position: relative;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: $white;
+    color: $black;
+}
+
+a {
+    color: $black;
+    text-decoration: none;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 25px;
+    font-weight: $bold;
+}
+
+.background {
+    position: fixed;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.6;
+    transform-origin: center center;
+
+    &.BLUE-bottom {
+        @include rotate-bg(0deg);
+    }
+
+    &.GREEN-bottom {
+        @include rotate-bg(90deg);
+    }
+
+    &.RED-bottom {
+        @include rotate-bg(180deg);
+    }
+
+    &.YELLOW-bottom {
+        @include rotate-bg(-90deg);
+    }
+}
+
+.foreground {
+    position: relative;
+    overflow: hidden;
+    @include fullscreen;
+}
+
+.gameScreen {
+    position: fixed;
+    @include fullscreen;
+}
+
+input,
+textarea,
+select,
+button {
+    font-family: inherit;
+    line-height: inherit;
+    font-size: inherit;
+    outline: none;
+}
+
+*:focus {
+    outline: none;
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+}
+
+
+div.blurred-element {
+
+    .container {
+        position: relative;
+
+        .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 9;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.1);
+            // todo fallback browser support
+        }
+
+        .content {
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+div.avatar-box {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.GREEN-bg {
+        background: rgba($green, 0.2);
+    }
+
+    &.RED-bg {
+        background: rgba($red, 0.2);
+    }
+
+    &.BLUE-bg {
+        background: rgba($blue, 0.2);
+    }
+
+    &.YELLOW-bg {
+        background: rgba($yellow, 0.2);
+    }
+
+    img {
+        width: 28px;
+        height: 28px;
+        margin-bottom: 4px;        
+        user-select: none;
+    }
+}
+
+div.box {
+
+    .box-content {
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 17px 22px;
+    }
+}

@@ -1,0 +1,116 @@
+.fadeInOut-enter {
+    opacity: 0;
+}
+
+.fadeInOut-enter-active {
+    opacity: 1;
+    transition: all 150ms ease-in; // has to be the same amount as in FadeInOut.js
+}
+
+.fadeInOut-exit {
+    opacity: 1;
+}
+
+.fadeInOut-exit-active {
+    opacity: 0;
+    transition: all 150ms ease-out; // has to be the same amount as in FadeInOut.js
+}
+
+.popInOrSlideDown-enter {
+    opacity: 0;
+    transform: scale(0.5);
+    max-height: 0px;
+    transform-origin: center center;
+}
+
+.popInOrSlideDown-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 500ms ease-in; // has to be the same amount as in throwIn.js
+    max-height: 120px;
+}
+
+.popInOrSlideDown-enter-done {
+     transition: all 500ms ease-in;
+}
+
+.popInOrSlideDown-exit {
+    opacity: 1;
+}
+
+.popInOrSlideDown-exit-active {
+    opacity: 0;
+    transition: max-all 500ms ease-out;
+    max-height: 0;
+}
+
+.throwIn-enter {
+    opacity: 0;
+    transform: scale(3);
+}
+
+.throwIn-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 500ms ease-in; // has to be the same amount as in throwIn.js
+}
+
+/*
+.throwIn-exit {
+    opacity: 1;
+}
+
+.throwIn-exit-active {
+    opacity: 0;
+    transition: all 500ms ease-out; // has to be the same amount as in throwIn.js
+}
+*/
+
+/////@at-root
+
+
+
+// todo pick up and then fadeout? not both the same time
+.pickUpAndDrop-enter {
+    opacity: 0.8;
+    transform: scale(2);
+}
+
+.pickUpAndDrop-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 500ms ease-in; // has to be the same amount as in pickUpAndDrop.js
+}
+
+.pickUpAndDrop-exit {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.pickUpAndDrop-exit-active {
+    opacity: 0.8;
+    transform: scale(2);
+    transition: all 500ms ease-out; // has to be the same amount as in FadeInOut.js
+}
+
+
+
+
+.fade-appear,
+.fade-enter {
+    opacity: 0;
+}
+
+.fade-appear-active,
+.fade-enter-active {
+    transition: opacity 0.4s linear;
+    opacity: 1;
+}
+
+.fade-exit {
+    opacity: 0;
+}
+
+.fade-exit-active {
+    opacity: 0;
+}

@@ -1,0 +1,266 @@
+.view {
+
+    .dog {
+        width: 90px;
+        display: block;
+        margin: 40px auto;
+    }
+
+    h1  {
+        margin-bottom: 40px;
+
+        &.title {
+            text-align: center;
+        }
+    }
+
+    main {
+        margin: 0 auto;
+
+        &.small {
+            width: 40%;
+            max-width: 380px;
+        }
+
+        &.middle {
+            width: 50%;
+            max-width: 600px;
+        }
+
+        &.large {
+            width: 60%;
+            max-width: 900px;
+        }
+
+        .above-box {
+            width: calc(100% - 30px);
+            margin: 0 auto 16px auto;
+        }
+
+        .below-box {
+            width: calc(100% - 30px);
+            margin: 16px auto 0 auto;
+            color: $black-light;
+            text-align: center;
+        }
+
+        &.side-by-side {
+            display: flex;
+
+            .col {
+                flex: 1;
+                padding: 10px 0;
+
+                &:nth-child(1) {
+                    padding-right: 30px;
+                    border-right: 1px solid lighten(#ADADAD, 10%);
+                }
+
+                &:nth-child(2) {
+                    padding-left: 30px;
+
+                    h1 {
+                        margin-left: 10px;
+                    }
+
+                }
+
+                .navigation-box {
+                    margin-bottom: 16px;
+                    cursor: pointer;
+
+                    .box-content {
+                        transition: all 0.2s ease;
+
+                        &:hover {
+                            background-color: rgba(255, 255, 255, 0.8);
+                        }
+
+                        .box-title {
+                            margin-bottom: 8px;
+                            font-weight: $semi-bold;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .navigation-link {
+        position: absolute;
+
+        a {
+            font-size: 22px;
+        }
+
+        &.header-link {
+            top: $content-margin;
+            left: $content-margin;
+        }
+
+        &.footer-link {
+            bottom: $content-margin;
+            right: $content-margin;
+        }
+    }
+
+    footer {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: $content-margin;
+
+        a {
+            text-decoration: underline;
+        }
+    }
+
+    .waiting-room {
+
+        .above-box {
+            margin-bottom: 25px;
+        }
+
+        .queue {
+
+            .above-players {
+                color: $black-light;
+                text-align: center;
+                margin-bottom: 16px;
+            }
+
+            .players {
+                padding: 10px;
+                background-color: rgba(255, 255, 255, 0.5);
+                display: flex;
+                justify-content: space-around;
+
+                .avatar-box {
+                    flex: 1;
+                }
+            }
+
+            .below-players {
+                color: $black-light;
+                text-align: center;
+                margin-top: 16px;
+            }
+        }
+    }
+
+    .choose-place {
+        width: 80%;
+        max-width: 1200px;
+        margin: 0 auto;
+        @include centerer;
+
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .col-left {
+                flex: 1;
+                padding-right: 20px;
+
+                .box {
+                    
+                    p {
+                        padding-bottom: 12px;
+                        position: relative;
+
+                        &:nth-child(4) {
+                            border-bottom: 1px solid $grey-light;
+                            margin-bottom: 12px;
+                        }
+
+                        &:last-of-type {
+                            padding-bottom: 0;
+                        }
+
+                        span {
+                            font-weight: $semi-bold;
+   
+                            &.remove {
+                                display: inline-block;
+                                position: absolute;
+                                top: calc(50% - 12px/2);
+                                transform: translate(0, -50%);
+                                right: 0;
+                                width: 13px;
+                                height: 13px;
+                                background-size: cover;
+                                background-image: url('../img/cross.png');
+    
+                                &:hover {
+                                    cursor: pointer;
+                                    opacity: 0.7;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .col-right {
+                flex: 2;
+                padding-left: 20px;
+
+                .board-container {
+                    position: relative;
+                    margin: 0 auto;
+
+                    .avatar-BLUE {
+                        @include centerer(true, false);
+                        bottom: 0;
+                    }
+
+                    .avatar-GREEN {
+                        @include centerer(false, true);
+                        right: 0;
+                    }
+
+                    .avatar-RED {
+                        @include centerer(true, false);
+                        top: 0;
+                    }
+
+                    .avatar-YELLOW {
+                        @include centerer(false, true);
+                        left: 0;
+                    }
+
+                    .no-img {
+                        cursor: pointer;
+                        transition: all 0.2s ease-in-out;
+
+                        &:hover {
+                            opacity: 0.7;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .game {
+
+        .avatar {
+            position: absolute;
+            bottom: 5px;
+            left: 128px;
+            z-index: 8;
+
+            .avatar-box {
+                width: 80px;
+                height: 80px;
+
+                img {
+                    width: 38px;
+                    height: 38px;
+                    margin-bottom: 6px;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,57 @@
+.board {
+    @include centerer;
+    // size computed by js
+    
+    .wood {
+        width: 100%;
+        height: auto;
+        z-index: 0;
+    }
+
+    .fields {
+        z-index: 1;
+    }
+
+    .marbles {
+        z-index: 2;
+
+        .marble {
+            position: absolute;
+            display: block;
+            border-radius: 100%;
+            // position, size and color dynamically added by js
+            
+            &.movable {
+                transform: scale(1);
+    
+                &:hover {
+                    cursor: pointer;
+                }
+    
+                &.BLUE {
+                    @include pulse($blue);
+                }
+    
+                &.GREEN {
+                    @include pulse($green);
+                }
+    
+                &.RED {
+                    @include pulse($red);
+                }
+    
+                &.YELLOW {
+                    @include pulse($yellow);
+                }
+            }
+        }
+    }
+
+    .played-card-pile {
+        @include centerer;
+
+        .card-wrapper {
+            @include centerer;
+        }
+    }
+}

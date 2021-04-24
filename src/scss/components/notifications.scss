@@ -1,0 +1,65 @@
+.notification-list {
+    position: absolute;
+    top: $content-margin;
+    right: $content-margin;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    > div {
+         @include disappear;
+    }
+    
+   
+
+    .notification-container {
+        margin-bottom: 16px;
+       
+    }
+   
+
+
+    .notification {
+    
+        p {
+            position: relative;
+            z-index: 6;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 16px;
+            font-size: 14px;
+
+            span {
+                font-weight: $semi-bold;
+            }
+        }
+    }
+
+    /*
+    .container {
+        position: relative;
+        @include disappear;
+        
+        .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            filter: blur(15px);
+        }
+
+        .message {
+            position: relative;
+            z-index: 6;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 15px;
+            border: 1px solid $grey-light;
+            margin-bottom: 16px;
+            padding: 16px;
+            font-size: 14px;
+
+            span {
+                font-weight: $semi-bold;
+            }
+        }
+    }*/
+}
