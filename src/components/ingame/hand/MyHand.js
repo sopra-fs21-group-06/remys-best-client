@@ -64,7 +64,7 @@ class MyHand extends React.Component {
         console.log("marble list received")
         console.log(msg)
 
-        this.props.handlMovableMarbles(msg.marbles)
+        this.props.handleMovableMarbles(msg.marbles)
     }
 
     requestMoves() {
