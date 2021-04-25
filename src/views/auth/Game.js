@@ -21,11 +21,29 @@ class Game extends React.Component {
 
     static contextType = WebsocketContext;
 
-    constructor() {
-      super();
-      this.connected = false;
+    constructor(props) {
+      super(props);
+
+      this.blueHandRef = React.createRef();
+      this.greenHandRef = React.createRef();
+      this.redHandRef = React.createRef();
+      this.yellowHandRef = React.createRef();
+      let players = [];
+      this.props.location.state.players.forEach(player => {
+        if(player.color === "BLUE") {
+          players.push(createPlayer(player.playerName, this.blueHandRef, 0))
+        } else if(player.color === "GREEN") {
+          players.push(createPlayer(player.playerName, this.greenHandRef, 90))
+        } else if(player.color === "RED") {
+          players.push(createPlayer(player.playerName, this.redHandRef, 180))
+        } else if(player.color === "YELLOW") {
+          players.push(createPlayer(player.playerName, this.yellowHandRef, -90))
+        }
+      })
+
+
       this.state = {
-        players: [], // TODO set players and colors in startGame message
+        players: players,
         facts: [],
         notifications: [],
         allCards: [],
@@ -33,10 +51,9 @@ class Game extends React.Component {
         movableMarbles: [],
       }
       this.playMyCard = this.playMyCard.bind(this);
-      this.myHandRef = React.createRef();
-      this.leftHandRef = React.createRef();
-      this.rightHandRef = React.createRef();
-      this.partnerHandRef = React.createRef();
+
+      
+
       this.boardRef = React.createRef();
       this.gameId = sessionManager.getGameId();
       this.channels = [
@@ -45,7 +62,6 @@ class Game extends React.Component {
         createChannel(`/topic/game/${this.gameId}/turn`, (msg) => this.handleTurnChangedMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
         createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg))
-        //createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
       ]
 
       this.exchange = this.exchange.bind(this)
@@ -58,15 +74,7 @@ class Game extends React.Component {
         return createCard(cardCode, cardImages[cardCode])
       })
       this.setState({allCards: allCards});
-       
-
-      // TODO assign player to color and HAND
-      let players = [];
-      players.push(createPlayer("my player", this.myHandRef, 0, "blue"))
-      players.push(createPlayer("username2", this.leftHandRef, -90, "yellow"))
-      players.push(createPlayer("username3", this.rightHandRef, 90, "green"))
-      players.push(createPlayer("username4", this.partnerHandRef, 180, "red"))
-      this.setState({players: players});
+      
     }
 
     generateOtherCards(cardAmount) {
@@ -98,20 +106,30 @@ class Game extends React.Component {
 
     }
 
+    getMyHandRef() {
+      let myHandRef = null
+      this.state.players.forEach(player => {
+        if(player.getPlayerName() === localStorage.getItem("username")) {
+          myHandRef = player.getHandRef()
+        }
+      })
+      return myHandRef
+    }
+
     handleCardsReceivedMessage(msg) {
       let allCards = this.state.allCards;
       let myCards = msg.cards.map(card => {
         return allCards.find(allCardsCard => allCardsCard.getCode() === card.code)
       })
 
-      this.myHandRef.current.addCards(myCards)
+      this.getMyHandRef().current.addCards(myCards)
 
       // TODO how to decide if it's the card from my partner?
       if(myCards.length > 1) {
         let cardAmount = myCards.length;
-        this.leftHandRef.current.addCards(this.generateOtherCards(cardAmount))
-        this.rightHandRef.current.addCards(this.generateOtherCards(cardAmount))
-        this.partnerHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.redHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.greenHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.yellowHandRef.current.addCards(this.generateOtherCards(cardAmount))
       } else {
         this.setState({ mode: roundModes.IDLE})
       }
@@ -155,7 +173,7 @@ class Game extends React.Component {
     }
 
     exchange(cardToExchange) {
-      this.myHandRef.current.removeCard(cardToExchange)
+      this.getMyHandRef().current.removeCard(cardToExchange)
       this.context.sockClient.send(`/app/game/${this.gameId}/card-exchange`, {code: cardToExchange.getCode()}); 
     }
 
@@ -183,18 +201,18 @@ class Game extends React.Component {
 
             
                 <HandContainer position="my">
-                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange} handleMovableMarbles={this.handlMovableMarbles}>
-                    <Hand ref={this.myHandRef} />
+                  <MyHand handRef={this.blueHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange} handleMovableMarbles={this.handlMovableMarbles}>
+                    <Hand ref={this.blueHandRef} />
                   </MyHand>
                 </HandContainer>
                 <HandContainer position="left">
-                  <Hand ref={this.leftHandRef} />
+                  <Hand ref={this.redHandRef} />
                 </HandContainer>
                 <HandContainer position="right">
-                  <Hand ref={this.rightHandRef} />
+                  <Hand ref={this.greenHandRef} />
                 </HandContainer>
                 <HandContainer position="partner">
-                  <Hand ref={this.partnerHandRef} />
+                  <Hand ref={this.yellowHandRef} />
                 </HandContainer>
                 <Link to={gameEnd}>Game aborted</Link>
             </main>
