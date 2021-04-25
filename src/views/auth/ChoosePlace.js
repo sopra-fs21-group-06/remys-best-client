@@ -27,7 +27,6 @@ class ChoosePlace extends React.Component {
     this.gameId = sessionManager.getGameId();
     this.channels = [
       createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
-      createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
     ]
   }
 
@@ -38,14 +37,11 @@ class ChoosePlace extends React.Component {
     players.forEach(player => {
       player.avatar = avatar
     })
+    this.setState({ players: players });
 
-    this.setState({
-      players: players
-    });
-  }
-
-  handleStartGameMessage(){
-    this.props.history.push('/game')
+    if(msg.startGame) {
+      this.props.history.push({pathname: '/game', state: {players: msg.players}})
+    }
   }
 
   handleChangeColor(pickedColorName) {    

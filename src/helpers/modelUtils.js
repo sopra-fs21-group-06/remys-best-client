@@ -70,20 +70,13 @@ export const createCard = (code, imgUrl) => {
     });
 };
 
-export const createPlayer = (username, handRef, handRot, color) => {
-    // A variable defined in a factory or constructor function scope
-    // is private to that function.
-    let _username = username;
+export const createPlayer = (playerName, handRef, handRot) => {
+    let _playerName = playerName;
     let _handRef = handRef;
     let _handRot = handRot;
-    let _color = color;
    
     return ({
-        // Any other functions defined in the same scope are privileged:
-        // These both have access to the private `count` variable
-        // defined anywhere in their scope chain (containing function
-        // scopes).
-        getUsername: () => _username,
+        getPlayerName: () => _playerName,
         getHandRef: () => _handRef,
         getHandRot: () => _handRot
     });
