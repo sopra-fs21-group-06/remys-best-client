@@ -9,7 +9,7 @@ class Facts extends React.Component {
         {this.props.facts.map((fact, index) => {
             return (
                 <div className="fact" key={index}>
-                  <p className="title">{fact.title}</p>
+                  <p className="title">{localStorage.getItem("username") === fact.title ? "You" : fact.title}</p>
                   <p className="subtitle">{fact.subTitle}</p>
                 </div>
             );

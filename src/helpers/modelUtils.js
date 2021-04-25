@@ -1,4 +1,4 @@
-import { getCardNameFromCode } from './remysBestUtils'
+import { getCardNameFromCode, getCardValueFromCode } from './remysBestUtils'
 
 export const createField = (id, left, top, color, size, borderWidth) => {
     let _id = id;
@@ -56,6 +56,7 @@ export const createCard = (code, imgUrl) => {
     let _isRaised = false;
     let _style = {};
     let _name = getCardNameFromCode(code)
+    let _value = getCardValueFromCode(code)
 
     return ({
         getCode: () => _code,
@@ -65,6 +66,7 @@ export const createCard = (code, imgUrl) => {
         getStyle: () => _style,
         setStyle: (style) => _style = style,
         getName: () => _name,
+        getValue: () => _value,
     });
 };
 
