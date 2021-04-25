@@ -16,6 +16,7 @@ import { generateUUID } from '../../helpers/remysBestUtils';
 import sessionManager from "../../helpers/sessionManager";
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import { roundModes } from '../../helpers/constants';
+import { withBackgroundContext } from '../../components/Background';
 
 class Game extends React.Component {
 
@@ -24,23 +25,37 @@ class Game extends React.Component {
     constructor(props) {
       super(props);
 
-      this.blueHandRef = React.createRef();
-      this.greenHandRef = React.createRef();
-      this.redHandRef = React.createRef();
-      this.yellowHandRef = React.createRef();
+      this.myHandRef = React.createRef();
+      this.rightHandRef = React.createRef();
+      this.leftHandRef = React.createRef();
+      this.partnerHandRef = React.createRef();
       let players = [];
-      this.props.location.state.players.forEach(player => {
-        if(player.color === "BLUE") {
-          players.push(createPlayer(player.playerName, this.blueHandRef, 0))
-        } else if(player.color === "GREEN") {
-          players.push(createPlayer(player.playerName, this.greenHandRef, 90))
-        } else if(player.color === "RED") {
-          players.push(createPlayer(player.playerName, this.redHandRef, 180))
-        } else if(player.color === "YELLOW") {
-          players.push(createPlayer(player.playerName, this.yellowHandRef, -90))
+      let foo = this.props.location.state.players
+      let colors = ["BLUE", "GREEN", "RED", "YELLOW"]
+      foo.forEach(player => {
+        if(player.playerName === localStorage.getItem("username")) {
+          players.push(createPlayer(player.playerName, this.myHandRef, 0))
+          let colorIdx = colors.indexOf(player.color)
+          
+
+          // TODO all palyers must be stored (no null values)
+          colorIdx += 1   
+          let rightPlayer = foo.find(player => player.color === colors[colorIdx % colors.length]);
+          if(rightPlayer) {
+            players.push(createPlayer(rightPlayer.playerName, this.rightHandRef, 90))
+          }
+          
+          colorIdx += 1
+          let partnerPlayer = foo.find(player => player.color === colors[colorIdx % colors.length]);
+          players.push(createPlayer(partnerPlayer.playerName, this.partnerHandRef, 180))
+          
+          colorIdx += 1  
+          let leftPlayer = foo.find(player => player.color === colors[colorIdx % colors.length]);
+          if(leftPlayer) {
+            players.push(createPlayer(leftPlayer.playerName, this.leftHandRef, -90))
+          }
         }
       })
-
 
       this.state = {
         players: players,
@@ -74,7 +89,15 @@ class Game extends React.Component {
         return createCard(cardCode, cardImages[cardCode])
       })
       this.setState({allCards: allCards});
-      
+
+
+      // set background
+      let foo = this.props.location.state.players;
+      let myPlayer = foo.find(player => player.playerName === localStorage.getItem("username"))
+      this.props.backgroundContextValue.dispatch({type: `${myPlayer.color}-bottom`})
+
+      // rotate board
+      this.boardRef.current.setBottomClass(`${myPlayer.color}-bottom`)
     }
 
     generateOtherCards(cardAmount) {
@@ -117,6 +140,9 @@ class Game extends React.Component {
     }
 
     handleCardsReceivedMessage(msg) {
+      console.log("-- CARDS RECEIVED ")
+      console.log(msg)
+
       let allCards = this.state.allCards;
       let myCards = msg.cards.map(card => {
         return allCards.find(allCardsCard => allCardsCard.getCode() === card.code)
@@ -127,9 +153,9 @@ class Game extends React.Component {
       // TODO how to decide if it's the card from my partner?
       if(myCards.length > 1) {
         let cardAmount = myCards.length;
-        this.redHandRef.current.addCards(this.generateOtherCards(cardAmount))
-        this.greenHandRef.current.addCards(this.generateOtherCards(cardAmount))
-        this.yellowHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.leftHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.rightHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.partnerHandRef.current.addCards(this.generateOtherCards(cardAmount))
       } else {
         this.setState({ mode: roundModes.IDLE})
       }
@@ -192,7 +218,7 @@ class Game extends React.Component {
             <main>
                 <Facts facts={this.state.facts}/>
                 <Notifications notifications={this.state.notifications} />
-                <Board size={500} ref={this.boardRef} />
+                <Board size={500} ref={this.boardRef}/>
                 {/*
                 <p onClick={() => this.playCard(this.state.players[1], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from left opponent</p>
                 <p onClick={() => this.playCard(this.state.players[2], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from right opponent</p>
@@ -201,18 +227,18 @@ class Game extends React.Component {
 
             
                 <HandContainer position="my">
-                  <MyHand handRef={this.blueHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange} handleMovableMarbles={this.handlMovableMarbles}>
-                    <Hand ref={this.blueHandRef} />
+                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange} handleMovableMarbles={this.handlMovableMarbles}>
+                    <Hand ref={this.myHandRef} />
                   </MyHand>
                 </HandContainer>
                 <HandContainer position="left">
-                  <Hand ref={this.redHandRef} />
+                  <Hand ref={this.leftHandRef} />
                 </HandContainer>
                 <HandContainer position="right">
-                  <Hand ref={this.greenHandRef} />
+                  <Hand ref={this.rightHandRef} />
                 </HandContainer>
                 <HandContainer position="partner">
-                  <Hand ref={this.yellowHandRef} />
+                  <Hand ref={this.partnerHandRef} />
                 </HandContainer>
                 <Link to={gameEnd}>Game aborted</Link>
             </main>
@@ -222,4 +248,4 @@ class Game extends React.Component {
     }
 }
 
-export default withRouter(Game);
+export default withRouter(withBackgroundContext(Game));
