@@ -3,6 +3,8 @@ import { FadeInOut } from '../../transitions/FadeInOut';
 import { roundModes } from '../../../helpers/constants';
 import { WebsocketContext } from '../../websocket/WebsocketProvider';
 import sessionManager from "../../../helpers/sessionManager";
+import WebsocketConsumer from '../..//websocket/WebsocketConsumer';
+import { createChannel } from '../../../helpers/modelUtils';
 
 class MyHand extends React.Component {
 
@@ -11,10 +13,17 @@ class MyHand extends React.Component {
     constructor() {
         super();
         this.state = {
-            raisedCard: null
+            raisedCard: null,
+            selectedMoveName: null,
+            moves: [],
         };
         this.gameId = sessionManager.getGameId();
         this.handleRaiseCard = this.handleRaiseCard.bind(this);
+
+        this.channels = [
+            createChannel(`/user/queue/game/${this.gameId}/move-list`, (msg) => this.handleMoveListMessage(msg)),
+            createChannel(`/user/queue/game/${this.gameId}/marble-list`, (msg) => this.handleMarbleListMessage(msg))
+        ]
     }
 
     handleRaiseCard(card) {
@@ -22,7 +31,11 @@ class MyHand extends React.Component {
         if(this.state.raisedCard == card) {
             this.setState({raisedCard: null});
         } else {
-            this.setState({raisedCard: card});
+            this.setState({raisedCard: card}, () => {
+                if(this.props.mode === roundModes.MY_TURN) {
+                    this.requestMoves();
+                }
+            });
         }
         this.props.handRef.current.raiseCard(card);
     }
@@ -30,43 +43,73 @@ class MyHand extends React.Component {
     play() {
         console.log("MyHand - play")
         this.props.playMyCard(this.state.raisedCard, null)
-        /*
-        this.handRef.current.props.playCard([this.state.raisedCard]);
-        this.handRef.current.removeCard([this.state.raisedCard]);
-        this.setState({raisedCard: null});*/
+        this.handleRaiseCard(null);
+
+        // TODO seven, send marble ids aswell
+        this.context.sockClient.send(`/app/game/${this.gameId}/play`, {code: this.state.raisedCard.getCode(), moveName: this.state.selectedMoveName});
     }
 
     reset() {
         console.log("reset")
     }
 
+    handleMoveListMessage(msg) {
+        console.log("move list received")
+        console.log(msg)
+
+        this.setState({ moves: msg.moves })
+    }
+
+    handleMarbleListMessage(msg) {
+        console.log("marble list received")
+        console.log(msg)
+
+        this.props.handlMovableMarbles(msg.marbles)
+    }
+
+    requestMoves() {
+        this.context.sockClient.send(`/app/game/${this.gameId}/move-request`, {code: this.state.raisedCard.getCode()}); 
+    }
+
+    requestMarbles(moveName) {
+        this.setState({ selectedMoveName: moveName })
+        this.context.sockClient.send(`/app/game/${this.gameId}/marble-request`, {code: this.state.raisedCard.getCode(), moveName: moveName}); 
+    }
+
+    exchange() {
+        this.handleRaiseCard(null)
+        this.props.exchange(this.state.raisedCard)
+    }
+
     render() {
         return (
-            <div>
-                <div className="card-options">
-                    <FadeInOut in={this.state.raisedCard ? true : false}>
-                        <p>forwards</p>
-                        <p>4 backwards</p>
-                        <p>split</p>
-                        <p>go to start</p>
-                        <p>exchange</p>
-                    </FadeInOut>
+            <WebsocketConsumer channels={this.channels} >
+                <div>
+                    <div className="card-options">
+                        <FadeInOut in={this.state.moves.length != 0}>
+                            {this.state.moves.map(move => {
+                                return (
+                                    <p key={move.moveName} onClick={() => this.requestMarbles(move.moveName)}>{move.moveName}</p>
+                                );
+                            })}
+                        </FadeInOut>
+                    </div>
+                    <div className="my-hand-wrapper">
+                        {React.cloneElement(this.props.children, { onCardClick: this.handleRaiseCard})}
+                    </div>
+                    <div className="card-menu">
+                        <FadeInOut in={this.props.mode === roundModes.EXCHANGE && this.state.raisedCard != null}>
+                            <p onClick={() => this.exchange()}>{this.state.raisedCard && "Send " + this.state.raisedCard.getValue()}</p>
+                        </FadeInOut>
+                        <FadeInOut in={this.props.mode === roundModes.MY_TURN}>
+                            <p>Choose Move</p>
+                            <p>Choose Marble</p>
+                            <p onClick={() => this.play()}>Play</p>
+                            <p onClick={() => this.reset()}>Reset</p>
+                        </FadeInOut>
+                    </div>
                 </div>
-                <div className="my-hand-wrapper">
-                    {React.cloneElement(this.props.children, { onCardClick: this.handleRaiseCard})}
-                </div>
-                <div className="card-menu">
-                    <FadeInOut in={this.state.raisedCard != null && this.props.mode === roundModes.EXCHANGE}>
-                        <p onClick={() => this.props.exchange(this.state.raisedCard)}>{this.state.raisedCard && "Send " + this.state.raisedCard.getName()}</p>
-                    </FadeInOut>
-                    <FadeInOut in={this.props.mode === roundModes.MY_TURN}>
-                        <p>Choose Move</p>
-                        <p>Choose Marble</p>
-                        <p onClick={() => this.play()}>Play</p>
-                        <p onClick={() => this.reset()}>Reset</p>
-                    </FadeInOut>
-                </div>
-            </div>
+            </WebsocketConsumer>
         );
     }
 }

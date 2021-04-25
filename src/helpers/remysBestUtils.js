@@ -49,7 +49,6 @@ export const getCardNameFromCode = (code) => {
     }
 
     let cardName = ""
-    let value = code.slice(0, 1)
     let suit = code.slice(1, 2)
 
     if(suit === "C") {
@@ -64,35 +63,48 @@ export const getCardNameFromCode = (code) => {
 
     cardName += " "
 
-    if(value === "2") {
-        cardName += "Two"
-    } else if(value === "3") {
-        cardName += "Three"
-    } else if(value === "4") {
-        cardName += "Four"
-    } else if(value === "5") {
-        cardName += "Five"
-    } else if(value === "6") {
-        cardName += "Six"
-    } else if(value === "7") {
-        cardName += "Seven"
-    } else if(value === "8") {
-        cardName += "Eight"
-    } else if(value === "9") {
-        cardName += "Nine"
-    } else if(value === "0") {
-        cardName += "Ten"
-    } else if(value === "J") {
-        cardName += "Jack"
-    } else if(value === "Q") {
-        cardName += "Queen"
-    } else if(value === "K") {
-        cardName += "King"
-    } else if(value === "A") {
-        cardName += "Ace"
-    } 
+    cardName += getCardValueFromCode(code)
 
     return cardName;
+}
+
+export const getCardValueFromCode = (code) => {
+    if(code === "X1" || code === "X2") {
+        return "Joker"
+    }
+
+    let cardValue = ""
+    let value = code.slice(0, 1)
+
+    if(value === "2") {
+        cardValue += "Two"
+    } else if(value === "3") {
+        cardValue += "Three"
+    } else if(value === "4") {
+        cardValue += "Four"
+    } else if(value === "5") {
+        cardValue += "Five"
+    } else if(value === "6") {
+        cardValue += "Six"
+    } else if(value === "7") {
+        cardValue += "Seven"
+    } else if(value === "8") {
+        cardValue += "Eight"
+    } else if(value === "9") {
+        cardValue += "Nine"
+    } else if(value === "0") {
+        cardValue += "Ten"
+    } else if(value === "J") {
+        cardValue += "Jack"
+    } else if(value === "Q") {
+        cardValue += "Queen"
+    } else if(value === "K") {
+        cardValue += "King"
+    } else if(value === "A") {
+        cardValue += "Ace"
+    } 
+
+    return cardValue;
 }
 
 export const computeFields = (boardSize) => {

@@ -25,11 +25,12 @@ class Game extends React.Component {
       super();
       this.connected = false;
       this.state = {
-        players: [], // TODO get players from sessionManager?? (via choose color screen?) or from startGame topic??
+        players: [], // TODO set players and colors in startGame message
         facts: [],
         notifications: [],
         allCards: [],
-        mode: roundModes.IDLE
+        mode: roundModes.IDLE,
+        movableMarbles: [],
       }
       this.playMyCard = this.playMyCard.bind(this);
       this.myHandRef = React.createRef();
@@ -41,11 +42,14 @@ class Game extends React.Component {
       this.channels = [
         createChannel(`/topic/game/${this.gameId}/facts`, (msg) => this.handleFactsMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/notification`, (msg) => this.handleNotificationMessage(msg)),
+        createChannel(`/topic/game/${this.gameId}/turn`, (msg) => this.handleTurnChangedMessage(msg)),
+        createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
         createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg))
         //createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
       ]
 
       this.exchange = this.exchange.bind(this)
+      this.handleMovableMarbles = this.handleMovableMarbles.bind(this)
     }
 
     componentDidMount() {
@@ -75,8 +79,6 @@ class Game extends React.Component {
 
     handleFactsMessage(msg) {
       this.setState({ facts: msg.facts })
-
-      this.setState({ mode: roundModes.EXCHANGE })
     } 
 
     handleNotificationMessage(msg) {
@@ -89,6 +91,11 @@ class Game extends React.Component {
               notification
           ],
       });
+
+      if(notification.action === "Card Exchange") {
+        this.setState({ mode: roundModes.EXCHANGE })
+      }
+
     }
 
     handleCardsReceivedMessage(msg) {
@@ -98,10 +105,34 @@ class Game extends React.Component {
       })
 
       this.myHandRef.current.addCards(myCards)
-      let cardAmount = myCards.length;
-      this.leftHandRef.current.addCards(this.generateOtherCards(cardAmount))
-      this.rightHandRef.current.addCards(this.generateOtherCards(cardAmount))
-      this.partnerHandRef.current.addCards(this.generateOtherCards(cardAmount))
+
+      // TODO how to decide if it's the card from my partner?
+      if(myCards.length > 1) {
+        let cardAmount = myCards.length;
+        this.leftHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.rightHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.partnerHandRef.current.addCards(this.generateOtherCards(cardAmount))
+      } else {
+        this.setState({ mode: roundModes.IDLE})
+      }
+    }
+
+    handleTurnChangedMessage(msg) {
+      if(localStorage.getItem("username") === msg.playerName) {
+        this.setState({ mode: roundModes.MY_TURN })
+      }
+
+      // TODO show current turn big message over whole screen
+    }
+
+    handlePlayedMessage(msg) {
+      // TODO play card from players hand if not my player
+    }
+
+    handleMovableMarbles(movableMarbles) {
+      console.log("movable marbles received in game")
+      console.log(movableMarbles)
+      this.setState({ movableMarbles: movableMarbles })
     }
 
     playMyCard(card, move) {
@@ -124,7 +155,6 @@ class Game extends React.Component {
     }
 
     exchange(cardToExchange) {
-      console.log("exchange")
       this.myHandRef.current.removeCard(cardToExchange)
       this.context.sockClient.send(`/app/game/${this.gameId}/card-exchange`, {code: cardToExchange.getCode()}); 
     }
@@ -153,7 +183,7 @@ class Game extends React.Component {
 
             
                 <HandContainer position="my">
-                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange}>
+                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange} handleMovableMarbles={this.handlMovableMarbles}>
                     <Hand ref={this.myHandRef} />
                   </MyHand>
                 </HandContainer>
