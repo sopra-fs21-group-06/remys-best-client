@@ -1,6 +1,24 @@
 .board {
-    @include centerer;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     // size computed by js
+
+    &.BLUE-bottom {
+        @include rotate-bg(0deg);
+    }
+
+    &.GREEN-bottom {
+        @include rotate-bg(90deg);
+    }
+
+    &.RED-bottom {
+        @include rotate-bg(180deg);
+    }
+
+    &.YELLOW-bottom {
+        @include rotate-bg(-90deg);
+    }
     
     .wood {
         width: 100%;

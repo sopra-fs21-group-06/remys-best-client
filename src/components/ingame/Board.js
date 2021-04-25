@@ -19,7 +19,8 @@ class Board extends React.Component {
             size: this.props.size, // this.props.size? -> always width 100% make wrapper around each board with dynamic sizes? on resize recompute
             fields: [],
             marbles: [],
-            playedCards: []
+            playedCards: [],
+            bottomClass: "BLUE-bottom"
         };
     }
 
@@ -110,9 +111,13 @@ class Board extends React.Component {
         }.bind(this), 1000);
     }
 
+    setBottomClass(bottomClass) {
+        this.setState({bottomClass: bottomClass})
+    }
+
     render() {
         return (
-            <div className="board" style={{width: this.state.size, height: this.state.size}}>
+            <div className={"board " + this.state.bottomClass} style={{width: this.state.size, height: this.state.size}}>
                 <img className="wood" src={wood} />
                 <div className="fields">
                     {this.state.fields.map(field => {

@@ -125,21 +125,3 @@ class ChoosePlace extends React.Component {
 }
 
 export default withRouter(ChoosePlace);
-
-
-
-/*
-
-<BackgroundContext.Consumer>
-            {context => (
-              <div>
-                <button onClick={() => context.dispatch({type: "blue-bottom"})}>Change blue</button>
-                <button onClick={() => context.dispatch({type: "yellow-bottom"})}>Change yellow</button>
-                <button onClick={() => context.dispatch({type: "red-bottom"})}>Change red</button>
-                <button onClick={() => context.dispatch({type: "green-bottom"})}>Change green</button>
-              </div>
-            )} 
-          </BackgroundContext.Consumer>
-
-
-          */
