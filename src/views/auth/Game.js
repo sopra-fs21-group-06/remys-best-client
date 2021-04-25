@@ -227,7 +227,7 @@ class Game extends React.Component {
 
             
                 <HandContainer position="my">
-                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange} handleMovableMarbles={this.handlMovableMarbles}>
+                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange} handleMovableMarbles={this.handleMovableMarbles}>
                     <Hand ref={this.myHandRef} />
                   </MyHand>
                 </HandContainer>
