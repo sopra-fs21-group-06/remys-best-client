@@ -153,7 +153,8 @@ class Game extends React.Component {
           this.boardRef.current.throwInCard(player, this.getCardFromCode(cardCodeToPlay));
       }.bind(this), 300);
       setTimeout(function() { 
-          this.boardRef.current.moveMarble(marblesToMove[0].marbleId, marblesToMove[0].targetFieldId)
+        let targetFieldKey = String(marblesToMove[0].targetFieldId) + String(marblesToMove[0].targetFieldColor)
+        this.boardRef.current.moveMarble(marblesToMove[0].marbleId, targetFieldKey)
       }.bind(this), 1300);
     }
 
