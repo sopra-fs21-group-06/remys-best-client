@@ -164,7 +164,7 @@ class Hand extends React.Component {
                                 key={card.getCode()} 
                                 card={card}
                                 onCardClick={this.props.onCardClick}
-                                isMyTurn={this.props.isMyTurn}
+                                isActive={this.props.isActive}
                             />
                         );
                     })}

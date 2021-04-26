@@ -1,12 +1,14 @@
 import { getCardNameFromCode, getCardValueFromCode } from './remysBestUtils'
 
-export const createField = (id, left, top, color, size, borderWidth) => {
+export const createField = (id, left, top, color, size, borderWidth, isColorShown) => {
     let _id = id;
     let _left = left;
     let _top = top;
     let _color = color;
     let _size = size;
     let _borderWidth = borderWidth;
+    let _key = String(_id) + (color ? color.name : '')
+    let _isColorShown = isColorShown
 
     return ({
         getId: () => _id,
@@ -14,26 +16,31 @@ export const createField = (id, left, top, color, size, borderWidth) => {
         getTop: () => _top,
         getColor: () => _color,
         getSize: () => _size,
-        getBorderWidth: () => _borderWidth
+        getBorderWidth: () => _borderWidth,
+        getKey: () => _key,
+        getIsColorShown: () => _isColorShown
     });
 };
 
-export const createMarble = (id, fieldId, color, isMovable, isVisible) => {
+export const createMarble = (id, fieldKey, color, isMovable, isVisible) => {
     let _id = id;
-    let _fieldId = fieldId;
+    let _fieldKey = String(fieldKey);
     let _color = color;
     let _isMovable = isMovable;
     let _isVisible = isVisible;
+    let _isSelected = false;
 
     return ({
         getId: () => _id,
-        getFieldId: () => _fieldId,
-        setFieldId: (fieldId) => _fieldId = fieldId,
+        getFieldKey: () => _fieldKey,
+        setFieldKey: (fieldKey) => _fieldKey = String(fieldKey),
         getColor: () => _color,
         getIsMovable: () => _isMovable,
         setIsMovable: (isMovable) => _isMovable = isMovable,
         getIsVisible: () => _isVisible,
         setIsVisible: (isVisible) => _isVisible = isVisible,
+        getIsSelected: () => _isSelected,
+        setIsSelected: (isSelected) => _isSelected = isSelected,
     });
 };
 

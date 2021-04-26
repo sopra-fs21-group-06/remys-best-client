@@ -25,10 +25,10 @@ class Card extends React.Component {
         return (
             <div className="card-wrapper">
                 <img 
-                    className={"card " + (this.props.isMyTurn ? "raisable" : '')} 
+                    className={"card " + (this.props.isActive ? "raisable" : '')} 
                     src={imgUrl} 
                     style={styles} 
-                    onClick={this.props.onCardClick ? () => this.props.onCardClick(this.props.card) : null}
+                    onClick={this.props.isActive ? () => this.props.onCardClick(this.props.card) : null}
                 />
             </div>
         );
