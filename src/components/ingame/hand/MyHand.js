@@ -3,7 +3,7 @@ import { FadeInOut } from '../../transitions/FadeInOut';
 import { roundModes } from '../../../helpers/constants';
 import { WebsocketContext } from '../../websocket/WebsocketProvider';
 import sessionManager from "../../../helpers/sessionManager";
-import WebsocketConsumer from '../..//websocket/WebsocketConsumer';
+import WebsocketConsumer from '../../websocket/WebsocketConsumer';
 import { createChannel } from '../../../helpers/modelUtils';
 
 class MyHand extends React.Component {
@@ -16,20 +16,33 @@ class MyHand extends React.Component {
             raisedCard: null,
             selectedMoveName: null,
             moves: [],
+            isMarbleChosen: false
         };
         this.gameId = sessionManager.getGameId();
         this.handleRaiseCard = this.handleRaiseCard.bind(this);
 
         this.channels = [
             createChannel(`/user/queue/game/${this.gameId}/move-list`, (msg) => this.handleMoveListMessage(msg)),
-            createChannel(`/user/queue/game/${this.gameId}/marble-list`, (msg) => this.handleMarbleListMessage(msg))
         ]
     }
 
+    getCardToPlay() {
+        return this.state.raisedCard;
+    }
+
+    getMoveNameToPlay() {
+        return this.state.selectedMoveName;
+    }
+
+    resetRaiseCard() {
+        this.handleRaiseCard(null)
+    }
+
     handleRaiseCard(card) {
-        console.log("MyHand - raise card")
-        if(this.state.raisedCard == card) {
+        if(card === null || this.state.raisedCard === card) {
             this.setState({raisedCard: null});
+            this.resetMoves();
+            this.resetSelectedMoveName();
         } else {
             this.setState({raisedCard: card}, () => {
                 if(this.props.mode === roundModes.MY_TURN) {
@@ -37,16 +50,7 @@ class MyHand extends React.Component {
                 }
             });
         }
-        this.props.handRef.current.raiseCard(card);
-    }
-
-    play() {
-        console.log("MyHand - play")
-        this.props.playMyCard(this.state.raisedCard, null)
-        this.handleRaiseCard(null);
-
-        // TODO seven, send marble ids aswell
-        this.context.sockClient.send(`/app/game/${this.gameId}/play`, {code: this.state.raisedCard.getCode(), moveName: this.state.selectedMoveName});
+        this.props.myHandRef.current.raiseCard(card);
     }
 
     reset() {
@@ -60,26 +64,35 @@ class MyHand extends React.Component {
         this.setState({ moves: msg.moves })
     }
 
-    handleMarbleListMessage(msg) {
-        console.log("marble list received")
-        console.log(msg)
-
-        this.props.handleMovableMarbles(msg.marbles)
-    }
-
     requestMoves() {
         this.context.sockClient.send(`/app/game/${this.gameId}/move-request`, {code: this.state.raisedCard.getCode()}); 
+    }
+
+    resetMoves() {
+        this.setState({ moves: [] })
+    }
+
+    resetSelectedMoveName() {
+        this.setState({ selectedMoveName: null })
     }
 
     requestMarbles(moveName) {
         this.setState({ selectedMoveName: moveName })
         this.context.sockClient.send(`/app/game/${this.gameId}/marble-request`, {code: this.state.raisedCard.getCode(), moveName: moveName}); 
+        this.resetMoves()
     }
 
     exchange() {
-        this.handleRaiseCard(null)
-        this.props.exchange(this.state.raisedCard)
+        let cardToExchange = this.state.raisedCard
+        this.context.sockClient.send(`/app/game/${this.gameId}/card-exchange`, {code: cardToExchange.getCode()});
+        this.props.myHandRef.current.removeCard(cardToExchange)
+        this.resetRaiseCard()
     }
+
+    setIsMarbleChosen(isMarbleChosen) {
+        this.setState({isMarbleChosen: isMarbleChosen})
+    }
+
 
     render() {
         return (
@@ -89,7 +102,7 @@ class MyHand extends React.Component {
                         <FadeInOut in={this.state.moves.length != 0}>
                             {this.state.moves.map(move => {
                                 return (
-                                    <p key={move.moveName} onClick={() => this.requestMarbles(move.moveName)}>{move.moveName}</p>
+                                    <div><p key={move.moveName} className="clickable" onClick={() => this.requestMarbles(move.moveName)}>{move.moveName}</p></div>
                                 );
                             })}
                         </FadeInOut>
@@ -99,13 +112,13 @@ class MyHand extends React.Component {
                     </div>
                     <div className="card-menu">
                         <FadeInOut in={this.props.mode === roundModes.EXCHANGE && this.state.raisedCard != null}>
-                            <p onClick={() => this.exchange()}>{this.state.raisedCard && "Send " + this.state.raisedCard.getValue()}</p>
+                            <p className="clickable" onClick={() => this.exchange()}>{this.state.raisedCard && "Send " + this.state.raisedCard.getValue()}</p>
                         </FadeInOut>
                         <FadeInOut in={this.props.mode === roundModes.MY_TURN}>
-                            <p>Choose Move</p>
-                            <p>Choose Marble</p>
-                            <p onClick={() => this.play()}>Play</p>
-                            <p onClick={() => this.reset()}>Reset</p>
+                            <div><p>{"Choose Move"}{this.state.selectedMoveName && (" (" + this.state.selectedMoveName + ")")}</p></div>
+                            <div><p>{"Choose Marble"}{this.state.isMarbleChosen && (" (chosen)")}</p></div>
+                            <div><p className="clickable" onClick={() => this.props.play()}>Play</p></div>
+                            <div><p className="clickable" onClick={() => this.props.reset()}>Reset</p></div>
                         </FadeInOut>
                     </div>
                 </div>

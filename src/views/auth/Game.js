@@ -12,7 +12,7 @@ import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import { createChannel, createCard } from '../../helpers/modelUtils';
-import { generateUUID } from '../../helpers/remysBestUtils';
+import { generateUUID, assignPlayersToColors } from '../../helpers/remysBestUtils';
 import sessionManager from "../../helpers/sessionManager";
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import { roundModes } from '../../helpers/constants';
@@ -25,51 +25,24 @@ class Game extends React.Component {
     constructor(props) {
       super(props);
 
+      this.boardRef = React.createRef();
+      this.myHandContainerRef = React.createRef();
       this.myHandRef = React.createRef();
       this.rightHandRef = React.createRef();
       this.leftHandRef = React.createRef();
       this.partnerHandRef = React.createRef();
-      let players = [];
-      let foo = this.props.location.state.players
-      let colors = ["BLUE", "GREEN", "RED", "YELLOW"]
-      foo.forEach(player => {
-        if(player.playerName === localStorage.getItem("username")) {
-          players.push(createPlayer(player.playerName, this.myHandRef, 0))
-          let colorIdx = colors.indexOf(player.color)
-          
-
-          // TODO all palyers must be stored (no null values)
-          colorIdx += 1   
-          let rightPlayer = foo.find(player => player.color === colors[colorIdx % colors.length]);
-          if(rightPlayer) {
-            players.push(createPlayer(rightPlayer.playerName, this.rightHandRef, 90))
-          }
-          
-          colorIdx += 1
-          let partnerPlayer = foo.find(player => player.color === colors[colorIdx % colors.length]);
-          players.push(createPlayer(partnerPlayer.playerName, this.partnerHandRef, 180))
-          
-          colorIdx += 1  
-          let leftPlayer = foo.find(player => player.color === colors[colorIdx % colors.length]);
-          if(leftPlayer) {
-            players.push(createPlayer(leftPlayer.playerName, this.leftHandRef, -90))
-          }
-        }
-      })
 
       this.state = {
-        players: players,
+        players: assignPlayersToColors(this.props.location.state.players, this.myHandRef, this.rightHandRef, this.partnerHandRef, this.leftHandRef),
         facts: [],
         notifications: [],
         allCards: [],
         mode: roundModes.IDLE,
-        movableMarbles: [],
+        moveNameToPlay: null,
+        marblesToPlay: []
       }
-      this.playMyCard = this.playMyCard.bind(this);
-
-      
-
-      this.boardRef = React.createRef();
+      this.play = this.play.bind(this);
+      this.reset = this.reset.bind(this);
       this.gameId = sessionManager.getGameId();
       this.channels = [
         createChannel(`/topic/game/${this.gameId}/facts`, (msg) => this.handleFactsMessage(msg)),
@@ -78,9 +51,6 @@ class Game extends React.Component {
         createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
         createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg))
       ]
-
-      this.exchange = this.exchange.bind(this)
-      this.handleMovableMarbles = this.handleMovableMarbles.bind(this)
     }
 
     componentDidMount() {
@@ -92,6 +62,7 @@ class Game extends React.Component {
 
 
       // set background
+      
       let foo = this.props.location.state.players;
       let myPlayer = foo.find(player => player.playerName === localStorage.getItem("username"))
       this.props.backgroundContextValue.dispatch({type: `${myPlayer.color}-bottom`})
@@ -100,12 +71,47 @@ class Game extends React.Component {
       this.boardRef.current.setBottomClass(`${myPlayer.color}-bottom`)
     }
 
+    getHandRef(playerName) {
+      let player = this.state.players.find(player => player.getPlayerName() === playerName)
+      return player.getHandRef()
+    }
+
+    getMyHandRef() {
+      return this.getHandRef(localStorage.getItem("username"))
+    }
+
+    getCardFromCode(code) {
+      return this.state.allCards.find(card => card.getCode() === code)
+    }
+    
     generateOtherCards(cardAmount) {
       let otherCards = [];
       for(let i = 0; i < cardAmount; i++) {
         otherCards.push(createCard(generateUUID(), dogCard))
       }
       return otherCards;
+    }
+
+    play() {
+      let cardToPlay = this.myHandContainerRef.current.getCardToPlay();
+      let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
+      let marbleToPlay = this.boardRef.current.getMarbleToPlay();
+
+      let marbles = [{id: marbleToPlay.getId()}];
+     
+      this.context.sockClient.send(`/app/game/${this.gameId}/play`, {code: cardToPlay.getCode(), moveName: moveNameToPlay, marbles: marbles});
+    }
+
+    reset() {
+      this.myHandContainerRef.current.resetRaiseCard();
+      this.myHandContainerRef.current.resetMoves();
+      this.myHandContainerRef.current.resetSelectedMoveName();
+      this.boardRef.current.resetMovableMarbles()
+      this.boardRef.current.resetSelectedMarble()
+    }
+
+    sendReady() {
+     this.context.sockClient.send(`/app/game/${this.gameId}/ready`, {});
     }
 
     handleFactsMessage(msg) {
@@ -126,28 +132,37 @@ class Game extends React.Component {
       if(notification.action === "Card Exchange") {
         this.setState({ mode: roundModes.EXCHANGE })
       }
-
     }
 
-    getMyHandRef() {
-      let myHandRef = null
-      this.state.players.forEach(player => {
-        if(player.getPlayerName() === localStorage.getItem("username")) {
-          myHandRef = player.getHandRef()
-        }
-      })
-      return myHandRef
+    handleTurnChangedMessage(msg) {
+      if(localStorage.getItem("username") === msg.playerName) {
+        this.setState({ mode: roundModes.MY_TURN })
+      }
+      // TODO show current turn big message over whole screen
+    }
+
+    handlePlayedMessage(msg) {
+      console.log("received played message")
+      console.log(msg)
+
+      let cardCodeToPlay = msg.card.code
+      let playerName = msg.playerName
+      let marblesToMove = msg.marbles
+      let player = this.state.players.find(player => player.getPlayerName() === playerName)
+
+      setTimeout(function(){ 
+          this.boardRef.current.throwInCard(player, this.getCardFromCode(cardCodeToPlay));
+      }.bind(this), 300);
+      setTimeout(function() { 
+          this.boardRef.current.moveMarble(marblesToMove[0].marbleId, marblesToMove[0].targetFieldId)
+      }.bind(this), 1300);
     }
 
     handleCardsReceivedMessage(msg) {
-      console.log("-- CARDS RECEIVED ")
-      console.log(msg)
-
-      let allCards = this.state.allCards;
       let myCards = msg.cards.map(card => {
-        return allCards.find(allCardsCard => allCardsCard.getCode() === card.code)
+        return this.getCardFromCode(card.code)
       })
-
+      
       this.getMyHandRef().current.addCards(myCards)
 
       // TODO how to decide if it's the card from my partner?
@@ -159,48 +174,6 @@ class Game extends React.Component {
       } else {
         this.setState({ mode: roundModes.IDLE})
       }
-    }
-
-    handleTurnChangedMessage(msg) {
-      if(localStorage.getItem("username") === msg.playerName) {
-        this.setState({ mode: roundModes.MY_TURN })
-      }
-
-      // TODO show current turn big message over whole screen
-    }
-
-    handlePlayedMessage(msg) {
-      // TODO play card from players hand if not my player
-    }
-
-    handleMovableMarbles(movableMarbles) {
-      console.log("movable marbles received in game")
-      console.log(movableMarbles)
-      this.setState({ movableMarbles: movableMarbles })
-    }
-
-    playMyCard(card, move) {
-      this.playCard(this.state.players[0], card, move)
-    }
-
-    playCard(player, card, move) {
-      player.getHandRef().current.removeCard(card)
-      setTimeout(function(){ 
-          // todo add player position for rotation
-          this.boardRef.current.throwInCard(player, card);
-      }.bind(this), 300);
-      setTimeout(function(){ 
-          this.boardRef.current.moveMarble()
-      }.bind(this), 1300);
-    }
-
-    sendReady() {
-     this.context.sockClient.send(`/app/game/${this.gameId}/ready`, {});
-    }
-
-    exchange(cardToExchange) {
-      this.getMyHandRef().current.removeCard(cardToExchange)
-      this.context.sockClient.send(`/app/game/${this.gameId}/card-exchange`, {code: cardToExchange.getCode()}); 
     }
 
     render() {
@@ -218,17 +191,16 @@ class Game extends React.Component {
             <main>
                 <Facts facts={this.state.facts}/>
                 <Notifications notifications={this.state.notifications} />
-                <Board size={500} ref={this.boardRef}/>
+                <Board size={500} ref={this.boardRef} myHandContainerRef={this.myHandContainerRef}/>
+
                 {/*
                 <p onClick={() => this.playCard(this.state.players[1], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from left opponent</p>
                 <p onClick={() => this.playCard(this.state.players[2], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from right opponent</p>
                 */}
 
-
-            
                 <HandContainer position="my">
-                  <MyHand handRef={this.myHandRef} playMyCard={this.playMyCard} mode={this.state.mode} exchange={this.exchange} handleMovableMarbles={this.handleMovableMarbles}>
-                    <Hand ref={this.myHandRef} />
+                  <MyHand ref={this.myHandContainerRef} myHandRef={this.myHandRef} mode={this.state.mode} play={this.play} reset={this.reset}>
+                    <Hand ref={this.myHandRef} isActive={this.state.mode !== roundModes.IDLE}/>
                   </MyHand>
                 </HandContainer>
                 <HandContainer position="left">

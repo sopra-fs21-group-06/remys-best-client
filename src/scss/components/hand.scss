@@ -31,7 +31,7 @@
         .hand {
             min-width: 337px; // TODO comare with js
             @include centerer(true, false);
-            bottom: -60px;
+            bottom: -75px; // TODO 60?
 
             .card {
                 position: absolute;
@@ -43,7 +43,7 @@
                 user-select: none;
 
                 &.raisable {
-                    border: 3px solid $blue-light;
+                    //border: 3px solid $blue-light;
 
                     &:hover {
                         cursor: pointer;
@@ -73,7 +73,7 @@
                 flex: 1;
                 padding-right: 20px;
                 text-align: right;
-                min-width: 150px;
+                min-width: 250px;
 
                 p {
                     line-height: 1.5;
@@ -87,7 +87,7 @@
             .card-menu {
                 flex: 1;
                 padding-left: 20px;
-                min-width: 150px;
+                min-width: 250px;
 
                 p {
                     line-height: 1.5;

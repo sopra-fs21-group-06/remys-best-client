@@ -1,5 +1,5 @@
 import { colors } from './constants'
-import { createField } from './modelUtils'
+import { createField, createMarble, createPlayer } from './modelUtils'
 
 export const generateUUID = () => { // Public Domain/MIT
     var d = new Date().getTime(); //Timestamp
@@ -62,7 +62,6 @@ export const getCardNameFromCode = (code) => {
     }
 
     cardName += " "
-
     cardName += getCardValueFromCode(code)
 
     return cardName;
@@ -135,35 +134,35 @@ export const computeFields = (boardSize) => {
         },
     }
 
-    const addFieldPosition = (fieldPositions, left, top, color) => {
-        fieldPositions.push({left: left, top: top, color: color})
+    const addFieldPosition = (fieldPositions, left, top, color, index) => {
+        fieldPositions.push({left: left, top: top, color: color, index: index})
     }
 
     const addKennel = (fieldPositions, curLeft, curTop, color) => {
         curLeft += SIZE/10 - directions.TO_RIGHT.leftDiff;
-        addStraightLine(fieldPositions, curLeft, curTop, directions.TO_RIGHT, color);
+        addStraightLine(fieldPositions, curLeft, curTop, directions.TO_RIGHT, color, 5);
     }
 
-    const addFinishZone = (fieldPositions, curLeft, curTop, color) => {
+    const addFinishZone = (fieldPositions, curLeft, curTop, color, fixedStartingIndex) => {
         curTop -= SIZE/12;
         curLeft -= SIZE/100;
-        addFieldPosition(fieldPositions, curLeft, curTop, color);
+        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex);
         curTop -= Math.ceil(Math.sqrt(FIELD_GAP*FIELD_GAP + FIELD_GAP*FIELD_GAP));
         curLeft -= SIZE/200;
-        addFieldPosition(fieldPositions, curLeft, curTop, color);
+        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 1);
         curTop += directions.TO_TOP_RIGHT.topDiff
         curLeft += directions.TO_TOP_RIGHT.leftDiff
-        addFieldPosition(fieldPositions, curLeft, curTop, color);
+        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 2);
         curTop += directions.TO_TOP_RIGHT.topDiff
         curLeft += directions.TO_TOP_RIGHT.leftDiff
-        addFieldPosition(fieldPositions, curLeft, curTop, color);
+        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 3);
     }
 
-    const addStraightLine = (fieldPositions, curLeft, curTop, direction, color) => {
+    const addStraightLine = (fieldPositions, curLeft, curTop, direction, color, fixedStartingIndex) => {
         for(let i = 0; i < LINE_LENGTH; i++) {
             curLeft += direction.leftDiff;
             curTop += direction.topDiff;
-            addFieldPosition(fieldPositions, curLeft, curTop, color);
+            addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + i);
         }
         return [curLeft, curTop];
     }
@@ -191,53 +190,103 @@ export const computeFields = (boardSize) => {
             var left = (fieldPosition.left - centerLeft) * Math.cos(degrees * Math.PI / 180) - (fieldPosition.top - centerTop) * Math.sin(degrees * Math.PI / 180) + centerLeft;
             var top = (fieldPosition.left - centerLeft) * Math.sin(degrees * Math.PI / 180) + (fieldPosition.top - centerTop) * Math.cos(degrees * Math.PI / 180) + centerTop;
             color = fieldPosition.color ? color : null
-            addFieldPosition(fieldPositions, left, top, color);
+            addFieldPosition(fieldPositions, left, top, color, fieldPosition.index);
         }
     }
 
     let startingLeft = Math.ceil(SIZE/4.8192771084);
     let startingTop = Math.ceil(SIZE/1.0869565217);
     var curPosition = [startingLeft, startingTop];
-    let fields = [];
+    let circleFields = [];
+    let fixedFields = [];
+
+    /*
+    const addField = (field) => {
+        fields.push(createField(field.index, field.left, field.top, field.color, FIELD_SIZE, COLORED_BORDER_WIDTH));
+    }*/
 
     // compute and add blue fields
-    addFieldPosition(fields, curPosition[0], curPosition[1], colors.BLUE);
-    addKennel(fields, startingLeft, startingTop, colors.BLUE)
-    addFinishZone(fields, startingLeft, startingTop, colors.BLUE)
-    curPosition = addStraightLine(fields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT)
-    curPosition = addCurvedLine(fields, curPosition[0], curPosition[1], directions.TO_RIGHT)
-    curPosition = addStraightLine(fields, curPosition[0], curPosition[1], directions.TO_BOTTOM_RIGHT)
-    curPosition = addCurvedLine(fields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT)
-    fields.splice(-1,1)
-    let blueFields = Array.from(fields);
+    addFinishZone(fixedFields, startingLeft, startingTop, colors.BLUE, 0)
+    addFieldPosition(circleFields, curPosition[0], curPosition[1], colors.BLUE);
+    addKennel(fixedFields, startingLeft, startingTop, colors.BLUE, 5)
+    curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT)
+    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_RIGHT)
+    curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_BOTTOM_RIGHT)
+    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT)
+    circleFields.splice(-1,1)
+    let blueCircleFields = Array.from(circleFields);
+    let blueFixedFields = Array.from(fixedFields);
 
-    // compute and add green fields
-    rotateAndAddFieldPositions(fields, blueFields, 270, colors.GREEN);
+    // compute and add green, red and yellow circle fields
+    rotateAndAddFieldPositions(circleFields, blueCircleFields, 270, colors.GREEN);
+    rotateAndAddFieldPositions(circleFields, blueCircleFields, 180, colors.RED);
+    rotateAndAddFieldPositions(circleFields, blueCircleFields, 90, colors.YELLOW);
 
-    // compute and add red fields
-    rotateAndAddFieldPositions(fields, blueFields, 180, colors.RED);
+    // compute and add green, red and yellow fixed fields
+    rotateAndAddFieldPositions(fixedFields, blueFixedFields, 270, colors.GREEN);
+    rotateAndAddFieldPositions(fixedFields, blueFixedFields, 180, colors.RED);
+    rotateAndAddFieldPositions(fixedFields, blueFixedFields, 90, colors.YELLOW);
 
-    // compute and add yellow fields
-    rotateAndAddFieldPositions(fields, blueFields, 90, colors.YELLOW);
-
-    // add additional attributes
-    for (let i = 0; i < fields.length; i++) {
-        fields[i].id = i;
-        fields[i].size = FIELD_SIZE;
-        fields[i].borderWidth = COLORED_BORDER_WIDTH;
+    for (let i = 0; i < circleFields.length; i++) {
+        circleFields[i].index = i+4;
     }
 
-    // mapping to model
+    let fields = circleFields.concat(fixedFields);
     fields = fields.map(field => {
-        let fieldModel = createField(field.id, field.left, field.top, field.color, field.size, field.borderWidth);
+        let fieldModel = createField(field.index, field.left, field.top, field.color, FIELD_SIZE, COLORED_BORDER_WIDTH);
         return fieldModel;
     })
-
     return fields;
 }
 
-export const moveMarble = (marble, newFieldId) => {
+export const initMarbles = () => {
+    let marbles = [];
+    let i = 0;
+    let startingFieldIds = [5, 6, 7, 8]
+    for (i = 0; i < 4; i++) {
+        marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.BLUE.name, colors.BLUE, false, true));
+    }
+    for (i = 4; i < 8; i++) {
+        marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.GREEN.name, colors.GREEN, false, true));
+    }
+    for (i = 8; i < 12; i++) {
+        marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.RED.name, colors.RED, false, true));
+    }
+    for (i = 12; i < 16; i++) {
+        marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.YELLOW.name, colors.YELLOW, false, true));
+    }
 
+    return marbles;
+}
+
+export const assignPlayersToColors = (playersToAssign, myHandRef, rightHandRef, partnerHandRef, leftHandRef) => {
+    let colors = ["BLUE", "GREEN", "RED", "YELLOW"]
+    let players = []
+    playersToAssign.forEach(player => {
+        if(player.playerName === localStorage.getItem("username")) {
+            players.push(createPlayer(player.playerName, myHandRef, 0))
+            let colorIdx = colors.indexOf(player.color)
+            
+
+            // TODO all palyers must be stored (no null values)
+            colorIdx += 1   
+            let rightPlayer = playersToAssign.find(player => player.color === colors[colorIdx % colors.length]);
+            if(rightPlayer) {
+                players.push(createPlayer(rightPlayer.playerName, rightHandRef, 90))
+            }
+            
+            colorIdx += 1
+            let partnerPlayer = playersToAssign.find(player => player.color === colors[colorIdx % colors.length]);
+                players.push(createPlayer(partnerPlayer.playerName, partnerHandRef, 180))
+            
+            colorIdx += 1  
+            let leftPlayer = playersToAssign.find(player => player.color === colors[colorIdx % colors.length]);
+            if(leftPlayer) {
+                players.push(createPlayer(leftPlayer.playerName, leftHandRef, -90))
+            }
+        }
+    })
+    return players;
 }
 
 export const getKeyByValue = (object, value) => {

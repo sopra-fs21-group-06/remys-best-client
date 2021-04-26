@@ -25,6 +25,15 @@ a {
 p {
     font-size: 16px;
     line-height: 1.2;
+
+    &.clickable {
+        display: inline-block;
+
+        &:hover {
+            cursor: pointer;
+            opacity: 0.8;
+        }
+    }
 }
 
 h1 {
