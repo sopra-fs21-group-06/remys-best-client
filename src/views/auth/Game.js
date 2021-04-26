@@ -62,7 +62,6 @@ class Game extends React.Component {
 
 
       // set background
-      
       let foo = this.props.location.state.players;
       let myPlayer = foo.find(player => player.playerName === localStorage.getItem("username"))
       this.props.backgroundContextValue.dispatch({type: `${myPlayer.color}-bottom`})

@@ -134,49 +134,49 @@ export const computeFields = (boardSize) => {
         },
     }
 
-    const addFieldPosition = (fieldPositions, left, top, color, index) => {
-        fieldPositions.push({left: left, top: top, color: color, index: index})
+    const addFieldPosition = (fieldPositions, left, top, color, index, isColorShown) => {
+        fieldPositions.push({left: left, top: top, color: color, index: index, isColorShown: isColorShown})
     }
 
-    const addKennel = (fieldPositions, curLeft, curTop, color) => {
+    const addKennel = (fieldPositions, curLeft, curTop, color, fixedStartingIndex) => {
         curLeft += SIZE/10 - directions.TO_RIGHT.leftDiff;
-        addStraightLine(fieldPositions, curLeft, curTop, directions.TO_RIGHT, color, 5);
+        addStraightLine(fieldPositions, curLeft, curTop, directions.TO_RIGHT, color, fixedStartingIndex, true);
     }
 
     const addFinishZone = (fieldPositions, curLeft, curTop, color, fixedStartingIndex) => {
         curTop -= SIZE/12;
         curLeft -= SIZE/100;
-        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex);
+        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex, true);
         curTop -= Math.ceil(Math.sqrt(FIELD_GAP*FIELD_GAP + FIELD_GAP*FIELD_GAP));
         curLeft -= SIZE/200;
-        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 1);
+        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 1, true);
         curTop += directions.TO_TOP_RIGHT.topDiff
         curLeft += directions.TO_TOP_RIGHT.leftDiff
-        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 2);
+        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 2, true);
         curTop += directions.TO_TOP_RIGHT.topDiff
         curLeft += directions.TO_TOP_RIGHT.leftDiff
-        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 3);
+        addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + 3, true);
     }
 
-    const addStraightLine = (fieldPositions, curLeft, curTop, direction, color, fixedStartingIndex) => {
+    const addStraightLine = (fieldPositions, curLeft, curTop, direction, color, fixedStartingIndex, isColorShown) => {
         for(let i = 0; i < LINE_LENGTH; i++) {
             curLeft += direction.leftDiff;
             curTop += direction.topDiff;
-            addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + i);
+            addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + i, isColorShown);
         }
         return [curLeft, curTop];
     }
 
-    const addCurvedLine = (fieldPositions, curLeft, curTop, direction) => {
+    const addCurvedLine = (fieldPositions, curLeft, curTop, direction, color) => {
         for(let i = LINE_LENGTH/2 - 1; i >= 0; i--) {
             curLeft += direction.leftDiff + ((i+1) * direction.leftOffset * 0.333);
             curTop += direction.topDiff + ((i+1) * direction.topOffset * 0.333);
-            addFieldPosition(fieldPositions, curLeft, curTop, null);
+            addFieldPosition(fieldPositions, curLeft, curTop, color, null, false);
         }
         for(let i = 0; i < LINE_LENGTH/2; i++) {
             curLeft += direction.leftDiff - ((i+1) * direction.leftOffset * 0.333);
             curTop += direction.topDiff - ((i+1) * direction.topOffset * 0.333);
-            addFieldPosition(fieldPositions, curLeft, curTop, null);
+            addFieldPosition(fieldPositions, curLeft, curTop, color, null, false);
         }
         return [curLeft, curTop];
     }
@@ -190,7 +190,7 @@ export const computeFields = (boardSize) => {
             var left = (fieldPosition.left - centerLeft) * Math.cos(degrees * Math.PI / 180) - (fieldPosition.top - centerTop) * Math.sin(degrees * Math.PI / 180) + centerLeft;
             var top = (fieldPosition.left - centerLeft) * Math.sin(degrees * Math.PI / 180) + (fieldPosition.top - centerTop) * Math.cos(degrees * Math.PI / 180) + centerTop;
             color = fieldPosition.color ? color : null
-            addFieldPosition(fieldPositions, left, top, color, fieldPosition.index);
+            addFieldPosition(fieldPositions, left, top, color, fieldPosition.index, fieldPosition.isColorShown);
         }
     }
 
@@ -200,40 +200,30 @@ export const computeFields = (boardSize) => {
     let circleFields = [];
     let fixedFields = [];
 
-    /*
-    const addField = (field) => {
-        fields.push(createField(field.index, field.left, field.top, field.color, FIELD_SIZE, COLORED_BORDER_WIDTH));
-    }*/
-
     // compute and add blue fields
-    addFinishZone(fixedFields, startingLeft, startingTop, colors.BLUE, 0)
-    addFieldPosition(circleFields, curPosition[0], curPosition[1], colors.BLUE);
-    addKennel(fixedFields, startingLeft, startingTop, colors.BLUE, 5)
-    curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT)
-    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_RIGHT)
-    curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_BOTTOM_RIGHT)
-    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT)
+    addFinishZone(fixedFields, startingLeft, startingTop, colors.BLUE, 17)
+    addFieldPosition(fixedFields, curPosition[0], curPosition[1], colors.BLUE, 16, true);
+    addKennel(fixedFields, startingLeft, startingTop, colors.BLUE, 96)
+    curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT, colors.BLUE, null, false)
+    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_RIGHT, colors.BLUE, null, false)
+    curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_BOTTOM_RIGHT, colors.BLUE, null, false)
+    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT, colors.BLUE, null, false)
     circleFields.splice(-1,1)
-    let blueCircleFields = Array.from(circleFields);
-    let blueFixedFields = Array.from(fixedFields);
-
-    // compute and add green, red and yellow circle fields
-    rotateAndAddFieldPositions(circleFields, blueCircleFields, 270, colors.GREEN);
-    rotateAndAddFieldPositions(circleFields, blueCircleFields, 180, colors.RED);
-    rotateAndAddFieldPositions(circleFields, blueCircleFields, 90, colors.YELLOW);
-
-    // compute and add green, red and yellow fixed fields
-    rotateAndAddFieldPositions(fixedFields, blueFixedFields, 270, colors.GREEN);
-    rotateAndAddFieldPositions(fixedFields, blueFixedFields, 180, colors.RED);
-    rotateAndAddFieldPositions(fixedFields, blueFixedFields, 90, colors.YELLOW);
-
     for (let i = 0; i < circleFields.length; i++) {
-        circleFields[i].index = i+4;
+        circleFields[i].index = 15-i;
     }
-
     let fields = circleFields.concat(fixedFields);
+    let blueFields = Array.from(fields);
+    
+    // compute and add green, red and yellow circle fields
+    rotateAndAddFieldPositions(fields, blueFields, 270, colors.GREEN);
+    rotateAndAddFieldPositions(fields, blueFields, 180, colors.RED);
+    rotateAndAddFieldPositions(fields, blueFields, 90, colors.YELLOW);
+
+    //console.log(fields)
+
     fields = fields.map(field => {
-        let fieldModel = createField(field.index, field.left, field.top, field.color, FIELD_SIZE, COLORED_BORDER_WIDTH);
+        let fieldModel = createField(field.index, field.left, field.top, field.color, FIELD_SIZE, COLORED_BORDER_WIDTH, field.isColorShown);
         return fieldModel;
     })
     return fields;
@@ -242,7 +232,7 @@ export const computeFields = (boardSize) => {
 export const initMarbles = () => {
     let marbles = [];
     let i = 0;
-    let startingFieldIds = [5, 6, 7, 8]
+    let startingFieldIds = [96, 97, 98, 99]
     for (i = 0; i < 4; i++) {
         marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.BLUE.name, colors.BLUE, false, true));
     }

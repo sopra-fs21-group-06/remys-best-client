@@ -1,6 +1,6 @@
 import { getCardNameFromCode, getCardValueFromCode } from './remysBestUtils'
 
-export const createField = (id, left, top, color, size, borderWidth) => {
+export const createField = (id, left, top, color, size, borderWidth, isColorShown) => {
     let _id = id;
     let _left = left;
     let _top = top;
@@ -8,6 +8,7 @@ export const createField = (id, left, top, color, size, borderWidth) => {
     let _size = size;
     let _borderWidth = borderWidth;
     let _key = String(_id) + (color ? color.name : '')
+    let _isColorShown = isColorShown
 
     return ({
         getId: () => _id,
@@ -16,7 +17,8 @@ export const createField = (id, left, top, color, size, borderWidth) => {
         getColor: () => _color,
         getSize: () => _size,
         getBorderWidth: () => _borderWidth,
-        getKey: () => _key
+        getKey: () => _key,
+        getIsColorShown: () => _isColorShown
     });
 };
 
