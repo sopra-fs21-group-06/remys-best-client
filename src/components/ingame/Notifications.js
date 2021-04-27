@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { PopInOrSlideDown } from '../transitions/PopInOrSlideDown';
 import { TransitionGroup } from 'react-transition-group';
-import BlurredElement from '../BlurredElement';
+import Blurred from '../Blurred';
 
 class Notifications extends React.Component {
 
@@ -13,7 +13,7 @@ class Notifications extends React.Component {
                     let {username, action, card} = this.props.notifications[key];
                     return (
                         <PopInOrSlideDown key={key}>
-                            <BlurredElement className="notification-container" borderRadius={15} hasBorder={true}>
+                            <Blurred className="notification-container" borderRadius={15} hasBorder={true}>
                                 <div className="notification">
                                     {username && action && card ? 
                                         <p><span>{username}</span> {action} <span>{card}</span></p> 
@@ -21,7 +21,7 @@ class Notifications extends React.Component {
                                         <p><span>{action}</span></p>
                                     }
                                 </div>
-                            </BlurredElement>
+                            </Blurred>
                         </PopInOrSlideDown>
                     );
                 })}

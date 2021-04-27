@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
-class BlurredElement extends React.Component {
+class Blurred extends React.Component {
 
     render() {
         var borderRadiusStyle = {};
@@ -31,4 +31,4 @@ class BlurredElement extends React.Component {
     }
 }
 
-export default withRouter(BlurredElement);
+export default withRouter(Blurred);

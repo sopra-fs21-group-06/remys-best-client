@@ -39,23 +39,6 @@ class Board extends React.Component {
         })
     }
 
-    getMarbleToPlay() {
-        return this.state.marbles.find(marble => marble.getIsSelected());
-    }
-
-    throwInCard(player, card) {
-        this.setState(prevState => {
-            let handRot = player.getHandRot();
-            let randomCardRot = (Math.random() * 31) -15
-
-            let style = card.getStyle();
-            style.rot = handRot + randomCardRot
-            card.setStyle(style)
-            
-            return {playedCards: [...prevState.playedCards, card]};
-      });
-    }
-
     handleMarbleListMessage(msg) {
         console.log("marble list received")
         console.log(msg.marbles)
@@ -86,33 +69,17 @@ class Board extends React.Component {
         this.setState({marbles: newMarbles});
     }
 
-    selectMarbleToPlay(marbleToPlay) {
-        this.resetMovableMarbles()
-        this.selectMarble(marbleToPlay)   
-    }
-
-    resetMovableMarbles() {
-        this.updateMovableMarbles([]);
-    }
-
-    resetSelectedMarble() {
-        this.selectMarble(null);
-    }
-
-    selectMarble(marbleToSelect) {
+    throwInCard(player, card) {
         this.setState(prevState => {
-            const marbles = prevState.marbles.map(marble => {
-                if (marbleToSelect && marble.getId() == marbleToSelect.getId()) {
-                    marble.setIsSelected(true)
-                    return marble;
-                }
-                marble.setIsSelected(false)
-                return marble;
-            });
-            return {marbles: marbles};
-        });     
-        
-        this.props.myHandContainerRef.current.setIsMarbleChosen(marbleToSelect);
+            let handRot = player.getHandRot();
+            let randomCardRot = (Math.random() * 31) -15
+
+            let style = card.getStyle();
+            style.rot = handRot + randomCardRot
+            card.setStyle(style)
+            
+            return {playedCards: [...prevState.playedCards, card]};
+      });
     }
 
     moveMarble(marbleId, targetFieldKey) {
@@ -138,6 +105,39 @@ class Board extends React.Component {
             return {marbles: marbles};
           });
         }.bind(this), 1000);
+    }
+
+    selectMarble(marbleToSelect) {
+        this.setState(prevState => {
+            const marbles = prevState.marbles.map(marble => {
+                if (marbleToSelect && marble.getId() == marbleToSelect.getId()) {
+                    marble.setIsSelected(true)
+                    return marble;
+                }
+                marble.setIsSelected(false)
+                return marble;
+            });
+            return {marbles: marbles};
+        });     
+        
+        this.props.myHandContainerRef.current.setIsMarbleChosen(marbleToSelect);
+    }
+
+    selectMarbleToPlay(marbleToPlay) {
+        this.resetMovableMarbles()
+        this.selectMarble(marbleToPlay)   
+    }
+
+    getMarbleToPlay() {
+        return this.state.marbles.find(marble => marble.getIsSelected());
+    }
+
+    resetMovableMarbles() {
+        this.updateMovableMarbles([]);
+    }
+
+    resetSelectedMarble() {
+        this.selectMarble(null);
     }
 
     setBottomClass(bottomClass) {

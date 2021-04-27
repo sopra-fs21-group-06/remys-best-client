@@ -77,15 +77,17 @@ export const createCard = (code, imgUrl) => {
     });
 };
 
-export const createPlayer = (playerName, handRef, handRot) => {
+export const createPlayer = (playerName, handRef, handRot, colorName) => {
     let _playerName = playerName;
     let _handRef = handRef;
     let _handRot = handRot;
+    let _colorName = colorName;
    
     return ({
         getPlayerName: () => _playerName,
         getHandRef: () => _handRef,
-        getHandRot: () => _handRot
+        getHandRot: () => _handRot,
+        getColorName: () => _colorName
     });
 };
 
