@@ -32,7 +32,8 @@
 
         .possibleTargetField {
             transform: scale(1);
-            $blue: #000000;
+
+            $color: #000000;
             @include pulse($color);
 
             &:hover {

@@ -48,7 +48,8 @@ class Game extends React.Component {
         createChannel(`/topic/game/${this.gameId}/notification`, (msg) => this.handleNotificationMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/turn`, (msg) => this.handleTurnChangedMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
-        createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg))
+        createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg)),
+        createChannel(`/user/queue/game/${this.gameId}/target-fields-list`, (msg) => this.handleTargetFieldsListMessage(msg))
       ]
     }
 
@@ -117,7 +118,6 @@ class Game extends React.Component {
         this.boardRef.current.moveMarble(marblesToMove[0].marbleId, targetFieldKey)
       }.bind(this), 1500);
 
-      // TODO how to process marbles sent home??
     }
 
     handleCardsReceivedMessage(msg) {
@@ -138,8 +138,14 @@ class Game extends React.Component {
       }
     }
 
-    // TODO another endpoint for receiving possible target fields?
-    // TODO call method updatePossibleTargetFields(possibleTargetFields) of board (list of fields)
+    handleTargetFieldsListMessage(msg) {
+      // TODO process data from backend
+      console.log(msg)
+      let possibleTargetFieldKeys = msg.targetFieldKeys
+      // fieldKey (unique): id + color (e.g. 4GREEN)
+
+      this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
+    }
 
     getMyPlayerName() {
       return localStorage.getItem("username")
@@ -178,17 +184,33 @@ class Game extends React.Component {
       return otherCards;
     }
 
+    requestPossibleTargetFields() {
+      let cardToPlay = this.myHandContainerRef.current.getCardToPlay();
+      let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
+      let marbleToPlay = this.boardRef.current.getMarbleToPlay();
+      let marbles = [{id: marbleToPlay.getId()}];
+      this.context.sockClient.send(`/app/game/${this.gameId}/target-fields-request`, {
+        code: cardToPlay.getCode(), 
+        moveName: moveNameToPlay, 
+        marbles: marbles
+      });
+    }
+
     play() {
       let cardToPlay = this.myHandContainerRef.current.getCardToPlay();
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleToPlay = this.boardRef.current.getMarbleToPlay();
       let marbles = [{id: marbleToPlay.getId()}];
-      // TODO let targetField = this.boardRef.current.getTargetField();
+      let targetField = this.boardRef.current.getTargetField();
+      // let key = this.boardRef.current.getTargetField().getKey();
+
       this.context.sockClient.send(`/app/game/${this.gameId}/play`, {
         code: cardToPlay.getCode(), 
         moveName: moveNameToPlay, 
-        marbles: marbles
+        marbles: marbles,
+
         // TODO targetField(s) submission
+        // fieldKey (e.g. "4GREEN", "8BLUE")
       });
     }
 

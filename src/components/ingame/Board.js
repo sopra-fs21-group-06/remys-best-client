@@ -70,17 +70,15 @@ class Board extends React.Component {
     }
 
     // TODO call with data received from backend, in game view component
-    updatePossibleTargetFields(possibleTargetFields) {
+    updatePossibleTargetFields(possibleTargetFieldKeys) {
         let newFields = [];
 
-        if(possibleTargetFields.length == 0) {
+        if(possibleTargetFieldKeys.length == 0) {
             newFields = this.state.fields.map(field => {
                 field.setIsPossibleTargetField(false)
                 return field;
             });
         } else {
-            // TODO key here?
-            let possibleTargetFieldKeys = possibleTargetFields.map(field => {return field.getFieldKey})
             newFields = this.state.fields.map(field => {
                 if(possibleTargetFieldKeys.includes(field.getKey())) {
                     field.setIsPossibleTargetField(true)
