@@ -5,7 +5,6 @@ import MyHand from "../../components/ingame/hand/MyHand";
 import Hand from "../../components/ingame/hand/Hand";
 import dogCard from "../../img/dog-card.png"
 import HandContainer from "../../components/ingame/hand/HandContainer";
-import { createPlayer } from '../../helpers/modelUtils'
 import View from "../View";
 import { viewLinks, gameEndModes, cardImages } from "../../helpers/constants";
 import Facts from "../../components/ingame/Facts";
@@ -60,57 +59,10 @@ class Game extends React.Component {
       })
       this.setState({allCards: allCards});
 
-
-      // set background
-      let foo = this.props.location.state.players;
-      let myPlayer = foo.find(player => player.playerName === localStorage.getItem("username"))
-      this.props.backgroundContextValue.dispatch({type: `${myPlayer.color}-bottom`})
-
-      // rotate board
-      this.boardRef.current.setBottomClass(`${myPlayer.color}-bottom`)
-    }
-
-    getHandRef(playerName) {
-      let player = this.state.players.find(player => player.getPlayerName() === playerName)
-      return player.getHandRef()
-    }
-
-    getMyHandRef() {
-      return this.getHandRef(localStorage.getItem("username"))
-    }
-
-    getCardFromCode(code) {
-      return this.state.allCards.find(card => card.getCode() === code)
-    }
-    
-    generateOtherCards(cardAmount) {
-      let otherCards = [];
-      for(let i = 0; i < cardAmount; i++) {
-        otherCards.push(createCard(generateUUID(), dogCard))
-      }
-      return otherCards;
-    }
-
-    play() {
-      let cardToPlay = this.myHandContainerRef.current.getCardToPlay();
-      let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
-      let marbleToPlay = this.boardRef.current.getMarbleToPlay();
-
-      let marbles = [{id: marbleToPlay.getId()}];
-     
-      this.context.sockClient.send(`/app/game/${this.gameId}/play`, {code: cardToPlay.getCode(), moveName: moveNameToPlay, marbles: marbles});
-    }
-
-    reset() {
-      this.myHandContainerRef.current.resetRaiseCard();
-      this.myHandContainerRef.current.resetMoves();
-      this.myHandContainerRef.current.resetSelectedMoveName();
-      this.boardRef.current.resetMovableMarbles()
-      this.boardRef.current.resetSelectedMarble()
-    }
-
-    sendReady() {
-     this.context.sockClient.send(`/app/game/${this.gameId}/ready`, {});
+      // rotate background and board
+      let myPlayer = this.getMyPlayer()
+      this.props.backgroundContextValue.dispatch({type: `${myPlayer.getColorName()}-bottom`})
+      this.boardRef.current.setBottomClass(`${myPlayer.getColorName()}-bottom`)
     }
 
     handleFactsMessage(msg) {
@@ -119,6 +71,7 @@ class Game extends React.Component {
 
     handleNotificationMessage(msg) {
       let notification = msg;
+      // inject key for rendering
       notification.key = +new Date()
 
       this.setState({
@@ -134,7 +87,7 @@ class Game extends React.Component {
     }
 
     handleTurnChangedMessage(msg) {
-      if(localStorage.getItem("username") === msg.playerName) {
+      if(this.isMyPlayerName(msg.playerName)) {
         this.setState({ mode: roundModes.MY_TURN })
       }
       // TODO show current turn big message over whole screen
@@ -144,18 +97,27 @@ class Game extends React.Component {
       console.log("received played message")
       console.log(msg)
 
-      let cardCodeToPlay = msg.card.code
-      let playerName = msg.playerName
+      let cardToPlay = this.getCardFromCode(msg.card.code)
+      let player = this.state.players.find(player => player.getPlayerName() === msg.playerName)
       let marblesToMove = msg.marbles
-      let player = this.state.players.find(player => player.getPlayerName() === playerName)
+
+      if(this.isMyPlayer(player)) {
+        player.getHandRef().current.removeCard(cardToPlay)
+      } else {
+        player.getHandRef().current.removeRandomCard()
+      }
 
       setTimeout(function(){ 
-          this.boardRef.current.throwInCard(player, this.getCardFromCode(cardCodeToPlay));
-      }.bind(this), 300);
+          this.boardRef.current.throwInCard(player, cardToPlay);
+      }.bind(this), 500);
+
       setTimeout(function() { 
+        // e.g. targetFieldKey = "16GREEN"
         let targetFieldKey = String(marblesToMove[0].targetFieldId) + String(marblesToMove[0].targetFieldColor)
         this.boardRef.current.moveMarble(marblesToMove[0].marbleId, targetFieldKey)
-      }.bind(this), 1300);
+      }.bind(this), 1500);
+
+      // TODO how to process marbles sent home??
     }
 
     handleCardsReceivedMessage(msg) {
@@ -176,6 +138,67 @@ class Game extends React.Component {
       }
     }
 
+    getMyPlayerName() {
+      return localStorage.getItem("username")
+    }
+
+    isMyPlayerName(playerName) {
+      return this.getMyPlayerName() === playerName
+    }
+
+    isMyPlayer(player) {
+      return this.isMyPlayerName(player.getPlayerName())
+    }
+
+    getMyPlayer() {
+      return this.state.players.find(player => this.isMyPlayerName(player.getPlayerName()))
+    }
+
+    getMyHandRef() {
+      return this.getHandRef(this.getMyPlayerName())
+    }
+
+    getHandRef(playerName) {
+      let player = this.state.players.find(player => player.getPlayerName() === playerName)
+      return player.getHandRef()
+    }
+
+    getCardFromCode(code) {
+      return this.state.allCards.find(card => card.getCode() === code)
+    }
+    
+    generateOtherCards(cardAmount) {
+      let otherCards = [];
+      for(let i = 0; i < cardAmount; i++) {
+        otherCards.push(createCard(generateUUID(), dogCard))
+      }
+      return otherCards;
+    }
+
+    play() {
+      let cardToPlay = this.myHandContainerRef.current.getCardToPlay();
+      let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
+      let marbleToPlay = this.boardRef.current.getMarbleToPlay();
+      let marbles = [{id: marbleToPlay.getId()}];
+      this.context.sockClient.send(`/app/game/${this.gameId}/play`, {
+        code: cardToPlay.getCode(), 
+        moveName: moveNameToPlay, 
+        marbles: marbles
+      });
+    }
+
+    reset() {
+      this.myHandContainerRef.current.resetRaiseCard();
+      this.myHandContainerRef.current.resetMoves();
+      this.myHandContainerRef.current.resetSelectedMoveName();
+      this.boardRef.current.resetMovableMarbles()
+      this.boardRef.current.resetSelectedMarble()
+    }
+
+    sendReadyMessage() {
+     this.context.sockClient.send(`/app/game/${this.gameId}/ready`, {});
+    }
+
     render() {
       let gameEnd = {
         pathname: '/game-end',
@@ -186,18 +209,12 @@ class Game extends React.Component {
       }
 
       return (
-        <WebsocketConsumer channels={this.channels} connectionCallback={() => this.sendReady()}>
+        <WebsocketConsumer channels={this.channels} connectionCallback={() => this.sendReadyMessage()}>
           <View className="game" withFooterHidden withDogImgHidden linkMode={viewLinks.BASIC}>
             <main>
                 <Facts facts={this.state.facts}/>
                 <Notifications notifications={this.state.notifications} />
                 <Board size={500} ref={this.boardRef} myHandContainerRef={this.myHandContainerRef}/>
-
-                {/*
-                <p onClick={() => this.playCard(this.state.players[1], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from left opponent</p>
-                <p onClick={() => this.playCard(this.state.players[2], OPP_CARDS[Math.floor(Math.random() * 6)], null )}>play from right opponent</p>
-                */}
-
                 <HandContainer position="my">
                   <MyHand ref={this.myHandContainerRef} myHandRef={this.myHandRef} mode={this.state.mode} play={this.play} reset={this.reset}>
                     <Hand ref={this.myHandRef} isActive={this.state.mode !== roundModes.IDLE}/>

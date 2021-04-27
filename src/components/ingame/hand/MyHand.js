@@ -20,22 +20,13 @@ class MyHand extends React.Component {
         };
         this.gameId = sessionManager.getGameId();
         this.handleRaiseCard = this.handleRaiseCard.bind(this);
-
         this.channels = [
             createChannel(`/user/queue/game/${this.gameId}/move-list`, (msg) => this.handleMoveListMessage(msg)),
         ]
     }
 
-    getCardToPlay() {
-        return this.state.raisedCard;
-    }
-
-    getMoveNameToPlay() {
-        return this.state.selectedMoveName;
-    }
-
-    resetRaiseCard() {
-        this.handleRaiseCard(null)
+    handleMoveListMessage(msg) {
+        this.setState({ moves: msg.moves })
     }
 
     handleRaiseCard(card) {
@@ -53,27 +44,11 @@ class MyHand extends React.Component {
         this.props.myHandRef.current.raiseCard(card);
     }
 
-    reset() {
-        console.log("reset")
-    }
-
-    handleMoveListMessage(msg) {
-        console.log("move list received")
-        console.log(msg)
-
-        this.setState({ moves: msg.moves })
-    }
-
-    requestMoves() {
-        this.context.sockClient.send(`/app/game/${this.gameId}/move-request`, {code: this.state.raisedCard.getCode()}); 
-    }
-
-    resetMoves() {
-        this.setState({ moves: [] })
-    }
-
-    resetSelectedMoveName() {
-        this.setState({ selectedMoveName: null })
+    exchange() {
+        let cardToExchange = this.state.raisedCard
+        this.context.sockClient.send(`/app/game/${this.gameId}/card-exchange`, {code: cardToExchange.getCode()});
+        this.props.myHandRef.current.removeCard(cardToExchange)
+        this.resetRaiseCard()
     }
 
     requestMarbles(moveName) {
@@ -82,17 +57,33 @@ class MyHand extends React.Component {
         this.resetMoves()
     }
 
-    exchange() {
-        let cardToExchange = this.state.raisedCard
-        this.context.sockClient.send(`/app/game/${this.gameId}/card-exchange`, {code: cardToExchange.getCode()});
-        this.props.myHandRef.current.removeCard(cardToExchange)
-        this.resetRaiseCard()
+    requestMoves() {
+        this.context.sockClient.send(`/app/game/${this.gameId}/move-request`, {code: this.state.raisedCard.getCode()}); 
+    }
+
+    getCardToPlay() {
+        return this.state.raisedCard;
+    }
+
+    getMoveNameToPlay() {
+        return this.state.selectedMoveName;
+    }
+
+    resetRaiseCard() {
+        this.handleRaiseCard(null)
     }
 
     setIsMarbleChosen(isMarbleChosen) {
         this.setState({isMarbleChosen: isMarbleChosen})
     }
 
+    resetSelectedMoveName() {
+        this.setState({ selectedMoveName: null })
+    }
+
+    resetMoves() {
+        this.setState({ moves: [] })
+    }
 
     render() {
         return (
@@ -102,7 +93,7 @@ class MyHand extends React.Component {
                         <FadeInOut in={this.state.moves.length != 0}>
                             {this.state.moves.map(move => {
                                 return (
-                                    <div><p key={move.moveName} className="clickable" onClick={() => this.requestMarbles(move.moveName)}>{move.moveName}</p></div>
+                                    <div key={move.moveName}><p className="clickable" onClick={() => this.requestMarbles(move.moveName)}>{move.moveName}</p></div>
                                 );
                             })}
                         </FadeInOut>
