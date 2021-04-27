@@ -29,6 +29,16 @@
 
     .fields {
         z-index: 7;
+
+        .possibleTargetField {
+            transform: scale(1);
+            $blue: #000000;
+            @include pulse($color);
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
     }
 
     .marbles {

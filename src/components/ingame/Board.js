@@ -26,6 +26,7 @@ class Board extends React.Component {
             bottomClass: "BLUE-bottom"
         };
         this.selectMarbleToPlay = this.selectMarbleToPlay.bind(this)
+        this.selectTargetField = this.selectTargetField.bind(this)
         this.gameId = sessionManager.getGameId();
         this.channels = [
             createChannel(`/user/queue/game/${this.gameId}/marble-list`, (msg) => this.handleMarbleListMessage(msg))
@@ -54,7 +55,6 @@ class Board extends React.Component {
                 return marble;
             });
         } else {
-            newMarbles = this.state.marbles;
             let movableMarbleIds = movableMarbles.map(marble => {return marble.marbleId})
             newMarbles = this.state.marbles.map(marble => {
                 if(movableMarbleIds.includes(marble.getId())) {
@@ -67,6 +67,31 @@ class Board extends React.Component {
         }
 
         this.setState({marbles: newMarbles});
+    }
+
+    // TODO call with data received from backend, in game view component
+    updatePossibleTargetFields(possibleTargetFields) {
+        let newFields = [];
+
+        if(possibleTargetFields.length == 0) {
+            newFields = this.state.fields.map(field => {
+                field.setIsPossibleTargetField(false)
+                return field;
+            });
+        } else {
+            // TODO key here?
+            let possibleTargetFieldKeys = possibleTargetFields.map(field => {return field.getFieldKey})
+            newFields = this.state.fields.map(field => {
+                if(possibleTargetFieldKeys.includes(field.getKey())) {
+                    field.setIsPossibleTargetField(true)
+                    return field;
+                } 
+                field.setIsPossibleTargetField(false)
+                return field;
+            });
+        }
+
+        this.setState({fields: newFields});
     }
 
     throwInCard(player, card) {
@@ -83,6 +108,7 @@ class Board extends React.Component {
     }
 
     moveMarble(marbleId, targetFieldKey) {
+        // pick up
         this.setState(prevState => {
             const marbles = prevState.marbles.map(marble => {
                 if (marble.getId() == marbleId) {
@@ -93,6 +119,7 @@ class Board extends React.Component {
             return {marbles: marbles};
         });
 
+        // drop to new field
         setTimeout(function(){ 
           this.setState(prevState => {
             const marbles = prevState.marbles.map(marble => {
@@ -119,8 +146,6 @@ class Board extends React.Component {
             });
             return {marbles: marbles};
         });     
-        
-        this.props.myHandContainerRef.current.setIsMarbleChosen(marbleToSelect);
     }
 
     selectMarbleToPlay(marbleToPlay) {
@@ -128,8 +153,29 @@ class Board extends React.Component {
         this.selectMarble(marbleToPlay)   
     }
 
+    selectTargetField(targetField) {
+        this.setState(prevState => {
+            const fields = prevState.fields.map(field => {
+                field.setIsPossibleTargetField(false)
+                if (targetField.getKey() == field.getKey()) {
+                    field.setIsTargetField(true)
+                    return field;
+                }
+                field.setIsTargetField(false)
+                return field;
+            });
+            return {fields: fields};
+        });     
+
+        this.props.myHandContainerRef.current.setIsMarbleChosen(true);
+    }
+
     getMarbleToPlay() {
         return this.state.marbles.find(marble => marble.getIsSelected());
+    }
+
+    getTargetField() {
+        return this.state.fields.find(field => field.getIsTargetField());
     }
 
     resetMovableMarbles() {
@@ -155,6 +201,7 @@ class Board extends React.Component {
                                 <Field 
                                     key={field.getKey()} 
                                     field={field}
+                                    selectTargetField={this.selectTargetField}
                                 />
                             );
                         })}
@@ -167,7 +214,7 @@ class Board extends React.Component {
                                     key={marble.getId()}
                                     marble={marble}
                                     field={field}
-                                    selectMarbleToPlay={this.selectMarbleToPlay}                
+                                    selectMarbleToPlay={this.selectMarbleToPlay}        
                                 />
                             );
                         })}

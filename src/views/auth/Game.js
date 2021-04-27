@@ -138,6 +138,9 @@ class Game extends React.Component {
       }
     }
 
+    // TODO another endpoint for receiving possible target fields?
+    // TODO call method updatePossibleTargetFields(possibleTargetFields) of board (list of fields)
+
     getMyPlayerName() {
       return localStorage.getItem("username")
     }
@@ -180,10 +183,12 @@ class Game extends React.Component {
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleToPlay = this.boardRef.current.getMarbleToPlay();
       let marbles = [{id: marbleToPlay.getId()}];
+      // TODO let targetField = this.boardRef.current.getTargetField();
       this.context.sockClient.send(`/app/game/${this.gameId}/play`, {
         code: cardToPlay.getCode(), 
         moveName: moveNameToPlay, 
         marbles: marbles
+        // TODO targetField(s) submission
       });
     }
 

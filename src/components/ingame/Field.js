@@ -10,6 +10,7 @@ class Field extends React.Component {
         let color = field.getColor();
         let isColorShown = field.getIsColorShown();
         let borderWidth = field.getBorderWidth();
+        let isPossibleTargetField = field.getIsPossibleTargetField();
 
         // colored field
         if(isColorShown) {
@@ -32,7 +33,11 @@ class Field extends React.Component {
         };
 
         return (
-            <div className="field" style={styles}></div>
+            <div 
+                onClick={isPossibleTargetField ? () => this.props.selectTargetField(field) : null} 
+                className={"field" + (isPossibleTargetField ? " possibleTargetField" : '')} 
+                style={styles}>
+            </div>
         );
     }
 }

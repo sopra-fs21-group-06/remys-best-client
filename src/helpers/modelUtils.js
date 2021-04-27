@@ -9,6 +9,8 @@ export const createField = (id, left, top, color, size, borderWidth, isColorShow
     let _borderWidth = borderWidth;
     let _key = String(_id) + (color ? color.name : '')
     let _isColorShown = isColorShown
+    let _isPossibleTargetField = false
+    let _isTargetField = false
 
     return ({
         getId: () => _id,
@@ -18,7 +20,11 @@ export const createField = (id, left, top, color, size, borderWidth, isColorShow
         getSize: () => _size,
         getBorderWidth: () => _borderWidth,
         getKey: () => _key,
-        getIsColorShown: () => _isColorShown
+        getIsColorShown: () => _isColorShown,
+        getIsPossibleTargetField: () => _isPossibleTargetField,
+        setIsPossibleTargetField: (isPossibleTargetField) => _isPossibleTargetField = isPossibleTargetField,
+        getIsTargetField: () => _isTargetField,
+        setIsTargetField: (isTargetField) => _isTargetField = isTargetField,
     });
 };
 
