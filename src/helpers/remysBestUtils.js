@@ -268,8 +268,8 @@ export const assignPlayersToColors = (playersToAssign, myHandRef, rightHandRef, 
             }
             
             colorIdx += 1
-            // let partnerPlayer = playersToAssign.find(player => player.color === colors[colorIdx % colors.length]);
-            //     players.push(createPlayer(partnerPlayer.playerName, partnerHandRef, 180, partnerPlayer.color))
+            let partnerPlayer = playersToAssign.find(player => player.color === colors[colorIdx % colors.length]);
+            players.push(createPlayer(partnerPlayer.playerName, partnerHandRef, 180, partnerPlayer.color))
             
             colorIdx += 1  
             let leftPlayer = playersToAssign.find(player => player.color === colors[colorIdx % colors.length]);
