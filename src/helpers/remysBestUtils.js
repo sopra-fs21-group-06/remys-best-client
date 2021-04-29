@@ -210,9 +210,11 @@ export const computeFields = (boardSize) => {
     curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT, colors.BLUE, null, false)
     circleFields.splice(-1,1)
     for (let i = 0; i < circleFields.length; i++) {
-        circleFields[i].index = 15-i;
+        circleFields[i].index = i+1;
     }
-    let fields = circleFields.concat(fixedFields);
+    let circleFieldsRotated = [];
+    rotateAndAddFieldPositions(circleFieldsRotated, circleFields, 90, colors.BLUE);
+    let fields = circleFieldsRotated.concat(fixedFields);
     let blueFields = Array.from(fields);
     
     // compute and add green, red and yellow circle fields
