@@ -146,9 +146,11 @@ class Board extends React.Component {
         });     
     }
 
-    selectMarbleToPlay(marbleToPlay) {
+    async selectMarbleToPlay(marbleToPlay) {
         this.resetMovableMarbles()
-        this.selectMarble(marbleToPlay)   
+        this.selectMarble(marbleToPlay)
+        await new Promise(resolve => setTimeout(resolve, 500));
+        this.props.requestPossibleTargetFields()
     }
 
     selectTargetField(targetField) {
