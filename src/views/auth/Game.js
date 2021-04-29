@@ -49,7 +49,8 @@ class Game extends React.Component {
         createChannel(`/topic/game/${this.gameId}/turn`, (msg) => this.handleTurnChangedMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
         createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg)),
-        createChannel(`/user/queue/game/${this.gameId}/target-fields-list`, (msg) => this.handleTargetFieldsListMessage(msg))
+        createChannel(`/user/queue/game/${this.gameId}/target-fields-list`, (msg) => this.handleTargetFieldsListMessage(msg)),
+        createChannel(`/topic/game/${this.gameId}/game-end`, (msg) => this.handlePlayerDisconnection(msg))
       ]
     }
 
@@ -144,6 +145,11 @@ class Game extends React.Component {
       // fieldKey (unique): id + color (e.g. 4GREEN)
 
       this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
+    }
+
+    handlePlayerDisconnection(msg) {
+      //to-do Edouard
+      //need to redirect to GameEnd view passing the player that invoked the SessionDesiconnect as prop.
     }
 
     getMyPlayerName() {
