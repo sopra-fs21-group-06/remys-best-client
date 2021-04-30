@@ -9,7 +9,7 @@ class GameEnd extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: "Sandro"
+      username: localStorage.getItem("username"),
     };
     setGameId(null)
   }

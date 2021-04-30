@@ -72,7 +72,20 @@ class Game extends React.Component {
     
     componentDidMount() {
 
+<<<<<<< Updated upstream
         // TODO
+=======
+      // rotate background and board
+      let myPlayer = this.getMyPlayer()
+      this.props.backgroundContextValue.dispatch({type: `${myPlayer.getColorName()}-bottom`})
+      this.boardRef.current.setBottomClass(`${myPlayer.getColorName()}-bottom`)
+      this.handlePlayerConnection()
+    }
+
+    handleFactsMessage(msg) {
+      this.setState({ facts: msg.facts })
+    } 
+>>>>>>> Stashed changes
 
        
         let players = [];
@@ -92,12 +105,148 @@ class Game extends React.Component {
     playCard(player, card, move) {
       player.getHandRef().current.removeCard(card)
       setTimeout(function(){ 
+<<<<<<< Updated upstream
           // todo add player position for rotation
           this.boardRef.current.throwInCard(player, card);
       }.bind(this), 300);
       setTimeout(function(){ 
           this.boardRef.current.moveMarble()
       }.bind(this), 1300);
+=======
+          this.boardRef.current.throwInCard(player, cardToPlay);
+      }.bind(this), 500);
+
+      setTimeout(function() { 
+        // e.g. targetFieldKey = "16GREEN"
+        this.boardRef.current.moveMarble(marblesToMove[0].marbleId, marblesToMove[0].targetFieldKey);
+      }.bind(this), 1500);
+
+    }
+
+    handleCardsReceivedMessage(msg) {
+      let myCards = msg.cards.map(card => {
+        return this.getCardFromCode(card.code)
+      })
+      
+      this.getMyHandRef().current.addCards(myCards)
+
+      // TODO how to decide if it's the card from my partner?
+      if(myCards.length > 1) {
+        let cardAmount = myCards.length;
+        this.leftHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.rightHandRef.current.addCards(this.generateOtherCards(cardAmount))
+        this.partnerHandRef.current.addCards(this.generateOtherCards(cardAmount))
+      } else {
+        this.setState({ mode: roundModes.IDLE})
+      }
+    }
+
+    handleTargetFieldsListMessage(msg) {
+      // TODO process data from backend
+      console.log(msg)
+      let possibleTargetFieldKeys = msg.targetFieldKeys
+      // fieldKey (unique): id + color (e.g. 4GREEN)
+
+      this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
+    }
+
+    handlePlayerConnection(msg){
+      this.context.sockClient.send(`/app/game/${this.gameId}/game-end`, {});
+    }
+    
+
+    handlePlayerDisconnection(msg) {
+      if(msg.aborted!=null){
+        this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.aborted, mode:'aborted'}})
+      }else if(this.getMyPlayerName in msg.won){
+        this.props.history.push({pathname: '/game-end', state: { mode:'won'}})
+      }else{
+        this.props.history.push({pathname: '/game-end', state: { mode:'lost'}})
+      }
+      
+    }
+
+    getMyPlayerName() {
+      return localStorage.getItem("username")
+    }
+
+    isMyPlayerName(playerName) {
+      return this.getMyPlayerName() === playerName
+    }
+
+    isMyPlayer(player) {
+      return this.isMyPlayerName(player.getPlayerName())
+    }
+
+    getMyPlayer() {
+      return this.state.players.find(player => this.isMyPlayerName(player.getPlayerName()))
+    }
+
+    getMyHandRef() {
+      return this.getHandRef(this.getMyPlayerName())
+    }
+
+    getHandRef(playerName) {
+      let player = this.state.players.find(player => player.getPlayerName() === playerName)
+      return player.getHandRef()
+    }
+
+    getCardFromCode(code) {
+      return this.state.allCards.find(card => card.getCode() === code)
+    }
+    
+    generateOtherCards(cardAmount) {
+      let otherCards = [];
+      for(let i = 0; i < cardAmount; i++) {
+        otherCards.push(createCard(generateUUID(), dogCard))
+      }
+      return otherCards;
+    }
+
+    //
+    //
+    //
+    //
+    requestPossibleTargetFields() {
+      let cardToPlay = this.myHandContainerRef.current.getCardToPlay();
+      let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
+      let marbleToPlay = this.boardRef.current.getMarbleToPlay();
+      let marbleId = marbleToPlay.getId();
+      this.context.sockClient.send(`/app/game/${this.gameId}/target-fields-request`, {
+        code: cardToPlay.getCode(), 
+        moveName: moveNameToPlay, 
+        marbleId: marbleId
+      });
+    }
+
+    play() {
+      let cardToPlay = this.myHandContainerRef.current.getCardToPlay();
+      let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
+      let marbleToPlay = this.boardRef.current.getMarbleToPlay();
+
+      //TODO no clue which attribute needs to be sent
+        let marbles = [{marbleId: marbleToPlay.getId(), targetFieldKey: this.boardRef.current.getTargetField().getKey()}];
+        //let targetField = this.boardRef.current.getTargetField();
+        //marbles.targetFielKey = this.boardRef.current.getTargetField().getKey();
+
+
+      this.context.sockClient.send(`/app/game/${this.gameId}/play`, {
+        code: cardToPlay.getCode(), 
+        moveName: moveNameToPlay, 
+        marbles: marbles
+
+        // TODO targetField(s) submission
+        // fieldKey (e.g. "4GREEN", "8BLUE")
+      });
+    }
+
+    reset() {
+      this.myHandContainerRef.current.resetRaiseCard();
+      this.myHandContainerRef.current.resetMoves();
+      this.myHandContainerRef.current.resetSelectedMoveName();
+      this.boardRef.current.resetMovableMarbles()
+      this.boardRef.current.resetSelectedMarble()
+>>>>>>> Stashed changes
     }
 
     handOutCards() {
