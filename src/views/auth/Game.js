@@ -65,7 +65,6 @@ class Game extends React.Component {
       let myPlayer = this.getMyPlayer()
       this.props.backgroundContextValue.dispatch({type: `${myPlayer.getColorName()}-bottom`})
       this.boardRef.current.setBottomClass(`${myPlayer.getColorName()}-bottom`)
-      this.handlePlayerConnection()
     }
 
     handleFactsMessage(msg) {
@@ -146,10 +145,6 @@ class Game extends React.Component {
       // fieldKey (unique): id + color (e.g. 4GREEN)
 
       this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
-    }
-
-    handlePlayerConnection(msg){
-      this.context.sockClient.send(`/app/game/${this.gameId}/game-end`, {});
     }
 
 
