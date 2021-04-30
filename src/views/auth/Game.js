@@ -65,6 +65,7 @@ class Game extends React.Component {
       let myPlayer = this.getMyPlayer()
       this.props.backgroundContextValue.dispatch({type: `${myPlayer.getColorName()}-bottom`})
       this.boardRef.current.setBottomClass(`${myPlayer.getColorName()}-bottom`)
+      this.handlePlayerConnection()
     }
 
     handleFactsMessage(msg) {
@@ -147,9 +148,20 @@ class Game extends React.Component {
       this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
     }
 
+    handlePlayerConnection(msg){
+      this.context.sockClient.send(`/app/game/${this.gameId}/game-end`, {});
+    }
+
+
     handlePlayerDisconnection(msg) {
-      //to-do Edouard
-      //need to redirect to GameEnd view passing the player that invoked the SessionDesiconnect as prop.
+      if(msg.aborted!=null){
+        this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.aborted, mode:'aborted'}})
+      }else if(this.getMyPlayerName in msg.won){
+        this.props.history.push({pathname: '/game-end', state: { mode:'won'}})
+      }else{
+        this.props.history.push({pathname: '/game-end', state: { mode:'lost'}})
+      }
+
     }
 
     getMyPlayerName() {
