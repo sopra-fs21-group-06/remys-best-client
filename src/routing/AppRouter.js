@@ -1,5 +1,9 @@
 import React from "react";
+<<<<<<< HEAD
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+=======
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Login from "../views/unauth/Login";
 import Register from "../views/unauth/Register";
@@ -37,7 +41,10 @@ class AppRouter extends React.Component {
                                     <AuthRoute exact path='/choose-place' component={ChoosePlace} isAuth={isAuth}/>
                                     <AuthRoute exact path='/game' component={Game} isAuth={isAuth}/>
                                     <AuthRoute exact path='/game-end' component={GameEnd} isAuth={isAuth}/>
+<<<<<<< HEAD
                                     <Redirect to="/login" />
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
                                 </Switch>
                             </FadingRoutes>
                         </WebsocketProvider>

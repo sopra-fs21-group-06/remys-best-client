@@ -3,19 +3,26 @@ import bg from '../img/bg.png';
 
 export const BackgroundContext = React.createContext();
 
+<<<<<<< HEAD
 export const withBackgroundContext = WrappedComponent => props => (
     <BackgroundContext.Consumer>
         {value => <WrappedComponent {...props} backgroundContextValue={value}/>}
     </BackgroundContext.Consumer>
 );
 
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 class BackgroundProvider extends Component {
 
   constructor() {
     super();
     this.state = {
       bgMaxSize: 0,
+<<<<<<< HEAD
       bottomColorClass: "BLUE-bottom",
+=======
+      bottomColorClass: "blue-bottom",
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
       isTransformationDurationEnabled: false,
       dispatch: action => this.bottomColorReducer(action)
     };
@@ -42,6 +49,7 @@ class BackgroundProvider extends Component {
 
   bottomColorReducer(action) {
     switch (action.type) {
+<<<<<<< HEAD
         case "BLUE-bottom":
             this.updateBottomColor("BLUE-bottom");
             break;
@@ -56,6 +64,22 @@ class BackgroundProvider extends Component {
             break;
         default:
             this.updateBottomColor("BLUE-bottom");
+=======
+        case "blue-bottom":
+            this.updateBottomColor("blue-bottom");
+            break;
+        case "green-bottom":
+            this.updateBottomColor("green-bottom");
+            break;
+        case "red-bottom":
+            this.updateBottomColor("red-bottom");
+            break;
+        case "yellow-bottom":
+            this.updateBottomColor("yellow-bottom");
+            break;
+        default:
+            this.updateBottomColor("blue-bottom");
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     }
   };
 

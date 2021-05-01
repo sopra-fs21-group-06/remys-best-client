@@ -1,4 +1,5 @@
 .board {
+<<<<<<< HEAD
     position: absolute;
     top: 50%;
     left: 50%;
@@ -20,6 +21,10 @@
     &.YELLOW-bottom {
         @include rotate-bg(-90deg);
     }
+=======
+    @include centerer;
+    // size computed by js
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     
     .wood {
         width: 100%;
@@ -28,6 +33,7 @@
     }
 
     .fields {
+<<<<<<< HEAD
         z-index: 7;
 
         .possibleTargetField {
@@ -43,12 +49,22 @@
     }
 
     .marbles {
+=======
+        z-index: 1;
+    }
+
+    .marbles {
+        z-index: 2;
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 
         .marble {
             position: absolute;
             display: block;
             border-radius: 100%;
+<<<<<<< HEAD
             z-index: 8;
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
             // position, size and color dynamically added by js
             
             &.movable {

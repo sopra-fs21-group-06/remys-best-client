@@ -8,7 +8,11 @@ import avatar from '../../img/avatar.png'
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
+<<<<<<< HEAD
 import sessionManager from "../../helpers/sessionManager";
+=======
+import { setGameId } from "../../helpers/sessionManager";
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 
 class WaitingRoom extends React.Component {
 
@@ -25,6 +29,7 @@ class WaitingRoom extends React.Component {
       createChannel("/user/queue/waiting-room", (msg) => this.handlePrivateMessage(msg))
     ]
   }
+<<<<<<< HEAD
   
   componentWillUnmount() {
     this.context.sockClient.send('/app/waiting-room/unregister', {});
@@ -40,12 +45,42 @@ class WaitingRoom extends React.Component {
 
   handlePrivateMessage(msg) {
     sessionManager.setGameId(msg.gameId)
+=======
+
+  // TODO wait for isConnected, on reload or first screen
+  async componentDidMount() {
+    // TODO rewrite
+    await new Promise(
+      resolve => setTimeout(resolve, 300)
+    )
+    let isConnected = await this.context.isConnected
+    console.log(isConnected)
+    this.context.sockClient.send('/app/waiting-room/register', {}); // token is sent implicitly
+  }
+  
+  componentWillUnmount() {
+    this.context.sockClient.send('/app/waiting-room/unregister', {}); // token is sent implicitly
+  }
+
+  handleWaitingRoomMessage(msg) {
+    this.setState({
+      currentUsers: msg.currentUsers
+    })
+  }
+
+  handlePrivateMessage(msg) {
+    setGameId(msg.gameId)
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     this.props.history.push({pathname: '/choose-place', state: {players: msg.players}})
   }
 
   render() {
     return (
+<<<<<<< HEAD
       <WebsocketConsumer channels={this.channels} connectionCallback={() => this.register()}>
+=======
+      <WebsocketConsumer channels={this.channels}>
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
         <View className="waiting-room" title="Waiting Room"  linkMode={viewLinks.BASIC}>
           <main className="small">
               <p className="above-box">As soon as four players are ready, a new game will automatically be started. You could also be picked from an existing game session to fill up their game</p>      

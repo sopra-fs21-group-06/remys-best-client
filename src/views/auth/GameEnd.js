@@ -2,16 +2,26 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import View from "../View";
 import { viewLinks } from "../../helpers/constants";
+<<<<<<< HEAD
 import sessionManager from "../../helpers/sessionManager";
+=======
+import { setGameId } from "../../helpers/sessionManager";
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 
 class GameEnd extends React.Component {
 
   constructor() {
     super();
     this.state = {
+<<<<<<< HEAD
       username: localStorage.getItem("username")
     };
     sessionManager.setGameId(null)
+=======
+      username: "Sandro"
+    };
+    setGameId(null)
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
   }
 
   render() {

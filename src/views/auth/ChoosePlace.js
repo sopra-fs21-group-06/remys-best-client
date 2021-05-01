@@ -10,7 +10,11 @@ import { createChannel } from '../../helpers/modelUtils';
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import avatar from '../../img/avatar.png';
+<<<<<<< HEAD
 import sessionManager from "../../helpers/sessionManager";
+=======
+import { getGameId } from "../../helpers/sessionManager";
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 
 class ChoosePlace extends React.Component {
 
@@ -24,9 +28,18 @@ class ChoosePlace extends React.Component {
     };
 
     this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
+<<<<<<< HEAD
     this.gameId = sessionManager.getGameId();
     this.channels = [
       createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
+=======
+    this.gameId = getGameId();
+
+    // TODO store gameId in session Manager
+    this.channels = [
+      createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
+      createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     ]
   }
 
@@ -37,11 +50,22 @@ class ChoosePlace extends React.Component {
     players.forEach(player => {
       player.avatar = avatar
     })
+<<<<<<< HEAD
     this.setState({ players: players });
 
     if(msg.startGame) {
       this.props.history.push({pathname: '/game', state: {players: msg.players}})
     }
+=======
+
+    this.setState({
+      players: players
+    });
+  }
+
+  handleStartGameMessage(){
+    this.props.history.push('/game')
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
   }
 
   handleChangeColor(pickedColorName) {    
@@ -49,7 +73,11 @@ class ChoosePlace extends React.Component {
   }
 
   getMyPlayer(players) {
+<<<<<<< HEAD
     let myPlayername = localStorage.getItem("username") // TODO improvement?
+=======
+    let myPlayername = localStorage.getItem("username") // TODO improvements?
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     return players.find(player => player.playerName == myPlayername)
   }
 
@@ -63,8 +91,11 @@ class ChoosePlace extends React.Component {
     let myPlayer = this.getMyPlayer(players)
     let myPartner;
 
+<<<<<<< HEAD
 
     // TODO compute team mate on backend?
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     if(myPlayer.color == colors.BLUE.name) {
       myPartner = players.find(player => player.color == colors.RED.name)
     } else if(myPlayer.color == colors.GREEN.name) {
@@ -124,4 +155,26 @@ class ChoosePlace extends React.Component {
   }
 }
 
+<<<<<<< HEAD
 export default withRouter(ChoosePlace);
+=======
+export default withRouter(ChoosePlace);
+
+
+
+/*
+
+<BackgroundContext.Consumer>
+            {context => (
+              <div>
+                <button onClick={() => context.dispatch({type: "blue-bottom"})}>Change blue</button>
+                <button onClick={() => context.dispatch({type: "yellow-bottom"})}>Change yellow</button>
+                <button onClick={() => context.dispatch({type: "red-bottom"})}>Change red</button>
+                <button onClick={() => context.dispatch({type: "green-bottom"})}>Change green</button>
+              </div>
+            )} 
+          </BackgroundContext.Consumer>
+
+
+          */
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))

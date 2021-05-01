@@ -53,11 +53,76 @@ class Hand extends React.Component {
         }
     }
 
+<<<<<<< HEAD
+=======
+    removeCard(cardToRemove) {
+        // remove card
+        let remainingCards = this.state.cards.filter(card => !card.code.includes(cardToRemove.code));
+        this.setState({cards: remainingCards});
+
+        // align cards
+        setTimeout(function() {  
+            let alignedCards = this.alignCards(this.state.cards);
+            this.setState({cards: alignedCards});
+        }.bind(this), 50); 
+    }
+
+    raiseCard(cardToRaise) {
+        this.setState(prevState => {
+            const cards = prevState.cards.map(card => {
+                if (card == cardToRaise) {
+                    if(card.isRaised) {
+                        card.isRaised = false;
+                    } else {
+                        card.isRaised = true;
+                    }
+                } else if(card.isRaised) {
+                    card.isRaised = false;
+                }
+                return card;
+            });
+            return {cards: cards};
+        });
+    }
+
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     getypos(xpos){
         let ypos = a * Math.pow((xpos - h), 2) + k;
         return ypos;
     }
 
+<<<<<<< HEAD
+=======
+    addCards(cardsToAdd) {
+        for(let i = 0; i < cardsToAdd.length; i++) {
+
+            // add card
+            setTimeout(function() {  
+                this.setState(prevState => {
+                    let cardToAdd = cardsToAdd[i];
+                    return {cards: [...prevState.cards, cardToAdd]};
+                });
+            }.bind(this), i * 300);
+
+            // align cards
+            setTimeout(function() {  
+                let alignedCards = this.alignCards(this.state.cards);
+                this.setState({cards: alignedCards});
+            }.bind(this), i * 300 + 50); 
+        }
+    }
+
+    /*
+    playCards(cards, cardsToPlay) {
+        let remainingCards = cards;
+        for(let i = 0; i < cardsToPlay.length; i++) {
+            remainingCards = cards.filter(card => !card.code.includes(cardsToPlay[i].code));
+        }
+        let alignedCards = this.alignCards(remainingCards);
+        this.props.handleCardsUpdate(alignedCards)
+    }*/
+
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     alignCards(cards) {
         for(let i = 0; i < cards.length; i++) {
             let card = cards[i];
@@ -89,12 +154,17 @@ class Hand extends React.Component {
                 rot: rot
             };
 
+<<<<<<< HEAD
             card.setStyle(styles)
+=======
+            card.style = styles;
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
         }
 
         return cards;
     }
 
+<<<<<<< HEAD
     raiseCard(cardToRaise) {
         this.setState(prevState => {
             const cards = prevState.cards.map(card => {
@@ -150,6 +220,8 @@ class Hand extends React.Component {
         }.bind(this), 50); 
     }
     
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     render() {
         return (  
             <div className="hand-wrapper">
@@ -157,10 +229,17 @@ class Hand extends React.Component {
                     {this.state.cards.map(card => {
                         return (
                             <Card 
+<<<<<<< HEAD
                                 key={card.getCode()} 
                                 card={card}
                                 onCardClick={this.props.onCardClick}
                                 isActive={this.props.isActive}
+=======
+                                key={card.code} 
+                                card={card}
+                                onCardClick={this.props.onCardClick}
+                                isMyTurn={this.props.isMyTurn}
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
                             />
                         );
                     })}

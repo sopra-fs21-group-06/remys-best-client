@@ -25,6 +25,7 @@ a {
 p {
     font-size: 16px;
     line-height: 1.2;
+<<<<<<< HEAD
 
     &.clickable {
         display: inline-block;
@@ -34,6 +35,8 @@ p {
             opacity: 0.8;
         }
     }
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 }
 
 h1 {

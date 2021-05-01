@@ -9,7 +9,11 @@ class Home extends React.Component {
   constructor() {
     super();
     this.state = {
+<<<<<<< HEAD
       username: localStorage.getItem("username")
+=======
+      username: "Sandro"
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     };
   }
 

@@ -1,6 +1,10 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { createSockClient } from "../../helpers/SockClientRemy";
+<<<<<<< HEAD
+=======
+import { createChannel } from '../../helpers/modelUtils';
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 
 export const WebsocketContext = React.createContext();
 
@@ -49,6 +53,11 @@ class WebsocketProvider extends React.Component {
   connect() {
     const onConnected = () => {
       this.setState({isConnected: true})
+<<<<<<< HEAD
+=======
+      let myPrivateChannel = createChannel("/user/queue/private", (msg) => this.handlePrivateMessage(msg))
+      this.subscribe(myPrivateChannel)
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
     }
     this.state.sockClient.connect(() => onConnected());
   }
@@ -70,20 +79,37 @@ class WebsocketProvider extends React.Component {
     });
   }
 
+<<<<<<< HEAD
   // passed to websocket consumer
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
   handleSubscribe(channels) {
     channels.forEach(channel => { 
       this.subscribe(channel) 
     })
   }
 
+<<<<<<< HEAD
   // passed to websocket consumer
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
   handleUnsubscribe(channels) {
     channels.forEach(channel => {
       this.unsubscribe(channel)
     })
   }
 
+<<<<<<< HEAD
+=======
+  handlePrivateMessage() {
+    // TODO: filter the message depending on the private message type and switch/case the types
+    console.log("private message received")
+
+    // TODO if message has type user is added to new game (4 players in waiting room), then redirect to the choose place screen with the game id
+    // this.props.history.push({pathname: '/choose-place', state: {gameId: '<uuid received from server>'}})
+  }
+
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
   render() {
     return (
       <WebsocketContext.Provider value={this.state}>

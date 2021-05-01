@@ -3,6 +3,7 @@
  * The data survives page refresh, but not closing/opening the tab.
  */
 
+<<<<<<< HEAD
 export default {
     getGameId: () => {
         return sessionStorage.getItem('gameId');
@@ -15,6 +16,20 @@ export default {
     }
 }
 
+=======
+export const getGameId = () => {
+    return sessionStorage.getItem('gameId');
+}
+
+export const setGameId = (gameId) => {
+    if (gameId === undefined) {
+        sessionStorage.removeItem('gameId');
+    }
+    sessionStorage.setItem('gameId', gameId);
+}
+
+
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 /* FRANTIC
 export default {
     

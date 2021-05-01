@@ -11,12 +11,15 @@ export const viewLinks = {
     }
 }
 
+<<<<<<< HEAD
 export const roundModes = {
     EXCHANGE: "EXCHANGE",
     MY_TURN: "MY_TURN",
 	IDLE: "IDLE",
 }
 
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 export const gameEndModes = {
     WON: "won",
     LOST: "lost",
@@ -47,6 +50,7 @@ export const handModes = {
 	LEFT_HAND: "left-hand",
 	RIGHT_HAND: "right-hand",
 	PARTNER_HAND: "partner-hand",
+<<<<<<< HEAD
 }
 
 export const cardImages = {
@@ -104,4 +108,6 @@ export const cardImages = {
 	"AS": "https://deckofcardsapi.com/static/img/AS.png",
     "X1": "https://deckofcardsapi.com/static/img/X1.png",
 	"X2": "https://deckofcardsapi.com/static/img/X2.png",
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 }

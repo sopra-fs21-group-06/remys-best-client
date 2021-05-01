@@ -1,6 +1,10 @@
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import { getDomain, isProduction } from "../helpers/domainUtils";
+<<<<<<< HEAD
+=======
+import sessionManager from "../helpers/sessionManager";
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 
 export const createSockClient = () => {
     var state = {
@@ -13,7 +17,11 @@ export const createSockClient = () => {
         return state.stomp.subscribe(channel, r => callback(stripResponse(r)));
     }
 
+<<<<<<< HEAD
     const send = (destination, body) => {
+=======
+   const send = (destination, body) => {
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
         body.token = localStorage.getItem('token');
         state.stomp.send(destination, {}, JSON.stringify(body ? body : {}));
     }

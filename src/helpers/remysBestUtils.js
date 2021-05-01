@@ -1,4 +1,5 @@
 import { colors } from './constants'
+<<<<<<< HEAD
 import { createField, createMarble, createPlayer } from './modelUtils'
 
 export const generateUUID = () => { // Public Domain/MIT
@@ -16,6 +17,9 @@ export const generateUUID = () => { // Public Domain/MIT
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 }
+=======
+import { createField } from './modelUtils'
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 
 export const lightenOrDarkenColor = (col, amt) => {
   
@@ -43,6 +47,7 @@ export const lightenOrDarkenColor = (col, amt) => {
     return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
 }
 
+<<<<<<< HEAD
 export const getCardNameFromCode = (code) => {
     if(code === "X1" || code === "X2") {
         return "Joker"
@@ -106,6 +111,8 @@ export const getCardValueFromCode = (code) => {
     return cardValue;
 }
 
+=======
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 export const computeFields = (boardSize) => {
 
     const SIZE = boardSize;
@@ -134,6 +141,7 @@ export const computeFields = (boardSize) => {
         },
     }
 
+<<<<<<< HEAD
     const addFieldPosition = (fieldPositions, left, top, color, index, isColorShown) => {
         fieldPositions.push({left: left, top: top, color: color, index: index, isColorShown: isColorShown})
     }
@@ -163,20 +171,63 @@ export const computeFields = (boardSize) => {
             curLeft += direction.leftDiff;
             curTop += direction.topDiff;
             addFieldPosition(fieldPositions, curLeft, curTop, color, fixedStartingIndex + i, isColorShown);
+=======
+    const addFieldPosition = (fieldPositions, left, top, color) => {
+        fieldPositions.push({left: left, top: top, color: color})
+    }
+
+    const addKennel = (fieldPositions, curLeft, curTop, color) => {
+        curLeft += SIZE/10 - directions.TO_RIGHT.leftDiff;
+        addStraightLine(fieldPositions, curLeft, curTop, directions.TO_RIGHT, color);
+    }
+
+    const addFinishZone = (fieldPositions, curLeft, curTop, color) => {
+        curTop -= SIZE/12;
+        curLeft -= SIZE/100;
+        addFieldPosition(fieldPositions, curLeft, curTop, color);
+        curTop -= Math.ceil(Math.sqrt(FIELD_GAP*FIELD_GAP + FIELD_GAP*FIELD_GAP));
+        curLeft -= SIZE/200;
+        addFieldPosition(fieldPositions, curLeft, curTop, color);
+        curTop += directions.TO_TOP_RIGHT.topDiff
+        curLeft += directions.TO_TOP_RIGHT.leftDiff
+        addFieldPosition(fieldPositions, curLeft, curTop, color);
+        curTop += directions.TO_TOP_RIGHT.topDiff
+        curLeft += directions.TO_TOP_RIGHT.leftDiff
+        addFieldPosition(fieldPositions, curLeft, curTop, color);
+    }
+
+    const addStraightLine = (fieldPositions, curLeft, curTop, direction, color) => {
+        for(let i = 0; i < LINE_LENGTH; i++) {
+            curLeft += direction.leftDiff;
+            curTop += direction.topDiff;
+            addFieldPosition(fieldPositions, curLeft, curTop, color);
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
         }
         return [curLeft, curTop];
     }
 
+<<<<<<< HEAD
     const addCurvedLine = (fieldPositions, curLeft, curTop, direction, color) => {
         for(let i = LINE_LENGTH/2 - 1; i >= 0; i--) {
             curLeft += direction.leftDiff + ((i+1) * direction.leftOffset * 0.333);
             curTop += direction.topDiff + ((i+1) * direction.topOffset * 0.333);
             addFieldPosition(fieldPositions, curLeft, curTop, color, null, false);
+=======
+    const addCurvedLine = (fieldPositions, curLeft, curTop, direction) => {
+        for(let i = LINE_LENGTH/2 - 1; i >= 0; i--) {
+            curLeft += direction.leftDiff + ((i+1) * direction.leftOffset * 0.333);
+            curTop += direction.topDiff + ((i+1) * direction.topOffset * 0.333);
+            addFieldPosition(fieldPositions, curLeft, curTop, null);
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
         }
         for(let i = 0; i < LINE_LENGTH/2; i++) {
             curLeft += direction.leftDiff - ((i+1) * direction.leftOffset * 0.333);
             curTop += direction.topDiff - ((i+1) * direction.topOffset * 0.333);
+<<<<<<< HEAD
             addFieldPosition(fieldPositions, curLeft, curTop, color, null, false);
+=======
+            addFieldPosition(fieldPositions, curLeft, curTop, null);
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
         }
         return [curLeft, curTop];
     }
@@ -190,13 +241,18 @@ export const computeFields = (boardSize) => {
             var left = (fieldPosition.left - centerLeft) * Math.cos(degrees * Math.PI / 180) - (fieldPosition.top - centerTop) * Math.sin(degrees * Math.PI / 180) + centerLeft;
             var top = (fieldPosition.left - centerLeft) * Math.sin(degrees * Math.PI / 180) + (fieldPosition.top - centerTop) * Math.cos(degrees * Math.PI / 180) + centerTop;
             color = fieldPosition.color ? color : null
+<<<<<<< HEAD
             addFieldPosition(fieldPositions, left, top, color, fieldPosition.index, fieldPosition.isColorShown);
+=======
+            addFieldPosition(fieldPositions, left, top, color);
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
         }
     }
 
     let startingLeft = Math.ceil(SIZE/4.8192771084);
     let startingTop = Math.ceil(SIZE/1.0869565217);
     var curPosition = [startingLeft, startingTop];
+<<<<<<< HEAD
     let circleFields = [];
     let fixedFields = [];
 
@@ -279,6 +335,48 @@ export const assignPlayersToColors = (playersToAssign, myHandRef, rightHandRef, 
         }
     })
     return players;
+=======
+    let fields = [];
+
+    // compute and add blue fields
+    addFieldPosition(fields, curPosition[0], curPosition[1], colors.BLUE);
+    addKennel(fields, startingLeft, startingTop, colors.BLUE)
+    addFinishZone(fields, startingLeft, startingTop, colors.BLUE)
+    curPosition = addStraightLine(fields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT)
+    curPosition = addCurvedLine(fields, curPosition[0], curPosition[1], directions.TO_RIGHT)
+    curPosition = addStraightLine(fields, curPosition[0], curPosition[1], directions.TO_BOTTOM_RIGHT)
+    curPosition = addCurvedLine(fields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT)
+    fields.splice(-1,1)
+    let blueFields = Array.from(fields);
+
+    // compute and add green fields
+    rotateAndAddFieldPositions(fields, blueFields, 270, colors.GREEN);
+
+    // compute and add red fields
+    rotateAndAddFieldPositions(fields, blueFields, 180, colors.RED);
+
+    // compute and add yellow fields
+    rotateAndAddFieldPositions(fields, blueFields, 90, colors.YELLOW);
+
+    // add additional attributes
+    for (let i = 0; i < fields.length; i++) {
+        fields[i].id = i;
+        fields[i].size = FIELD_SIZE;
+        fields[i].borderWidth = COLORED_BORDER_WIDTH;
+    }
+
+    // mapping to model
+    fields = fields.map(field => {
+        let fieldModel = createField(field.id, field.left, field.top, field.color, field.size, field.borderWidth);
+        return fieldModel;
+    })
+
+    return fields;
+}
+
+export const moveMarble = (marble, newFieldId) => {
+
+>>>>>>> 1d7b81c (websocket basic implementation, first test until game screen (#111))
 }
 
 export const getKeyByValue = (object, value) => {
