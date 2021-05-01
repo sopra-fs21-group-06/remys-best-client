@@ -96,9 +96,6 @@ class Game extends React.Component {
     }
 
     handlePlayedMessage(msg) {
-      console.log("received played message")
-      console.log(msg)
-
       let cardToPlay = this.getCardFromCode(msg.card.code)
       let player = this.state.players.find(player => player.getPlayerName() === msg.playerName)
       let marblesToMove = msg.marbles
@@ -114,10 +111,10 @@ class Game extends React.Component {
       }.bind(this), 500);
 
       setTimeout(function() { 
-        // e.g. targetFieldKey = "16GREEN"
-        this.boardRef.current.moveMarble(marblesToMove[0].marbleId, marblesToMove[0].targetFieldKey);
+        marblesToMove.forEach(marbleToMove => {
+          this.boardRef.current.moveMarble(marbleToMove.marbleId, marbleToMove.targetFieldKey);
+        })
       }.bind(this), 1500);
-
     }
 
     handleCardsReceivedMessage(msg) {
