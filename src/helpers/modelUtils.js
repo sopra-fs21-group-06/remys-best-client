@@ -1,10 +1,23 @@
+<<<<<<< HEAD
 export const createField = (id, left, top, color, size, borderWidth) => {
+=======
+import { getCardNameFromCode, getCardValueFromCode } from './remysBestUtils'
+
+export const createField = (id, left, top, color, size, borderWidth, isColorShown) => {
+>>>>>>> dev
     let _id = id;
     let _left = left;
     let _top = top;
     let _color = color;
     let _size = size;
     let _borderWidth = borderWidth;
+<<<<<<< HEAD
+=======
+    let _key = String(_id) + (color ? color.name : '')
+    let _isColorShown = isColorShown
+    let _isPossibleTargetField = false
+    let _isTargetField = false
+>>>>>>> dev
 
     return ({
         getId: () => _id,
@@ -12,6 +25,7 @@ export const createField = (id, left, top, color, size, borderWidth) => {
         getTop: () => _top,
         getColor: () => _color,
         getSize: () => _size,
+<<<<<<< HEAD
         getBorderWidth: () => _borderWidth
     });
 };
@@ -27,11 +41,36 @@ export const createMarble = (id, fieldId, color, isMovable, isVisible) => {
         getId: () => _id,
         getFieldId: () => _fieldId,
         setFieldId: (fieldId) => _fieldId = fieldId,
+=======
+        getBorderWidth: () => _borderWidth,
+        getKey: () => _key,
+        getIsColorShown: () => _isColorShown,
+        getIsPossibleTargetField: () => _isPossibleTargetField,
+        setIsPossibleTargetField: (isPossibleTargetField) => _isPossibleTargetField = isPossibleTargetField,
+        getIsTargetField: () => _isTargetField,
+        setIsTargetField: (isTargetField) => _isTargetField = isTargetField,
+    });
+};
+
+export const createMarble = (id, fieldKey, color, isMovable, isVisible) => {
+    let _id = id;
+    let _fieldKey = String(fieldKey);
+    let _color = color;
+    let _isMovable = isMovable;
+    let _isVisible = isVisible;
+    let _isSelected = false;
+
+    return ({
+        getId: () => _id,
+        getFieldKey: () => _fieldKey,
+        setFieldKey: (fieldKey) => _fieldKey = String(fieldKey),
+>>>>>>> dev
         getColor: () => _color,
         getIsMovable: () => _isMovable,
         setIsMovable: (isMovable) => _isMovable = isMovable,
         getIsVisible: () => _isVisible,
         setIsVisible: (isVisible) => _isVisible = isVisible,
+<<<<<<< HEAD
     });
 };
 
@@ -66,6 +105,57 @@ export const createCard = () => {
         // scopes).
         click: () => count += 1,
         getCount: () => count.toLocaleString()
+=======
+        getIsSelected: () => _isSelected,
+        setIsSelected: (isSelected) => _isSelected = isSelected,
+    });
+};
+
+export const createChannel = (name, callback) => {
+    let _name = name;
+    let _callback = callback;
+    let _unsubscribe;
+
+    return ({
+        getName: () => _name,
+        getCallback: () => _callback,
+        getUnsubscribe: () => _unsubscribe,
+        setUnsubscribe: (unsubscribe) => _unsubscribe = unsubscribe,
+    });
+};
+
+export const createCard = (code, imgUrl) => {
+    let _code = code;
+    let _imgUrl = imgUrl;
+    let _isRaised = false;
+    let _style = {};
+    let _name = getCardNameFromCode(code)
+    let _value = getCardValueFromCode(code)
+
+    return ({
+        getCode: () => _code,
+        getImgUrl: () => _imgUrl,
+        getIsRaised: () => _isRaised,
+        setIsRaised: (isRaised) => _isRaised = isRaised,
+        getStyle: () => _style,
+        setStyle: (style) => _style = style,
+        getName: () => _name,
+        getValue: () => _value,
+    });
+};
+
+export const createPlayer = (playerName, handRef, handRot, colorName) => {
+    let _playerName = playerName;
+    let _handRef = handRef;
+    let _handRot = handRot;
+    let _colorName = colorName;
+   
+    return ({
+        getPlayerName: () => _playerName,
+        getHandRef: () => _handRef,
+        getHandRot: () => _handRot,
+        getColorName: () => _colorName
+>>>>>>> dev
     });
 };
 
@@ -82,6 +172,7 @@ export const createUser = () => {
         click: () => count += 1,
         getCount: () => count.toLocaleString()
     });
+<<<<<<< HEAD
 };
 
 export const createChannel = (name, callback) => {
@@ -95,4 +186,6 @@ export const createChannel = (name, callback) => {
         getUnsubscribe: () => _unsubscribe,
         setUnsubscribe: (unsubscribe) => _unsubscribe = unsubscribe,
     });
+=======
+>>>>>>> dev
 };

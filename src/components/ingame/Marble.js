@@ -29,7 +29,11 @@ class Marble extends React.Component {
 
         return (
             <PickUpAndDrop in={isVisible}>
+<<<<<<< HEAD
                 <div className={`marble ${colorName}` + (isMovable ? ' movable' : '')} style={styles}></div>
+=======
+                <div onClick={isMovable ? () => this.props.selectMarbleToPlay(marble) : null} className={`marble ${colorName}` + (isMovable ? ' movable' : '')} style={styles}></div>
+>>>>>>> dev
             </PickUpAndDrop>
         );
     }

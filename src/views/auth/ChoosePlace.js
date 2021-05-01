@@ -10,7 +10,11 @@ import { createChannel } from '../../helpers/modelUtils';
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import avatar from '../../img/avatar.png';
+<<<<<<< HEAD
 import { getGameId } from "../../helpers/sessionManager";
+=======
+import sessionManager from "../../helpers/sessionManager";
+>>>>>>> dev
 
 class ChoosePlace extends React.Component {
 
@@ -24,12 +28,18 @@ class ChoosePlace extends React.Component {
     };
 
     this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
+<<<<<<< HEAD
     this.gameId = getGameId();
 
     // TODO store gameId in session Manager
     this.channels = [
       createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
       createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
+=======
+    this.gameId = sessionManager.getGameId();
+    this.channels = [
+      createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
+>>>>>>> dev
     ]
   }
 
@@ -40,6 +50,7 @@ class ChoosePlace extends React.Component {
     players.forEach(player => {
       player.avatar = avatar
     })
+<<<<<<< HEAD
 
     this.setState({
       players: players
@@ -48,6 +59,13 @@ class ChoosePlace extends React.Component {
 
   handleStartGameMessage(){
     this.props.history.push('/game')
+=======
+    this.setState({ players: players });
+
+    if(msg.startGame) {
+      this.props.history.push({pathname: '/game', state: {players: msg.players}})
+    }
+>>>>>>> dev
   }
 
   handleChangeColor(pickedColorName) {    
@@ -55,7 +73,11 @@ class ChoosePlace extends React.Component {
   }
 
   getMyPlayer(players) {
+<<<<<<< HEAD
     let myPlayername = localStorage.getItem("username") // TODO improvements?
+=======
+    let myPlayername = localStorage.getItem("username") // TODO improvement?
+>>>>>>> dev
     return players.find(player => player.playerName == myPlayername)
   }
 
@@ -69,6 +91,11 @@ class ChoosePlace extends React.Component {
     let myPlayer = this.getMyPlayer(players)
     let myPartner;
 
+<<<<<<< HEAD
+=======
+
+    // TODO compute team mate on backend?
+>>>>>>> dev
     if(myPlayer.color == colors.BLUE.name) {
       myPartner = players.find(player => player.color == colors.RED.name)
     } else if(myPlayer.color == colors.GREEN.name) {
@@ -128,6 +155,7 @@ class ChoosePlace extends React.Component {
   }
 }
 
+<<<<<<< HEAD
 export default withRouter(ChoosePlace);
 
 
@@ -147,3 +175,6 @@ export default withRouter(ChoosePlace);
 
 
           */
+=======
+export default withRouter(ChoosePlace);
+>>>>>>> dev

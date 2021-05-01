@@ -53,6 +53,7 @@ class Hand extends React.Component {
         }
     }
 
+<<<<<<< HEAD
     removeCard(cardToRemove) {
         // remove card
         let remainingCards = this.state.cards.filter(card => !card.code.includes(cardToRemove.code));
@@ -83,11 +84,14 @@ class Hand extends React.Component {
         });
     }
 
+=======
+>>>>>>> dev
     getypos(xpos){
         let ypos = a * Math.pow((xpos - h), 2) + k;
         return ypos;
     }
 
+<<<<<<< HEAD
     addCards(cardsToAdd) {
         for(let i = 0; i < cardsToAdd.length; i++) {
 
@@ -117,6 +121,8 @@ class Hand extends React.Component {
         this.props.handleCardsUpdate(alignedCards)
     }*/
 
+=======
+>>>>>>> dev
     alignCards(cards) {
         for(let i = 0; i < cards.length; i++) {
             let card = cards[i];
@@ -148,12 +154,74 @@ class Hand extends React.Component {
                 rot: rot
             };
 
+<<<<<<< HEAD
             card.style = styles;
+=======
+            card.setStyle(styles)
+>>>>>>> dev
         }
 
         return cards;
     }
 
+<<<<<<< HEAD
+=======
+    raiseCard(cardToRaise) {
+        this.setState(prevState => {
+            const cards = prevState.cards.map(card => {
+                if (card == cardToRaise) {
+                    if(card.getIsRaised()) {
+                        card.setIsRaised(false);
+                    } else {
+                        card.setIsRaised(true);
+                    }
+                } else if(card.getIsRaised()) {
+                    card.setIsRaised(false);
+                }
+                return card;
+            });
+            return {cards: cards};
+        });
+    }
+
+    addCards(cardsToAdd) {
+        for(let i = 0; i < cardsToAdd.length; i++) {
+
+            // add card
+            setTimeout(function() {  
+                this.setState(prevState => {
+                    let cardToAdd = cardsToAdd[i];
+                    return {cards: [...prevState.cards, cardToAdd]};
+                });
+            }.bind(this), i * 300);
+
+            // align cards
+            setTimeout(function() {  
+                let alignedCards = this.alignCards(this.state.cards);
+                this.setState({cards: alignedCards});
+            }.bind(this), i * 300 + 50); 
+        }
+    }
+
+    removeRandomCard() {
+        let cards = this.state.cards
+        var randomCard = cards[Math.floor(Math.random() * cards.length)];
+        this.removeCard(randomCard)
+    }
+
+    removeCard(cardToRemove) {
+        // remove card
+        let remainingCards = this.state.cards.filter(card => !card.getCode().includes(cardToRemove.getCode()));
+        this.setState({cards: remainingCards});
+
+        // align cards
+        setTimeout(function() {  
+            let alignedCards = this.alignCards(this.state.cards);
+            this.setState({cards: alignedCards});
+        }.bind(this), 50); 
+    }
+    
+>>>>>>> dev
     render() {
         return (  
             <div className="hand-wrapper">
@@ -161,10 +229,17 @@ class Hand extends React.Component {
                     {this.state.cards.map(card => {
                         return (
                             <Card 
+<<<<<<< HEAD
                                 key={card.code} 
                                 card={card}
                                 onCardClick={this.props.onCardClick}
                                 isMyTurn={this.props.isMyTurn}
+=======
+                                key={card.getCode()} 
+                                card={card}
+                                onCardClick={this.props.onCardClick}
+                                isActive={this.props.isActive}
+>>>>>>> dev
                             />
                         );
                     })}

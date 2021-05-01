@@ -1,6 +1,10 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+<<<<<<< HEAD
 import BlurredElement from './BlurredElement';
+=======
+import Blurred from './Blurred';
+>>>>>>> dev
 
 class Avatar extends React.Component {
 
@@ -9,11 +13,19 @@ class Avatar extends React.Component {
         let img = this.props.img ? this.props.img : 'no-img'
 
         return (
+<<<<<<< HEAD
             <BlurredElement borderRadius="25" hasBorder={true} size={this.props.size ? this.props.size : "60"} className={"avatar avatar-" + colorName}>
                 <div className={"avatar-box " + colorName + "-bg " + (this.props.img ? '' : 'no-img')} onClick={this.props.onClick}>
                     {this.props.img ? <img src={this.props.img}/> : null}
                 </div>
             </BlurredElement>
+=======
+            <Blurred borderRadius="25" hasBorder={true} size={this.props.size ? this.props.size : "60"} className={"avatar avatar-" + colorName}>
+                <div className={"avatar-box " + colorName + "-bg " + (this.props.img ? '' : 'no-img')} onClick={this.props.onClick}>
+                    {this.props.img ? <img src={this.props.img}/> : null}
+                </div>
+            </Blurred>
+>>>>>>> dev
         );
     }
 }

@@ -2,16 +2,26 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import View from "../View";
 import { viewLinks } from "../../helpers/constants";
+<<<<<<< HEAD
 import { setGameId } from "../../helpers/sessionManager";
+=======
+import sessionManager from "../../helpers/sessionManager";
+>>>>>>> dev
 
 class GameEnd extends React.Component {
 
   constructor() {
     super();
     this.state = {
+<<<<<<< HEAD
       username: "Sandro"
     };
     setGameId(null)
+=======
+      username: localStorage.getItem("username")
+    };
+    sessionManager.setGameId(null)
+>>>>>>> dev
   }
 
   render() {

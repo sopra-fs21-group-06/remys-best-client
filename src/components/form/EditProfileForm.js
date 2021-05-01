@@ -2,7 +2,10 @@ import { withFormValidation }  from './withFormValidation';
 import { withRouter, Link } from 'react-router-dom';
 import { api } from "../../helpers/api";
 import { ServerError, SubmitButton, ValidatedInput} from "../../helpers/formUtils"
+<<<<<<< HEAD
 import User from "../models/shared/User";
+=======
+>>>>>>> dev
 
 const EditProfileFormSkeleton = (props) => {
   const {

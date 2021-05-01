@@ -1,6 +1,30 @@
 .board {
+<<<<<<< HEAD
     @include centerer;
     // size computed by js
+=======
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 6;
+    // size computed by js
+
+    &.BLUE-bottom {
+        @include rotate-bg(0deg);
+    }
+
+    &.GREEN-bottom {
+        @include rotate-bg(90deg);
+    }
+
+    &.RED-bottom {
+        @include rotate-bg(180deg);
+    }
+
+    &.YELLOW-bottom {
+        @include rotate-bg(-90deg);
+    }
+>>>>>>> dev
     
     .wood {
         width: 100%;
@@ -9,16 +33,38 @@
     }
 
     .fields {
+<<<<<<< HEAD
         z-index: 1;
     }
 
     .marbles {
         z-index: 2;
+=======
+        z-index: 7;
+
+        .possibleTargetField {
+            transform: scale(1);
+
+            $color: #000000;
+            @include pulse($color);
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .marbles {
+>>>>>>> dev
 
         .marble {
             position: absolute;
             display: block;
             border-radius: 100%;
+<<<<<<< HEAD
+=======
+            z-index: 8;
+>>>>>>> dev
             // position, size and color dynamically added by js
             
             &.movable {

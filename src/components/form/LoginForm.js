@@ -3,7 +3,10 @@ import { withFormValidation }  from './withFormValidation';
 import { withRouter, Link } from 'react-router-dom';
 import { api } from "../../helpers/api";
 import { ServerError, SubmitButton, ValidatedInput} from "../../helpers/formUtils"
+<<<<<<< HEAD
 import User from "../models/shared/User";
+=======
+>>>>>>> dev
 import { WebsocketContext } from '../websocket/WebsocketProvider';
 
 const LoginFormSkeleton = (props) => {
@@ -86,12 +89,19 @@ const handlers = {
           password: values.password
       });
       const response = await api.post(`/users/login`, requestBody);
+<<<<<<< HEAD
       // Get the returned user and update a new object.
       const user = new User(response.data);
 
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);
       localStorage.setItem('username', user.username);
+=======
+
+      // Store the token into the local storage.
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('username', response.data.username);
+>>>>>>> dev
     } catch (error) {
       return error;
     }

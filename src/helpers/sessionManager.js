@@ -3,6 +3,7 @@
  * The data survives page refresh, but not closing/opening the tab.
  */
 
+<<<<<<< HEAD
 export const getGameId = () => {
     return sessionStorage.getItem('gameId');
 }
@@ -15,6 +16,20 @@ export const setGameId = (gameId) => {
 }
 
 
+=======
+export default {
+    getGameId: () => {
+        return sessionStorage.getItem('gameId');
+    },
+    setGameId: (gameId) => {
+        if (gameId === undefined) {
+            sessionStorage.removeItem('gameId');
+        }
+        sessionStorage.setItem('gameId', gameId);
+    }
+}
+
+>>>>>>> dev
 /* FRANTIC
 export default {
     
