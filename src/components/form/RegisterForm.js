@@ -3,7 +3,6 @@ import { withFormValidation }  from './withFormValidation';
 import { withRouter, Link } from 'react-router-dom';
 import { api } from "../../helpers/api";
 import { ServerError, SubmitButton, ValidatedInput} from "../../helpers/formUtils"
-import User from "../models/shared/User";
 import { WebsocketContext } from '../websocket/WebsocketProvider';
 
 const RegisterFormSkeleton = (props) => {

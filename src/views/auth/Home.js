@@ -9,7 +9,7 @@ class Home extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: "Sandro"
+      username: localStorage.getItem("username")
     };
   }
 

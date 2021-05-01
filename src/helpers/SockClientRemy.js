@@ -1,7 +1,6 @@
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import { getDomain, isProduction } from "../helpers/domainUtils";
-import sessionManager from "../helpers/sessionManager";
 
 export const createSockClient = () => {
     var state = {
@@ -14,7 +13,7 @@ export const createSockClient = () => {
         return state.stomp.subscribe(channel, r => callback(stripResponse(r)));
     }
 
-   const send = (destination, body) => {
+    const send = (destination, body) => {
         body.token = localStorage.getItem('token');
         state.stomp.send(destination, {}, JSON.stringify(body ? body : {}));
     }
