@@ -10,7 +10,7 @@ import { createChannel } from '../../helpers/modelUtils';
 import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import avatar from '../../img/avatar.png';
-import { getGameId } from "../../helpers/sessionManager";
+import sessionManager from "../../helpers/sessionManager";
 
 class ChoosePlace extends React.Component {
 
@@ -24,12 +24,9 @@ class ChoosePlace extends React.Component {
     };
 
     this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
-    this.gameId = getGameId();
-
-    // TODO store gameId in session Manager
+    this.gameId = sessionManager.getGameId();
     this.channels = [
       createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
-      createChannel(`/topic/game/${this.gameId}/startGame`, () => this.handleStartGameMessage())
     ]
   }
 
@@ -40,14 +37,11 @@ class ChoosePlace extends React.Component {
     players.forEach(player => {
       player.avatar = avatar
     })
+    this.setState({ players: players });
 
-    this.setState({
-      players: players
-    });
-  }
-
-  handleStartGameMessage(){
-    this.props.history.push('/game')
+    if(msg.startGame) {
+      this.props.history.push({pathname: '/game', state: {players: msg.players}})
+    }
   }
 
   handleChangeColor(pickedColorName) {    
@@ -55,7 +49,7 @@ class ChoosePlace extends React.Component {
   }
 
   getMyPlayer(players) {
-    let myPlayername = localStorage.getItem("username") // TODO improvements?
+    let myPlayername = localStorage.getItem("username") // TODO improvement?
     return players.find(player => player.playerName == myPlayername)
   }
 
@@ -69,6 +63,8 @@ class ChoosePlace extends React.Component {
     let myPlayer = this.getMyPlayer(players)
     let myPartner;
 
+
+    // TODO compute team mate on backend?
     if(myPlayer.color == colors.BLUE.name) {
       myPartner = players.find(player => player.color == colors.RED.name)
     } else if(myPlayer.color == colors.GREEN.name) {
@@ -129,21 +125,3 @@ class ChoosePlace extends React.Component {
 }
 
 export default withRouter(ChoosePlace);
-
-
-
-/*
-
-<BackgroundContext.Consumer>
-            {context => (
-              <div>
-                <button onClick={() => context.dispatch({type: "blue-bottom"})}>Change blue</button>
-                <button onClick={() => context.dispatch({type: "yellow-bottom"})}>Change yellow</button>
-                <button onClick={() => context.dispatch({type: "red-bottom"})}>Change red</button>
-                <button onClick={() => context.dispatch({type: "green-bottom"})}>Change green</button>
-              </div>
-            )} 
-          </BackgroundContext.Consumer>
-
-
-          */
