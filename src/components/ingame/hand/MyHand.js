@@ -1,5 +1,6 @@
 import React from "react";
 import { FadeInOut } from '../../transitions/FadeInOut';
+import { DelayedFadeInOut } from '../../transitions/DelayedFadeInOut';
 import { roundModes } from '../../../helpers/constants';
 import { WebsocketContext } from '../../websocket/WebsocketProvider';
 import sessionManager from "../../../helpers/sessionManager";
@@ -104,6 +105,16 @@ class MyHand extends React.Component {
         let isResetButtonActive = selectedMoveName != null
         let isThrowAwayVisible = selectedMoveName == null
 
+        let distance = 24
+        let arrowRightTop = 0;
+        if(selectedMoveName == null) {
+            arrowRightTop = 0 * distance
+        } else if(selectedMoveName != null && !isMarbleChosen) {
+            arrowRightTop = 1 * distance
+        } else {
+            arrowRightTop = 2 * distance
+        }
+
         return (
             <WebsocketConsumer channels={this.channels} >
                 <div>
@@ -125,41 +136,34 @@ class MyHand extends React.Component {
                         </FadeInOut>
                         <FadeInOut in={this.props.mode === roundModes.MY_TURN}>
                             <div className="step">
-                                <FadeInOut in={selectedMoveName == null}>
-                                    <img className="arrow-right" src={arrowRight} />
-                                </FadeInOut>
-                                <FadeInOut in={selectedMoveName != null}>
+                                <img className="arrow-right" src={arrowRight} style={{top: `calc(50% + ${arrowRightTop}px)`}} />
+                                <DelayedFadeInOut in={selectedMoveName != null}>
                                     <img className="checkmark" src={checkmark} />
-                                </FadeInOut>
+                                </DelayedFadeInOut>
                                 <p>{"Choose Move"}{selectedMoveName && (" (" + selectedMoveName + ")")}</p>
                             </div>
                             <div className={"step " + (selectedMoveName != null ? '' : 'inactive')}>
-                                <FadeInOut in={selectedMoveName != null && !isMarbleChosen}>
-                                    <img className="arrow-right" src={arrowRight} />
-                                </FadeInOut>
-                                <FadeInOut in={selectedMoveName != null && isMarbleChosen}>
+                                <DelayedFadeInOut in={selectedMoveName != null && isMarbleChosen}>
                                     <img className="checkmark" src={checkmark} />
-                                </FadeInOut>
+                                </DelayedFadeInOut>
                                 <p>Choose Marble</p>
                             </div>
 
                             <div className="actions">
-                                <FadeInOut in={isThrowAwayVisible}>
+                                {/* delay on appear */}
+                                <DelayedFadeInOut in={isThrowAwayVisible}>
                                     <div className="btn ">
                                         <p className='clickable' onClick={() => this.props.throwAway()}>Throw Away</p>
                                     </div>
-                                </FadeInOut>
-                                <FadeInOut in={!isThrowAwayVisible}>
+                                </DelayedFadeInOut>
+                                <DelayedFadeInOut in={!isThrowAwayVisible}>
                                     <div className={"btn " + (!isPlayButtonActive ? 'inactive' : '')}>
-                                        <FadeInOut in={selectedMoveName != null && isMarbleChosen}>
-                                            <img className="arrow-right" src={arrowRight} />
-                                        </FadeInOut>
                                         <p className={isPlayButtonActive ? 'clickable' : ''} onClick={isPlayButtonActive ? () => this.props.play() : null}>Play</p>
                                     </div>
                                     <div className={"btn " + (!isResetButtonActive ? 'inactive' : '')}>
                                         <p className={isResetButtonActive ? 'clickable' : ''} onClick={isResetButtonActive ? () => this.props.reset() : null}>Reset</p>
                                     </div>
-                                </FadeInOut>
+                                </DelayedFadeInOut>
                             </div>
                         </FadeInOut>
                     </div>
