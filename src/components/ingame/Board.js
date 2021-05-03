@@ -178,6 +178,11 @@ class Board extends React.Component {
         return this.state.fields.find(field => field.getIsTargetField());
     }
 
+    resetAll() {
+        this.resetMovableMarbles()
+        this.resetSelectedMarble()
+    }
+
     resetMovableMarbles() {
         this.updateMovableMarbles([]);
     }

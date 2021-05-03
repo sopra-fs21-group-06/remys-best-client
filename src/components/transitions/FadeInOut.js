@@ -7,7 +7,7 @@ export class FadeInOut extends React.Component{
         const extendedProps = { 
             ...this.props,
             timeout: 150, // has to be the same amount as in fadeInOut.scss
-            classNames: "fadeInOut" ,
+            classNames: "fadeInOut",
             unmountOnExit: true
         }
         return (

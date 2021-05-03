@@ -43,6 +43,24 @@ class WaitingRoom extends React.Component {
     this.props.history.push({pathname: '/choose-place', state: {players: msg.players}})
   }
 
+  getCurrentPlace() {
+    let place = null;
+    this.state.currentUsers.forEach((user, index) => {
+      if(localStorage.getItem("username") === user.username) {
+        if(index === 0) {
+          place = "first"
+        } else if(index === 1) {
+          place = "second"
+        } else if(index === 2) {
+          place = "third"
+        } else if(index === 3) {
+          place = "fourth"
+        }
+      }
+    })
+    return place
+  }
+
   render() {
     return (
       <WebsocketConsumer channels={this.channels} connectionCallback={() => this.register()}>
@@ -50,7 +68,7 @@ class WaitingRoom extends React.Component {
           <main className="small">
               <p className="above-box">As soon as four players are ready, a new game will automatically be started. You could also be picked from an existing game session to fill up their game</p>      
               <div className="queue">
-                <p className="above-players">You are in the second place</p>
+                <p className="above-players">You are in the {this.getCurrentPlace()} place</p>
                 <Box className="players">
                   {this.state.currentUsers.map(user => {
                     return <Avatar key={user.username} img={avatar}/>

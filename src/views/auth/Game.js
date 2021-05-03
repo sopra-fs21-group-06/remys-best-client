@@ -228,14 +228,13 @@ class Game extends React.Component {
         // TODO targetField(s) submission
         // fieldKey (e.g. "4GREEN", "8BLUE")
       });
+
+      this.reset();
     }
 
     reset() {
-      this.myHandContainerRef.current.resetRaiseCard();
-      this.myHandContainerRef.current.resetMoves();
-      this.myHandContainerRef.current.resetSelectedMoveName();
-      this.boardRef.current.resetMovableMarbles()
-      this.boardRef.current.resetSelectedMarble()
+      this.myHandContainerRef.current.resetAll();
+      this.boardRef.current.resetAll();
     }
 
     sendReadyMessage() {
