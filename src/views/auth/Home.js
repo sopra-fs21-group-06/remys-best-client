@@ -28,6 +28,7 @@ class Home extends React.Component {
               <NavigationBox 
                 title="Create New Game"
                 subtitle="Play with your friends"
+                onClick={() => this.props.history.push('/create-new-game')}
               />
               <p className="below-box">or just wait here to get invited</p>
             </div>
@@ -36,6 +37,7 @@ class Home extends React.Component {
               <NavigationBox 
                 title="Manage Friends"
                 subtitle="Connect with your friends"
+                onClick={() => this.props.history.push('/manage-friends')}
               />
               <NavigationBox 
                 title="Edit Profile"

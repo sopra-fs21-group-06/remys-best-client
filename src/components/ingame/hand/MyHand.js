@@ -1,10 +1,13 @@
 import React from "react";
 import { FadeInOut } from '../../transitions/FadeInOut';
+import { DelayedFadeInOut } from '../../transitions/DelayedFadeInOut';
 import { roundModes } from '../../../helpers/constants';
 import { WebsocketContext } from '../../websocket/WebsocketProvider';
 import sessionManager from "../../../helpers/sessionManager";
 import WebsocketConsumer from '../../websocket/WebsocketConsumer';
 import { createChannel } from '../../../helpers/modelUtils';
+import checkmark from '../../../img/checkmark.png';
+import arrowRight from '../../../img/arrow-right.png';
 
 class MyHand extends React.Component {
 
@@ -14,8 +17,8 @@ class MyHand extends React.Component {
         super();
         this.state = {
             raisedCard: null,
-            selectedMoveName: null,
             moves: [],
+            selectedMoveName: null,
             isMarbleChosen: false
         };
         this.gameId = sessionManager.getGameId();
@@ -69,29 +72,55 @@ class MyHand extends React.Component {
         return this.state.selectedMoveName;
     }
 
-    resetRaiseCard() {
-        this.handleRaiseCard(null)
-    }
-
     setIsMarbleChosen(isMarbleChosen) {
         this.setState({isMarbleChosen: isMarbleChosen})
     }
 
-    resetSelectedMoveName() {
-        this.setState({ selectedMoveName: null })
+    resetAll() {
+        this.resetRaiseCard()
+        this.resetMoves()
+        this.resetSelectedMoveName()
+        this.resetIsMarbleChosen()
+    }
+
+    resetRaiseCard() {
+        this.handleRaiseCard(null)
     }
 
     resetMoves() {
         this.setState({ moves: [] })
     }
 
+    resetSelectedMoveName() {
+        this.setState({ selectedMoveName: null })
+    }
+
+    resetIsMarbleChosen() {
+        this.setState({ isMarbleChosen: false })
+    }
+
     render() {
+        let {selectedMoveName, isMarbleChosen, raisedCard, moves} = this.state
+        let isPlayButtonActive = selectedMoveName != null && isMarbleChosen
+        let isResetButtonActive = selectedMoveName != null
+        let isThrowAwayVisible = selectedMoveName == null
+
+        let distance = 24
+        let arrowRightTop = 0;
+        if(selectedMoveName == null) {
+            arrowRightTop = 0 * distance
+        } else if(selectedMoveName != null && !isMarbleChosen) {
+            arrowRightTop = 1 * distance
+        } else {
+            arrowRightTop = 2 * distance
+        }
+
         return (
             <WebsocketConsumer channels={this.channels} >
                 <div>
                     <div className="card-options">
-                        <FadeInOut in={this.state.moves.length != 0}>
-                            {this.state.moves.map(move => {
+                        <FadeInOut in={moves.length != 0}>
+                            {moves.map(move => {
                                 return (
                                     <div key={move.moveName}><p className="clickable" onClick={() => this.requestMarbles(move.moveName)}>{move.moveName}</p></div>
                                 );
@@ -102,14 +131,40 @@ class MyHand extends React.Component {
                         {React.cloneElement(this.props.children, { onCardClick: this.handleRaiseCard})}
                     </div>
                     <div className="card-menu">
-                        <FadeInOut in={this.props.mode === roundModes.EXCHANGE && this.state.raisedCard != null}>
-                            <p className="clickable" onClick={() => this.exchange()}>{this.state.raisedCard && "Send " + this.state.raisedCard.getValue()}</p>
+                        <FadeInOut in={this.props.mode === roundModes.EXCHANGE && raisedCard != null}>
+                            <p className="clickable" onClick={() => this.exchange()}>{raisedCard && "Send " + raisedCard.getValue()}</p>
                         </FadeInOut>
                         <FadeInOut in={this.props.mode === roundModes.MY_TURN}>
-                            <div><p>{"Choose Move"}{this.state.selectedMoveName && (" (" + this.state.selectedMoveName + ")")}</p></div>
-                            <div><p>{"Choose Marble"}{this.state.isMarbleChosen && (" (chosen)")}</p></div>
-                            <div><p className="clickable" onClick={() => this.props.play()}>Play</p></div>
-                            <div><p className="clickable" onClick={() => this.props.reset()}>Reset</p></div>
+                            <div className="step">
+                                <img className="arrow-right" src={arrowRight} style={{top: `calc(50% + ${arrowRightTop}px)`}} />
+                                <DelayedFadeInOut in={selectedMoveName != null}>
+                                    <img className="checkmark" src={checkmark} />
+                                </DelayedFadeInOut>
+                                <p>{"Choose Move"}{selectedMoveName && (" (" + selectedMoveName + ")")}</p>
+                            </div>
+                            <div className={"step " + (selectedMoveName != null ? '' : 'inactive')}>
+                                <DelayedFadeInOut in={selectedMoveName != null && isMarbleChosen}>
+                                    <img className="checkmark" src={checkmark} />
+                                </DelayedFadeInOut>
+                                <p>Choose Marble</p>
+                            </div>
+
+                            <div className="actions">
+                                {/* delay on appear */}
+                                <DelayedFadeInOut in={isThrowAwayVisible}>
+                                    <div className="btn ">
+                                        <p className='clickable' onClick={() => this.props.throwAway()}>Throw Away</p>
+                                    </div>
+                                </DelayedFadeInOut>
+                                <DelayedFadeInOut in={!isThrowAwayVisible}>
+                                    <div className={"btn " + (!isPlayButtonActive ? 'inactive' : '')}>
+                                        <p className={isPlayButtonActive ? 'clickable' : ''} onClick={isPlayButtonActive ? () => this.props.play() : null}>Play</p>
+                                    </div>
+                                    <div className={"btn " + (!isResetButtonActive ? 'inactive' : '')}>
+                                        <p className={isResetButtonActive ? 'clickable' : ''} onClick={isResetButtonActive ? () => this.props.reset() : null}>Reset</p>
+                                    </div>
+                                </DelayedFadeInOut>
+                            </div>
                         </FadeInOut>
                     </div>
                 </div>

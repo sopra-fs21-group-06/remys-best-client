@@ -1,13 +1,19 @@
 import React from "react";
 import { CSSTransition } from 'react-transition-group';
 
-export class FadeInOut extends React.Component{
+export class DelayedFadeInOut extends React.Component{
+
+
+    // TODO css stuff in here and work with variables (multiple delays at the same time)
     
     render() {
         const extendedProps = { 
             ...this.props,
-            timeout: 150, // has to be the same amount as in fadeInOut.scss
-            classNames: "fadeInOut",
+            timeout: {
+                enter: 300,
+                exit: 0,
+            },
+            classNames: "delayedFadeInOut",
             unmountOnExit: true,
             mountOnEnter: true
         }

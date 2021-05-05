@@ -93,8 +93,7 @@ const handlers = {
     } catch (error) {
         return error;
     }
-  },
-  routeOnSuccess: "/home"
+  }
 }
 
 const EditProfileForm = withFormValidation(initialValues, rules, handlers, EditProfileFormSkeleton);

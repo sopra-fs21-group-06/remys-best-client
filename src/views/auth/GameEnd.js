@@ -37,7 +37,7 @@ class GameEnd extends React.Component {
       <View className="game-end" title={title}  linkMode={viewLinks.BASIC}>
         <main className="small">
             <p>{text}</p>      
-            <Link to="/home">Leave and return to Home</Link>
+            <p className="below-text"><Link to="/home">Leave and return to Home</Link></p>
           </main>
       </View>
     );

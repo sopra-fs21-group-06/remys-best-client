@@ -16,6 +16,24 @@
     transition: all 150ms ease-out; // has to be the same amount as in FadeInOut.js
 }
 
+.delayedFadeInOut-enter {
+    opacity: 0;
+}
+
+.delayedFadeInOut-enter-active {
+    opacity: 1;
+    transition: all 150ms ease-in; // has to be the same amount as in FadeInOut.js
+    transition-delay: 150ms; // 150 + 300 = 450
+}
+
+.delayedFadeInOut-exit {
+    opacity: 1;
+}
+
+.delayedFadeInOut-exit-active {
+    opacity: 0;
+}
+
 .popInOrSlideDown-enter {
     opacity: 0;
     transform: scale(0.5);
