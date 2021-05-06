@@ -11,6 +11,7 @@ import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
 import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
 import {createCard, createChannel} from '../../helpers/modelUtils';
+import {kennelFieldIds} from '../../helpers/constants';
 import {assignPlayersToColors, generateUUID} from '../../helpers/remysBestUtils';
 import sessionManager from "../../helpers/sessionManager";
 import {WebsocketContext} from '../../components/websocket/WebsocketProvider';
@@ -98,7 +99,14 @@ class Game extends React.Component {
     handlePlayedMessage(msg) {
       let cardToPlay = this.getCardFromCode(msg.card.code)
       let player = this.state.players.find(player => player.getPlayerName() === msg.playerName)
-      let marblesToMove = msg.marbles
+      let marbles = msg.marbles
+
+      let marblesToSendHome = marbles.filter(marbleIdAndFieldKey => { 
+        let targetFieldId = parseInt(marbleIdAndFieldKey.targetFieldKey.replace(/\D/g, ""))  
+        return targetFieldId >= kennelFieldIds[0];
+      });
+
+      let marblesToMove = marbles.filter(marbleIdAndFieldKey => !marblesToSendHome.includes(marbleIdAndFieldKey.targetFieldKey))
 
       if(this.isMyPlayer(player)) {
         player.getHandRef().current.removeCard(cardToPlay)
@@ -115,6 +123,12 @@ class Game extends React.Component {
           this.boardRef.current.moveMarble(marbleToMove.marbleId, marbleToMove.targetFieldKey);
         })
       }.bind(this), 1500);
+
+      setTimeout(function() { 
+        marblesToSendHome.forEach(marbleToSendHome => {
+          this.boardRef.current.moveMarble(marbleToSendHome.marbleId, marbleToSendHome.targetFieldKey);
+        })
+      }.bind(this), 3000);
     }
 
     handleCardsReceivedMessage(msg) {
@@ -136,8 +150,6 @@ class Game extends React.Component {
     }
 
     handleTargetFieldsListMessage(msg) {
-      // TODO process data from backend
-      console.log(msg)
       let possibleTargetFieldKeys = msg.targetFieldKeys
       // fieldKey (unique): id + color (e.g. 4GREEN)
 

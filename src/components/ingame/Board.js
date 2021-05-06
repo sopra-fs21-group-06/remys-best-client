@@ -41,8 +41,6 @@ class Board extends React.Component {
     }
 
     handleMarbleListMessage(msg) {
-        console.log("marble list received")
-        console.log(msg.marbles)
         this.updateMovableMarbles(msg.marbles)
     }
 
@@ -149,6 +147,8 @@ class Board extends React.Component {
     async selectMarbleToPlay(marbleToPlay) {
         this.resetMovableMarbles()
         this.selectMarble(marbleToPlay)
+
+        // TODO wait for it
         await new Promise(resolve => setTimeout(resolve, 500));
         this.props.requestPossibleTargetFields()
     }

@@ -143,13 +143,13 @@ https: //stackoverflow.com/questions/66696971/css3-increment-text-after-animatio
 
 @keyframes moveRightLeft {
     0% {
-        transform: translate(-40%, -50%);
-        //opacity: 0.7;
+        transform: translate(-37.5%, -50%);
+        opacity: 0.7;
     }
 
     100% {
-        transform: translate(-60%, -50%);
-        //opacity: 1;
+        transform: translate(-62.5%, -50%);
+        opacity: 1;
     }
 }
 
