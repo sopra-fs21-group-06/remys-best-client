@@ -1,4 +1,4 @@
-import { colors } from './constants'
+import { colors, kennelFieldIds } from './constants'
 import { createField, createMarble, createPlayer } from './modelUtils'
 
 export const generateUUID = () => { // Public Domain/MIT
@@ -203,7 +203,7 @@ export const computeFields = (boardSize) => {
     // compute and add blue fields
     addFinishZone(fixedFields, startingLeft, startingTop, colors.BLUE, 17)
     addFieldPosition(fixedFields, curPosition[0], curPosition[1], colors.BLUE, 16, true);
-    addKennel(fixedFields, startingLeft, startingTop, colors.BLUE, 96)
+    addKennel(fixedFields, startingLeft, startingTop, colors.BLUE, kennelFieldIds[0])
     curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT, colors.BLUE, null, false)
     curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_RIGHT, colors.BLUE, null, false)
     curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_BOTTOM_RIGHT, colors.BLUE, null, false)
@@ -234,18 +234,17 @@ export const computeFields = (boardSize) => {
 export const initMarbles = () => {
     let marbles = [];
     let i = 0;
-    let startingFieldIds = [96, 97, 98, 99]
     for (i = 0; i < 4; i++) {
-        marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.BLUE.name, colors.BLUE, false, true));
+        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.BLUE.name, colors.BLUE, false, true));
     }
     for (i = 4; i < 8; i++) {
-        marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.GREEN.name, colors.GREEN, false, true));
+        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.GREEN.name, colors.GREEN, false, true));
     }
     for (i = 8; i < 12; i++) {
-        marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.RED.name, colors.RED, false, true));
+        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.RED.name, colors.RED, false, true));
     }
     for (i = 12; i < 16; i++) {
-        marbles.push(createMarble(i, String(startingFieldIds[i%4]) + colors.YELLOW.name, colors.YELLOW, false, true));
+        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.YELLOW.name, colors.YELLOW, false, true));
     }
 
     return marbles;

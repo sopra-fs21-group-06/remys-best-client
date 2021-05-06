@@ -105,3 +105,5 @@ export const cardImages = {
     "X1": "https://deckofcardsapi.com/static/img/X1.png",
 	"X2": "https://deckofcardsapi.com/static/img/X2.png",
 }
+
+export const kennelFieldIds = [21, 22, 23, 24]
