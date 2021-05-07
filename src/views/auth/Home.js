@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import View from "../View";
 import { viewLinks } from "../../helpers/constants";
 import NavigationBox from "../../components/NavigationBox"
+import { withForegroundContext } from '../../components/context/ForegroundProvider';
 
 class Home extends React.Component {
 
@@ -11,6 +12,10 @@ class Home extends React.Component {
     this.state = {
       username: localStorage.getItem("username")
     };
+  }
+
+  openAlert() {
+    this.props.foregroundContextValue.showAlert(<p>foo</p>, 5000);
   }
 
   // todo view withBasicLinks topLeftLink={} bottomRightLink={}
@@ -31,6 +36,7 @@ class Home extends React.Component {
                 onClick={() => this.props.history.push('/create-new-game')}
               />
               <p className="below-box">or just wait here to get invited</p>
+              <p onClick={() => this.openAlert()}>open alert</p>
             </div>
             <div className="col">
               <p className="above-box">Want to change your profile?</p>
@@ -51,4 +57,4 @@ class Home extends React.Component {
   }
 }
 
-export default withRouter(Home);
+export default withRouter(withForegroundContext(Home));

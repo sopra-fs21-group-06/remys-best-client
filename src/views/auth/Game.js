@@ -6,16 +6,16 @@ import Hand from "../../components/ingame/hand/Hand";
 import dogCard from "../../img/dog-card.png"
 import HandContainer from "../../components/ingame/hand/HandContainer";
 import View from "../View";
-import {cardImages, gameEndModes, roundModes, viewLinks} from "../../helpers/constants";
+import { cardImages, gameEndModes, roundModes, viewLinks } from "../../helpers/constants";
 import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
-import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
-import {createCard, createChannel} from '../../helpers/modelUtils';
+import WebsocketConsumer from '../../components/context/WebsocketConsumer';
+import { createCard, createChannel } from '../../helpers/modelUtils';
 import {kennelFieldIds} from '../../helpers/constants';
-import {assignPlayersToColors, generateUUID} from '../../helpers/remysBestUtils';
+import { assignPlayersToColors, generateUUID } from '../../helpers/remysBestUtils';
 import sessionManager from "../../helpers/sessionManager";
-import {WebsocketContext} from '../../components/websocket/WebsocketProvider';
-import {withBackgroundContext} from '../../components/Background';
+import { WebsocketContext } from '../../components/context/WebsocketProvider';
+import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 
 class Game extends React.Component {
 

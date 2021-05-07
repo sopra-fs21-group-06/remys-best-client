@@ -10,7 +10,7 @@ import { TransitionGroup } from 'react-transition-group';
 import Card from "./hand/Card";
 import { createMarble } from '../../helpers/modelUtils'
 import { GameContext } from '../../views/auth/Game';
-import WebsocketConsumer from '../websocket/WebsocketConsumer';
+import WebsocketConsumer from '../context/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
 import sessionManager from "../../helpers/sessionManager";
 
