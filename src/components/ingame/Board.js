@@ -219,7 +219,8 @@ class Board extends React.Component {
                                     key={marble.getId()}
                                     marble={marble}
                                     field={field}
-                                    selectMarbleToPlay={this.selectMarbleToPlay}        
+                                    selectMarbleToPlay={this.selectMarbleToPlay} 
+                                    selectTargetField={this.selectTargetField}       
                                 />
                             );
                         })}

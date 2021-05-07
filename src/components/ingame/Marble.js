@@ -1,9 +1,17 @@
 import React from "react";
 import { lightenOrDarkenColor, getKeyByValue } from '../../helpers/remysBestUtils';
-import {colors} from '../../helpers/constants';
 import { PickUpAndDrop } from '../transitions/PickUpAndDrop';
 
 class Marble extends React.Component {
+
+    getOnClick(isMovable, isOnTargetField, marble, field) {
+        if(isMovable) {
+            return () => this.props.selectMarbleToPlay(marble)
+        } else if(isOnTargetField) {
+            return () => this.props.selectTargetField(field)
+        }
+        return null
+    }
 
     render() {
         let {field, marble} = this.props;
@@ -17,6 +25,7 @@ class Marble extends React.Component {
         let colorHexDark = lightenOrDarkenColor(colorHex, -70);
         let isMovable = marble.getIsMovable();
         let isVisible = marble.getIsVisible();
+        let isOnTargetField = field.getIsPossibleTargetField()
 
         let styles = {
             left: left + 'px',
@@ -29,7 +38,11 @@ class Marble extends React.Component {
 
         return (
             <PickUpAndDrop in={isVisible}>
-                <div onClick={isMovable ? () => this.props.selectMarbleToPlay(marble) : null} className={`marble ${colorName}` + (isMovable ? ' movable' : '')} style={styles}></div>
+                <div 
+                    onClick={this.getOnClick(isMovable, isOnTargetField, marble, field)} 
+                    className={`marble ${colorName}` + (isMovable ? ' movable' : '') + (isOnTargetField ? ' clickable' : '')} 
+                    style={styles}>
+                </div>
             </PickUpAndDrop>
         );
     }
