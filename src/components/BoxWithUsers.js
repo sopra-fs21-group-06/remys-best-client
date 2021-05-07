@@ -18,7 +18,7 @@ class BoxWithUsers extends React.Component {
     }
 
     render() {
-        let {withFilter, users, isSubmitting, title} = this.props
+        let {withFilter, users, isSubmitting, title, onClickStatus} = this.props
         let {filterMode} = this.state
         let usersToShow = users.filter(user => {
             return user.category === filterMode
@@ -55,7 +55,7 @@ class BoxWithUsers extends React.Component {
                                     <Avatar img={avatar} />
                                     <p className="username">{user.username}</p>
                                     <p className="email">{user.email}</p>
-                                    <p className="status">{user.status}</p>
+                                    <p onClick={onClickStatus ? () => onClickStatus(user.username) : null} className="status">{user.status}</p>
                                 </div>  
                             );
                         })}

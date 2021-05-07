@@ -32,6 +32,7 @@ class FriendsFilter extends React.Component {
 
         this.handleOnChange = this.handleOnChange.bind(this)
         this.handleClearValue = this.handleClearValue.bind(this)
+        this.onClickStatus = this.onClickStatus.bind(this)
     }
 
     componentDidMount() {
@@ -68,6 +69,12 @@ class FriendsFilter extends React.Component {
         this.setState({users: filteredUsers})
     }
 
+    onClickStatus(username) {
+        console.log("clicked " + username)
+
+        // TODO Sandro send invitation to clicked user
+    }
+
     render() {
         let {usernameOrEmail, users, serverError, isSubmitting} = this.state
 
@@ -82,7 +89,7 @@ class FriendsFilter extends React.Component {
                     onChange={this.handleOnChange}
                     onClearValue={this.handleClearValue}
                 />
-                <BoxWithUsers withFilter users={users} isSubmitting={isSubmitting} />
+                <BoxWithUsers withFilter users={users} isSubmitting={isSubmitting} onClickStatus={this.onClickStatus}/>
                 <div className="link-below-box"><p className="clickable">Refresh</p></div>
              </div>
         );

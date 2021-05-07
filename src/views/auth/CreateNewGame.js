@@ -7,6 +7,9 @@ import FriendsFilter from '../../components/FriendsFilter';
 
 class CreateNewGame extends React.Component {
 
+  // TODO Sandro subscribtion to the "current player" channel
+
+
   // TODO align boxes horizontally dynamically with refs and on compDidM
   render() {
     return (
