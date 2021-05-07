@@ -36,6 +36,22 @@ p {
     }
 }
 
+.user-box-title {
+    margin-left: 10px;
+    margin-bottom: 8px;
+
+    p {
+        color: $black-light;
+    }
+}
+
+div.clickable {
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 h1 {
     font-size: 25px;
     font-weight: $bold;
@@ -166,7 +182,7 @@ div.box {
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            max-height: 304px;
+            height: 304px;
 
             .scrollable {
                 width: 100%;
@@ -227,8 +243,8 @@ div.box {
 
 
 .user-filter {
-     margin-left: 10px;
-     margin-bottom: 8px;
+    margin-left: 10px;
+    margin-bottom: 8px;
 
     p {
         display:inline-block;
@@ -296,5 +312,28 @@ div.box {
 
     &:after {
         left: 3.5em;
+    }
+}
+
+.manage-friends {
+
+    .friends-filter {
+        margin-bottom: 32px;;
+    }
+
+    .friend-request {
+         p {
+             margin-left: 10px;
+             margin-bottom: 8px;
+         }
+    }
+}
+
+.link-below-box {
+    text-align: center;
+    margin-top: 16px;
+
+    p {
+        text-decoration: underline;
     }
 }

@@ -6,17 +6,38 @@ import Avatar from './Avatar';
 
 class BoxWithUsers extends React.Component {
 
+    constructor() {
+        super();
+        this.state = {
+            filterMode: "friends"
+        };
+    }
+
+    changeFilterMode(newFilterMode) {
+        this.setState({filterMode: newFilterMode})
+    }
+
     render() {
-        let {withFilter, users, isSubmitting} = this.props
+        let {withFilter, users, isSubmitting, title} = this.props
+        let {filterMode} = this.state
+        let usersToShow = users.filter(user => {
+            return user.category === filterMode
+        });
+
         return (
             <div>
                 {
                     withFilter && 
                     <div className="user-filter">
-                        <p>All Users</p>
-                        <p>Friends</p>
-                        <p>Pending</p>
-                        <p>Requests</p>
+                        <p onClick={() => this.changeFilterMode("friends")} className={filterMode == "friends" ? "active" : ""}>Friends</p>
+                        <p onClick={() => this.changeFilterMode("pending")} className={filterMode == "pending" ? "active" : ""}>Pending</p>
+                        <p onClick={() => this.changeFilterMode("requests")} className={filterMode == "requests" ? "active" : ""}>Requests</p>
+                    </div>
+                }
+                {
+                    title && 
+                    <div className="user-box-title">
+                        <p>{title}</p>
                     </div>
                 }
                 <Box className="with-users">
@@ -28,7 +49,7 @@ class BoxWithUsers extends React.Component {
                                 </div>
                             </div>
                         : 
-                        users.map(user => {
+                        usersToShow.map(user => {
                             return (
                                 <div className="user-entry" key={user.username}>
                                     <Avatar img={avatar} />
@@ -40,8 +61,6 @@ class BoxWithUsers extends React.Component {
                         })}
                     </div>
                 </Box> 
-
-                <p>Refresh</p>
              </div>
         );
     }

@@ -107,12 +107,14 @@ class MyHand extends React.Component {
 
         let distance = 24
         let arrowRightTop = 0;
-        if(selectedMoveName == null) {
+        if(raisedCard == null) {
             arrowRightTop = 0 * distance
-        } else if(selectedMoveName != null && !isMarbleChosen) {
+        } else if(raisedCard != null && selectedMoveName == null) {
             arrowRightTop = 1 * distance
-        } else {
+        } else if(raisedCard != null && selectedMoveName != null && !isMarbleChosen) {
             arrowRightTop = 2 * distance
+        } else {
+            arrowRightTop = 3 * distance
         }
 
         return (
@@ -137,20 +139,26 @@ class MyHand extends React.Component {
                         <FadeInOut in={this.props.mode === roundModes.MY_TURN}>
                             <div className="step">
                                 <img className="arrow-right" src={arrowRight} style={{top: `calc(50% + ${arrowRightTop}px)`}} />
-                                <DelayedFadeInOut in={selectedMoveName != null}>
+                                <DelayedFadeInOut in={raisedCard != null}>
                                     <img className="checkmark" src={checkmark} />
                                 </DelayedFadeInOut>
-                                <p>{"Choose Move"}{selectedMoveName && (" (" + selectedMoveName + ")")}</p>
+                                <p>Pick Card</p>
                             </div>
-                            <div className={"step " + (selectedMoveName != null ? '' : 'inactive')}>
-                                <DelayedFadeInOut in={selectedMoveName != null && isMarbleChosen}>
+
+                            <div className={"step " + (raisedCard != null ? '' : 'inactive')}>
+                                <DelayedFadeInOut in={raisedCard != null && selectedMoveName != null}>
                                     <img className="checkmark" src={checkmark} />
                                 </DelayedFadeInOut>
-                                <p>Choose Marble</p>
+                                <p>Pick Move</p>
+                            </div>
+                            <div className={"step " + (raisedCard != null && selectedMoveName != null ? '' : 'inactive')}>
+                                <DelayedFadeInOut in={raisedCard != null && selectedMoveName != null && isMarbleChosen}>
+                                    <img className="checkmark" src={checkmark} />
+                                </DelayedFadeInOut>
+                                <p>Pick Marble + Target</p>
                             </div>
 
                             <div className="actions">
-                                {/* delay on appear */}
                                 <DelayedFadeInOut in={isThrowAwayVisible}>
                                     <div className="btn ">
                                         <p className='clickable' onClick={() => this.props.throwAway()}>Throw Away</p>
