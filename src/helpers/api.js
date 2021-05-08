@@ -6,6 +6,11 @@ export const api = axios.create({
   headers: { 'Content-Type': 'application/json' }
 });
 
+api.interceptors.request.use((request) => {
+  request.headers.Authorization = localStorage.getItem("token");
+  return request;
+})
+
 export const handleError = error => {
   const response = error.response;
 

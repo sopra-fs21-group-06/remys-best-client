@@ -1,9 +1,9 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import Blurred from './Blurred';
+import Blurred from '../Blurred';
 
 /*
-class Invitation extends React.Component {
+class InfoMessage extends React.Component {
 
     render() {
         
@@ -20,4 +20,4 @@ class Invitation extends React.Component {
     }
 }
 
-export default withRouter(Invitation)*/
+export default withRouter(InfoMessage)*/
