@@ -221,6 +221,14 @@ div.box {
                         color: $black-light;
                         @include centerer(false, true);
                         right: 0;
+
+                        &.invite {
+                            text-decoration: underline;
+
+                            &:hover {
+                                cursor: pointer;
+                            }
+                        }
                     }
 
                     &:last-of-type {

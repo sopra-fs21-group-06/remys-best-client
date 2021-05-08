@@ -4,8 +4,6 @@ import View from "../View";
 import { viewLinks } from "../../helpers/constants";
 import NavigationBox from "../../components/NavigationBox"
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
-import { api } from "../../helpers/api";
-import sessionManager from "../../helpers/sessionManager";
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import Invitation from '../../components/alert/Invitation';
@@ -46,9 +44,10 @@ class Home extends React.Component {
   }
 
   async onClickCreateNewGame() {
+    /*
     const response = await api.get(`/create-gamesession`);
     let gameSessionId = response.data.gameSessionId
-    sessionManager.setGameSessionId(gameSessionId)
+    sessionManager.setGameSessionId(gameSessionId)*/
     this.props.history.push('/create-new-game')
   }
 

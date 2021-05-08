@@ -62,13 +62,13 @@ class CreateNewGame extends React.Component {
               <div className="col">
                 <p className="above-box">Only friends which are on the home screen can be invited. If you are not friends just send a friend request and wait for the response.</p>
                 <div className="friends-filter">
-                  <FriendsFilter />
+                  <FriendsFilter withInvitation />
                 </div>
               </div>
               <div className="col">
                 <p className="above-box">After getting invited your friend has 15 seconds to accept your invitation. If the invitation has been accepted it will be marked in the list below, otherwise your friend will be removed. It is possible to invite friends several times in a row or fill your game up with random players.</p>
                 <div className="current-players">
-                  <BoxWithUsers title="Current Players" users={[]}/>
+                  <BoxWithUsers title="Current Players" users={this.state.currentPlayers}/>
                   <div className="link-below-box"><p className="clickable">Fill up with random players</p></div>
                 </div>
               </div>

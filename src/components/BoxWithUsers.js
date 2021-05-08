@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import Box from './Box';
 import avatar from '../img/avatar.png';
 import Avatar from './Avatar';
+import UserEntry from './UserEntry';
 
 class BoxWithUsers extends React.Component {
 
@@ -18,7 +19,7 @@ class BoxWithUsers extends React.Component {
     }
 
     render() {
-        let {withFilter, users, isSubmitting, title, onClickStatus} = this.props
+        let {withFilter, users, isSubmitting, title, withInvitation, refreshUsers} = this.props
         let {filterMode} = this.state
         let usersToShow = users.filter(user => {
             return user.category === filterMode
@@ -30,8 +31,8 @@ class BoxWithUsers extends React.Component {
                     withFilter && 
                     <div className="user-filter">
                         <p onClick={() => this.changeFilterMode("friends")} className={filterMode == "friends" ? "active" : ""}>Friends</p>
-                        <p onClick={() => this.changeFilterMode("sent")} className={filterMode == "sent" ? "active" : ""}>Pending</p>
-                        <p onClick={() => this.changeFilterMode("received")} className={filterMode == "received" ? "active" : ""}>Requests</p>
+                        <p onClick={() => this.changeFilterMode("sent")} className={filterMode == "sent" ? "active" : ""}>Sent</p>
+                        <p onClick={() => this.changeFilterMode("received")} className={filterMode == "received" ? "active" : ""}>Received</p>
                     </div>
                 }
                 {
@@ -51,12 +52,12 @@ class BoxWithUsers extends React.Component {
                         : 
                         usersToShow.map(user => {
                             return (
-                                <div className="user-entry" key={user.username}>
-                                    <Avatar img={avatar} />
-                                    <p className="username">{user.username}</p>
-                                    <p className="email">{user.email}</p>
-                                    <p onClick={onClickStatus ? () => onClickStatus(user.username) : null} className="status">{user.status}</p>
-                                </div>  
+                                <UserEntry 
+                                    key={user.username} 
+                                    user={user} 
+                                    withInvitation={withInvitation}
+                                    refreshUsers={refreshUsers}
+                                />
                             );
                         })}
                     </div>

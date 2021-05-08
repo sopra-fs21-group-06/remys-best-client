@@ -97,17 +97,25 @@ export const createPlayer = (playerName, handRef, handRot, colorName) => {
     });
 };
 
-export const createUser = () => {
-    // A variable defined in a factory or constructor function scope
-    // is private to that function.
-    let count = 0;
-
+export const createUser = (username, email, status, category) => {
+    let _username = username;
+    let _email = email;
+    let _status = status;
+    let _category = category;
+    let _invite = null;
+    let _accept = null;
+    let _reject = null;
+   
     return ({
-        // Any other functions defined in the same scope are privileged:
-        // These both have access to the private `count` variable
-        // defined anywhere in their scope chain (containing function
-        // scopes).
-        click: () => count += 1,
-        getCount: () => count.toLocaleString()
+        getUsername: () => _username,
+        getEmail: () => _email,
+        getStatus: () => _status,
+        getCategory: () => _category,
+        getInvite: () => _invite,
+        setInvite: (invite) => _invite = invite,
+        getAccept: () => _accept,
+        setAccept: (accept) => _accept = accept,
+        getReject: () => _reject,
+        setReject: (reject) => _reject = reject,
     });
 };
