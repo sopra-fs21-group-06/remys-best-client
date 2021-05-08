@@ -1,11 +1,11 @@
 import React, {Component} from "react";
-import bg from '../img/bg.png';
+import bg from '../../img/bg.png';
 
 export const BackgroundContext = React.createContext();
 
 export const withBackgroundContext = WrappedComponent => props => (
     <BackgroundContext.Consumer>
-        {value => <WrappedComponent {...props} backgroundContextValue={value}/>}
+        {value => <WrappedComponent {...props} backgroundContext={value}/>}
     </BackgroundContext.Consumer>
 );
 

@@ -1,13 +1,13 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import Blurred from './Blurred';
 
 class Box extends React.Component {
 
     render() {
+        let {className, borderRadius, counter} = this.props
         return (
-            <Blurred borderRadius="25" hasBorder={true} className="box">
-                <div className={"box-content " + (this.props.className ? this.props.className : '')}>
+            <Blurred borderRadius={borderRadius ? borderRadius : "25"} hasBorder={true} className="box" counter={counter}>
+                <div className={"box-content " + (className ? className : '')}>
                     {this.props.children}
                 </div>
             </Blurred>
@@ -15,4 +15,4 @@ class Box extends React.Component {
     }
 }
 
-export default withRouter(Box);
+export default Box;

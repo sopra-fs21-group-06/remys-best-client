@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import AppRouter from "./routing/AppRouter";
-import BackgroundProvider, { BackgroundContext } from './components/Background';
+import BackgroundProvider from './components/context/BackgroundProvider';
+import ForegroundProvider from "./components/context/ForegroundProvider";
 
 class App extends Component {
   render() {
     return (
       <BackgroundProvider>
-        <div className="foreground">
+        <ForegroundProvider>
           <AppRouter />
-        </div>
+        </ForegroundProvider>
       </BackgroundProvider>
     );
   }

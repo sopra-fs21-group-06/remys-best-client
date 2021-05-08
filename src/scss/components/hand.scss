@@ -89,8 +89,62 @@
                 padding-left: 20px;
                 min-width: 250px;
 
-                p {
-                    line-height: 1.5;
+                .actions {
+                    min-height: 24px;
+                }
+
+                .step,
+                .actions {
+                    position: relative;
+                    margin-left: 25px;
+                    opacity: 1;
+                    transition: all 0.3s ease;
+                }
+
+                .step,
+                .actions .btn {
+
+                    p {
+                        line-height: 1.5;
+                    }
+    
+                    .checkmark, 
+                    .arrow-right {
+                        @include centerer;
+                        
+                    }
+
+                    .arrow-right {
+                        width: 16px;
+                        left: -16px;
+                        animation: moveRightLeft 1s infinite alternate ease-in-out;
+                        transition: all 0.3s ease-in-out;
+                    }
+
+                    .checkmark {
+                        width: 14px;
+                        left: -17px;
+                    }
+
+                    &.btn {
+
+                        p {
+                            float: left;
+                            text-decoration: underline;
+                            margin-right: 8px;
+                        }
+
+                        &:last-of-type {
+
+                            p {
+                                margin-right: 0;
+                            }
+                        }
+                    }
+
+                    &.inactive {
+                        opacity: 0.6;
+                    }
                 }
             }
         }

@@ -3,10 +3,12 @@ import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Login from "../views/unauth/Login";
 import Register from "../views/unauth/Register";
-import WebsocketProvider from "../components/websocket/WebsocketProvider";
+import WebsocketProvider from "../components/context/WebsocketProvider";
 import Home from "../views/auth/Home";
 import EditProfile from "../views/auth/EditProfile";
 import WaitingRoom from "../views/auth/WaitingRoom";
+import CreateNewGame from "../views/auth/CreateNewGame";
+import ManageFriends from "../views/auth/ManageFriends";
 import ChoosePlace from "../views/auth/ChoosePlace";
 import Game from "../views/auth/Game";
 import GameEnd from "../views/auth/GameEnd";
@@ -32,8 +34,10 @@ class AppRouter extends React.Component {
                                     <UnauthRoute exact path='/login' component={Login} isAuth={isAuth}/>
                                     <UnauthRoute exact path='/register' component={Register} isAuth={isAuth}/>
                                     <AuthRoute exact path='/home' component={Home} isAuth={isAuth}/>
-                                    <AuthRoute exact path='/edit-profile' component={EditProfile} isAuth={isAuth}/>
                                     <AuthRoute exact path='/waiting-room' component={WaitingRoom} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/create-new-game' component={CreateNewGame} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/manage-friends' component={ManageFriends} isAuth={isAuth}/>
+                                    <AuthRoute exact path='/edit-profile' component={EditProfile} isAuth={isAuth}/>
                                     <AuthRoute exact path='/choose-place' component={ChoosePlace} isAuth={isAuth}/>
                                     <AuthRoute exact path='/game' component={Game} isAuth={isAuth}/>
                                     <AuthRoute exact path='/game-end' component={GameEnd} isAuth={isAuth}/>

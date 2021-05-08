@@ -10,8 +10,18 @@ const EditProfileFormSkeleton = (props) => {
     values,
     fieldErrors,
     serverError,
-    isSubmitting
+    isSubmitting,
+    history
   } = props;
+
+  const handleOnFormSubmit = async () => {
+    try {
+      await onFormSubmit();
+      history.push("/home");
+    } catch (e) {
+      // errors are handled directly in onFormSubmit
+    }
+  }
 
   return (
     <div>
@@ -46,7 +56,7 @@ const EditProfileFormSkeleton = (props) => {
         <SubmitButton 
             isSubmitting={isSubmitting}
             value="Save changes" 
-            onClick={onFormSubmit}
+            onClick={handleOnFormSubmit}
         />
         <p className="below-btn"><Link to="/home">Return to Home</Link></p>
     </div>
@@ -93,8 +103,7 @@ const handlers = {
     } catch (error) {
         return error;
     }
-  },
-  routeOnSuccess: "/home"
+  }
 }
 
 const EditProfileForm = withFormValidation(initialValues, rules, handlers, EditProfileFormSkeleton);

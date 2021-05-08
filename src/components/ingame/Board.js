@@ -10,7 +10,7 @@ import { TransitionGroup } from 'react-transition-group';
 import Card from "./hand/Card";
 import { createMarble } from '../../helpers/modelUtils'
 import { GameContext } from '../../views/auth/Game';
-import WebsocketConsumer from '../websocket/WebsocketConsumer';
+import WebsocketConsumer from '../context/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
 import sessionManager from "../../helpers/sessionManager";
 
@@ -27,10 +27,6 @@ class Board extends React.Component {
         };
         this.selectMarbleToPlay = this.selectMarbleToPlay.bind(this)
         this.selectTargetField = this.selectTargetField.bind(this)
-        this.gameId = sessionManager.getGameId();
-        this.channels = [
-            createChannel(`/user/queue/game/${this.gameId}/marble-list`, (msg) => this.handleMarbleListMessage(msg))
-        ]
     }
 
     componentDidMount() {       
@@ -40,10 +36,8 @@ class Board extends React.Component {
         })
     }
 
-    handleMarbleListMessage(msg) {
-        console.log("marble list received")
-        console.log(msg.marbles)
-        this.updateMovableMarbles(msg.marbles)
+    updatePossibleMarbles(marbles) {
+        this.updateMovableMarbles(marbles)
     }
 
     updateMovableMarbles(movableMarbles) {
@@ -149,6 +143,8 @@ class Board extends React.Component {
     async selectMarbleToPlay(marbleToPlay) {
         this.resetMovableMarbles()
         this.selectMarble(marbleToPlay)
+
+        // TODO wait for it
         await new Promise(resolve => setTimeout(resolve, 500));
         this.props.requestPossibleTargetFields()
     }
@@ -178,6 +174,11 @@ class Board extends React.Component {
         return this.state.fields.find(field => field.getIsTargetField());
     }
 
+    resetAll() {
+        this.resetMovableMarbles()
+        this.resetSelectedMarble()
+    }
+
     resetMovableMarbles() {
         this.updateMovableMarbles([]);
     }
@@ -192,44 +193,43 @@ class Board extends React.Component {
 
     render() {
         return (
-            <WebsocketConsumer channels={this.channels} >
-                <div className={"board " + this.state.bottomClass} style={{width: this.state.size, height: this.state.size}}>
-                    <img className="wood" src={wood} />
-                    <div className="fields">
-                        {this.state.fields.map(field => {
-                            return (
-                                <Field 
-                                    key={field.getKey()} 
-                                    field={field}
-                                    selectTargetField={this.selectTargetField}
-                                />
-                            );
-                        })}
-                    </div>
-                    <div className="marbles">
-                        {this.state.marbles.map(marble => {
-                            let field = this.state.fields.find(field => field.getKey() === marble.getFieldKey())
-                            return (
-                                <Marble 
-                                    key={marble.getId()}
-                                    marble={marble}
-                                    field={field}
-                                    selectMarbleToPlay={this.selectMarbleToPlay}        
-                                />
-                            );
-                        })}
-                    </div>
-                    <TransitionGroup className="played-card-pile">
-                        {this.state.playedCards ? Object.keys(this.state.playedCards).map(key => {
-                            return (
-                                <ThrowIn key={key}>
-                                    <Card card={this.state.playedCards[key]}/>
-                                </ThrowIn>
-                            );
-                        }) : null}
-                    </TransitionGroup>
-                </div>  
-            </WebsocketConsumer>
+            <div className={"board " + this.state.bottomClass} style={{width: this.state.size, height: this.state.size}}>
+                <img className="wood" src={wood} />
+                <div className="fields">
+                    {this.state.fields.map(field => {
+                        return (
+                            <Field 
+                                key={field.getKey()} 
+                                field={field}
+                                selectTargetField={this.selectTargetField}
+                            />
+                        );
+                    })}
+                </div>
+                <div className="marbles">
+                    {this.state.marbles.map(marble => {
+                        let field = this.state.fields.find(field => field.getKey() === marble.getFieldKey())
+                        return (
+                            <Marble 
+                                key={marble.getId()}
+                                marble={marble}
+                                field={field}
+                                selectMarbleToPlay={this.selectMarbleToPlay} 
+                                selectTargetField={this.selectTargetField}       
+                            />
+                        );
+                    })}
+                </div>
+                <TransitionGroup className="played-card-pile">
+                    {this.state.playedCards ? Object.keys(this.state.playedCards).map(key => {
+                        return (
+                            <ThrowIn key={key}>
+                                <Card card={this.state.playedCards[key]}/>
+                            </ThrowIn>
+                        );
+                    }) : null}
+                </TransitionGroup>
+            </div>  
         );
     }
 }

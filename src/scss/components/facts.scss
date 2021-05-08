@@ -24,32 +24,6 @@
                 vertical-align: middle;
                 padding-right: 5px;
             }
-
-            .timer {
-                display: table-cell;
-                vertical-align: middle;
-                background-color: $blue-light;
-                color: white;
-                font-size: 13px;
-                line-height: 13px;
-                font-weight: $semi-bold;
-                padding: 4px 8px;
-                letter-spacing: -0.25px;
-                border-radius: 13px;
-                border: 1px solid $grey-light;
-                transition: max-width 1s;
-
-                &:after {
-                    content: " \00a0\f12a ";
-                    font-family: ionicons;
-                    font-size: 80%;
-                    display: inline-block;
-                    max-width: 0;
-                    transition: max-width .6s;
-                    vertical-align: bottom;
-                    overflow: hidden;
-                }
-            }
         }
 
         .subtitle {

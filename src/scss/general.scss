@@ -36,6 +36,22 @@ p {
     }
 }
 
+.user-box-title {
+    margin-left: 10px;
+    margin-bottom: 8px;
+
+    p {
+        color: $black-light;
+    }
+}
+
+div.clickable {
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 h1 {
     font-size: 25px;
     font-weight: $bold;
@@ -99,6 +115,15 @@ button {
 
 
 div.blurred-element {
+    position: relative;
+
+    .counter {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 11;
+        transform: translate(33%, -33%);
+    }
 
     .container {
         position: relative;
@@ -161,5 +186,234 @@ div.box {
     .box-content {
         background-color: rgba(255, 255, 255, 0.5);
         padding: 17px 22px;
+
+        &.with-users {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 304px;
+
+            .scrollable {
+                width: 100%;
+                height: 100%;
+                overflow-y: scroll;
+                padding-right: 100px;
+                box-sizing: content-box;
+
+                .user-entry {
+                    position: relative;
+                    margin-bottom: 10px;
+                
+                    .username {
+                        font-weight: $semi-bold;
+                        position: absolute;
+                        top: 9px;
+                        left: 70px; // avatar width 60px
+                    }
+
+                    .email {
+                         position: absolute;
+                         bottom: 9px;
+                         left: 70px;
+                    }
+
+                    .status {
+                        color: $black-light;
+                        @include centerer(false, true);
+                        right: 0;
+
+                        &.invite {
+                            text-decoration: underline;
+
+                            &:hover {
+                                cursor: pointer;
+                            }
+                        }
+                    }
+
+                    &:last-of-type {
+                        margin-bottom: 0;
+                    }
+                }
+
+                .loading {
+                    position: relative;
+
+                    .loader-wrapper {
+                        @include centerer;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+.game-end {
+    .below-text {
+       color: $black-light;
+       text-align: center;
+       margin-top: 16px;
+    }
+}
+
+
+
+.user-filter {
+    margin-left: 10px;
+    margin-bottom: 8px;
+
+    p {
+        display:inline-block;
+        margin-right: 10px;
+        cursor: pointer;
+        color: $black-light;
+
+        &:first-of-type {
+            position: relative;
+            padding-right: 10px;
+
+            &:after {
+                content:"";
+                background: $black-light;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                height: 100%;
+                width: 1px;
+            }
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        &.active {
+            text-decoration: underline;
+        }
+    }
+}
+
+
+
+.loader,
+.loader:before,
+.loader:after {
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    animation-fill-mode: both;
+    animation: loading 1s infinite ease-in-out;
+}
+
+.loader {
+    color: #ffffff;
+    font-size: 5px;
+    margin: 0 auto;
+    position: relative;
+    text-indent: -9999em;
+    transform: translateZ(0);
+    animation-delay: -0.16s;
+
+    &:before,
+    &:after {
+        content: '';
+        position: absolute;
+        top: 0;
+    }
+
+    &:before {
+        left: -3.5em;
+        animation-delay: -0.3s;
+    }
+
+    &:after {
+        left: 3.5em;
+    }
+}
+
+.manage-friends {
+
+    .friends-filter {
+        margin-bottom: 32px;;
+    }
+
+    .friend-request {
+         p {
+             margin-left: 10px;
+             margin-bottom: 8px;
+         }
+    }
+}
+
+.link-below-box {
+    text-align: center;
+    margin-top: 16px;
+
+    p {
+        text-decoration: underline;
+    }
+}
+
+.alert {
+    width: auto;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    //min-width: 350;
+
+    .invitation {
+
+        position: relative;
+
+        .text {
+            margin-bottom: 8px;
+            max-width: 250px;
+
+            .host-name {
+                font-weight: $semi-bold;
+            }
+        }
+
+        .btn-wrapper {
+            overflow: hidden;
+
+            .accept {
+                float: left;
+                color: $green;
+            }
+
+            .reject {
+                float: left;
+                color: $red;
+                margin-right: 16px;
+            }
+        }
+    }
+}
+
+.counter {
+    display: table-cell;
+    vertical-align: middle;
+    background-color: $blue-light;
+    color: white;
+    font-size: 13px;
+    line-height: 13px;
+    font-weight: $semi-bold;
+    padding: 4px 8px;
+    letter-spacing: -0.25px;
+    border-radius: 13px;
+    border: 1px solid $grey-light;
+    transition: max-width 1s;
+
+    &:after {
+        content: " \00a0\f12a ";
+        font-family: ionicons;
+        font-size: 80%;
+        display: inline-block;
+        max-width: 0;
+        transition: max-width .6s;
+        vertical-align: bottom;
+        overflow: hidden;
     }
 }

@@ -12,6 +12,15 @@ export default {
             sessionStorage.removeItem('gameId');
         }
         sessionStorage.setItem('gameId', gameId);
+    },
+    getGameSessionId: () => {
+        return sessionStorage.getItem('gameSessionId');
+    },
+    setGameSessionId: (gameSessionId) => {
+        if (gameSessionId === undefined) {
+            sessionStorage.removeItem('gameSessionId');
+        }
+        sessionStorage.setItem('gameSessionId', gameSessionId);
     }
 }
 

@@ -32,6 +32,7 @@ export const withFormValidation = (initialValues, rules, handlers, FormSkeleton)
 
       this.onFormValueChange = this.onFormValueChange.bind(this)
       this.onFormSubmit = this.onFormSubmit.bind(this)
+      this.clearValue = this.clearValue.bind(this)
       this.validate = this.validate.bind(this)
       this.validations = rules
     }
@@ -77,6 +78,14 @@ export const withFormValidation = (initialValues, rules, handlers, FormSkeleton)
       });
     }
 
+    clearValue(value) {
+      this.setState((currentState, props) => {
+        const nextState = {...currentState}
+        nextState.values[value] = ""
+        return nextState
+      })
+    }
+
     onFormValueChange(event) {
       this.setState((currentState, props) => {
         const nextState = {...currentState}
@@ -120,6 +129,7 @@ export const withFormValidation = (initialValues, rules, handlers, FormSkeleton)
           {...this.props} 
           onFormSubmit={this.onFormSubmit} 
           onFormValueChange={this.onFormValueChange} 
+          clearValue={this.clearValue}
         />
       )
     }
