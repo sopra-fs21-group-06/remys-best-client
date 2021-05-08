@@ -14,13 +14,11 @@ import { createCard, createChannel } from '../../helpers/modelUtils';
 import {kennelFieldIds} from '../../helpers/constants';
 import { assignPlayersToColors, generateUUID } from '../../helpers/remysBestUtils';
 import sessionManager from "../../helpers/sessionManager";
-import { WebsocketContext } from '../../components/context/WebsocketProvider';
+import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 import { api } from '../../helpers/api';
 
 class Game extends React.Component {
-
-    static contextType = WebsocketContext;
 
     constructor(props) {
       super(props);
@@ -66,7 +64,7 @@ class Game extends React.Component {
 
       // rotate background and board
       let myPlayer = this.getMyPlayer()
-      this.props.backgroundContextValue.dispatch({type: `${myPlayer.getColorName()}-bottom`})
+      this.props.backgroundContext.dispatch({type: `${myPlayer.getColorName()}-bottom`})
       this.boardRef.current.setBottomClass(`${myPlayer.getColorName()}-bottom`)
     }
 
@@ -159,7 +157,6 @@ class Game extends React.Component {
       }else{
         this.props.history.push({pathname: '/game-end', state: { mode:'lost'}})
       }
-
     }
 
     getMyPlayerName() {
@@ -245,7 +242,7 @@ class Game extends React.Component {
         //marbles.targetFielKey = this.boardRef.current.getTargetField().getKey();
 
 
-      this.context.sockClient.send(`/app/game/${this.gameId}/play`, {
+      this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/play`, {
         code: cardToPlay.getCode(), 
         moveName: moveNameToPlay, 
         marbles: marbles
@@ -263,7 +260,7 @@ class Game extends React.Component {
     }
 
     sendReadyMessage() {
-     this.context.sockClient.send(`/app/game/${this.gameId}/ready`, {});
+     this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/ready`, {});
     }
 
     render() {
@@ -304,4 +301,4 @@ class Game extends React.Component {
     }
 }
 
-export default withRouter(withBackgroundContext(Game));
+export default withRouter(withBackgroundContext(withWebsocketContext(Game)));

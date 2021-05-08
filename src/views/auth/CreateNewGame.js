@@ -7,6 +7,7 @@ import FriendsFilter from '../../components/FriendsFilter';
 import sessionManager from "../../helpers/sessionManager";
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
+import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 
 class CreateNewGame extends React.Component {
 
@@ -14,7 +15,7 @@ class CreateNewGame extends React.Component {
     super(props);
 
     this.state = {
-      //players: this.props.location.state.players
+      currentPlayers: [],
     };
 
     this.gameSessionId = sessionManager.getGameSessionId();
@@ -25,28 +26,32 @@ class CreateNewGame extends React.Component {
     ]
   }
 
-  handleGameSessionEndMessage(msg) {
-    // msg.hostName "Andrina has closed the game"
+  componentWillUnmount() {
+    this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/leave`, {});
+  }
 
+  handleGameSessionEndMessage(msg) {
+    this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.hostName, mode:'aborted'}})
   }
 
   handleInvitedUserMessage(msg) {
-    // pending invitation
-    // msg.invitedUser [{username: "Adrina"}] 
-
+    let invitedUser = {username: msg.username, email: "inviteduser@foo.ch"}
+    this.setState(prevState => { 
+      return {currentPlayers: [...prevState.currentPlayers, invitedUser]};
+    });
   }
 
   handleCountdownMessage(msg) {
-    // msg.username msg.currentCounter
-
-
+    this.setState(prevState => {
+        const currentPlayers = prevState.currentPlayers.map(currentPlayer => {
+            if (currentPlayer.username === msg.username) {
+                currentPlayer.status = msg.currentCounter
+            } 
+            return currentPlayer;
+        });
+        return {currentPlayers: currentPlayers};
+    });
   }
-
-
-  // unmount (leave gameSession)
-  // websockets '/app/gamesession/{gameSessionId}/leave'
-
-  
 
   // TODO align boxes horizontally dynamically with refs and on compDidM
   render() {
@@ -57,13 +62,13 @@ class CreateNewGame extends React.Component {
               <div className="col">
                 <p className="above-box">Only friends which are on the home screen can be invited. If you are not friends just send a friend request and wait for the response.</p>
                 <div className="friends-filter">
-                  <FriendsFilter />
+                  <FriendsFilter withInvitation />
                 </div>
               </div>
               <div className="col">
                 <p className="above-box">After getting invited your friend has 15 seconds to accept your invitation. If the invitation has been accepted it will be marked in the list below, otherwise your friend will be removed. It is possible to invite friends several times in a row or fill your game up with random players.</p>
                 <div className="current-players">
-                  <BoxWithUsers title="Current Players" users={[]}/>
+                  <BoxWithUsers title="Current Players" users={this.state.currentPlayers}/>
                   <div className="link-below-box"><p className="clickable">Fill up with random players</p></div>
                 </div>
               </div>
@@ -74,4 +79,4 @@ class CreateNewGame extends React.Component {
   }
 }
 
-export default withRouter(CreateNewGame);
+export default withRouter(withWebsocketContext(CreateNewGame));

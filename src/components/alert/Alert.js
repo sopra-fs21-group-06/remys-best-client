@@ -1,14 +1,11 @@
 import React from 'react';
-import Box from '../Box';
 
 class Alert extends React.Component {
 
     render() {
         return (
             <div className="alert">
-                <Box>
-                     {this.props.component}
-                </Box>
+                {React.cloneElement(this.props.component, { countdown: this.props.countdown})}
             </div>
         );
     }

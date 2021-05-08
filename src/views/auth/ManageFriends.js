@@ -13,7 +13,7 @@ class ManageFriends extends React.Component {
       <View className="manage-friends" title="Manage Friends" linkMode={viewLinks.BASIC}>
         <main className="middle">
             <div className="friends-filter">
-              <FriendsFilter/>
+              <FriendsFilter />
             </div>
             <div className="friend-request">
               <p>You want to add new friends? Just type in the username and send a friend request</p>

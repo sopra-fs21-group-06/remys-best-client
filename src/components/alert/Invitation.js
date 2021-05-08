@@ -1,23 +1,41 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import Blurred from '../Blurred';
+import Box from '../Box';
+import sessionManager from "../../helpers/sessionManager"
 
-/*
 class Invitation extends React.Component {
 
+    reject() {
+        // TODO? send rejection (send rejection to server?)
+        this.props.closeAlert()
+    }
+
+    accept() {
+        // TODO? send acception (send acception to server?)
+        this.props.closeAlert()
+        sessionManager.setGameSessionId(this.props.gameSessionId)
+        this.props.history.push('/create-new-game')
+    }
+
     render() {
-        
-        let colorName = this.props.colorName ? this.props.colorName : 'no-color'
-        let img = this.props.img ? this.props.img : 'no-img'
+        let {countdown, hostName} = this.props
+
+        if(parseInt(countdown) <= 0) {
+            console.log(parseInt(countdown))
+            this.props.closeAlert()
+        }
 
         return (
-            <Blurred borderRadius="25" hasBorder={true} size={this.props.size ? this.props.size : "60"} className={"avatar avatar-" + colorName}>
-                <div className={"avatar-box " + colorName + "-bg " + (this.props.img ? '' : 'no-img')} onClick={this.props.onClick}>
-                    {this.props.img ? <img src={this.props.img}/> : null}
+            <Box borderRadius="16" counter={countdown}>
+                <div className="invitation">
+                    <div className="text"><p>Invitation from <span className="host-name">{hostName}</span></p></div>
+                    <div className="btn-wrapper">
+                        <p onClick={() => this.reject()} className="reject clickable">Reject</p>
+                        <p onClick={() => this.accept()} className="accept clickable">Accept</p>
+                    </div>
                 </div>
-            </Blurred>
+            </Box>
         );
     }
 }
 
-export default withRouter(Invitation)*/
+export default Invitation

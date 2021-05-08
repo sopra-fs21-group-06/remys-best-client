@@ -7,14 +7,12 @@ import Board from "../../components/ingame/Board";
 import Box from "../../components/Box";
 import { colors } from "../../helpers/constants";
 import { createChannel } from '../../helpers/modelUtils';
-import { WebsocketContext } from '../../components/context/WebsocketProvider';
+import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import avatar from '../../img/avatar.png';
 import sessionManager from "../../helpers/sessionManager";
 
 class ChoosePlace extends React.Component {
-
-  static contextType = WebsocketContext;
 
   constructor(props) {
     super(props);
@@ -45,7 +43,7 @@ class ChoosePlace extends React.Component {
   }
 
   handleChangeColor(pickedColorName) {    
-    this.context.sockClient.send(`/app/game/${this.gameId}/choose-color`, { color: pickedColorName });
+    this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/choose-color`, { color: pickedColorName });
   }
 
   getMyPlayer(players) {
@@ -124,4 +122,4 @@ class ChoosePlace extends React.Component {
   }
 }
 
-export default withRouter(ChoosePlace);
+export default withRouter(withWebsocketContext(ChoosePlace));

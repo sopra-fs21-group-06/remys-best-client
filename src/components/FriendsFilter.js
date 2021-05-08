@@ -1,12 +1,12 @@
 import React from 'react';
-import { api } from "../helpers/api";
+import { api, handleError } from "../helpers/api";
 import { ServerError, ValidatedClearableInput} from "../helpers/formUtils"
 import BoxWithUsers from "./BoxWithUsers"
 import debounce from 'lodash.debounce'
 import { withRouter } from 'react-router-dom';
-import Box from './Box';
-import avatar from '../img/avatar.png';
-import Avatar from './Avatar';
+import { withWebsocketContext } from './context/WebsocketProvider';
+import sessionManager from "../helpers/sessionManager";
+import { createUser } from "../helpers/modelUtils";
 
 class FriendsFilter extends React.Component {
 
@@ -16,9 +16,12 @@ class FriendsFilter extends React.Component {
             usernameOrEmail: "",
             serverError: null,
             isSubmitting: false,
-            users: []
+            filteredUsers: []
         };
 
+        this.allUsers = []
+
+        /*
         this.allUsers = [
             {username: "Andrina", email: "andrina@andrina.ch", category: "friends", status: "Free"},
             {username: "Peter", email: "peter@peter.ch", category: "friends", status: "Busy"},
@@ -28,29 +31,65 @@ class FriendsFilter extends React.Component {
             {username: "George Clooney", email: "clooney@gmbh.ch", category: "requests"},
             {username: "David Beckham", email: "becks@david.ch", category: "requests"},
             {username: "Remy", email: "remyegloff@egloff.ch", category: "requests"}
-        ]
+        ]*/
 
+        this.gameSessionId = sessionManager.getGameSessionId();
         this.handleOnChange = this.handleOnChange.bind(this)
         this.handleClearValue = this.handleClearValue.bind(this)
-        this.onClickStatus = this.onClickStatus.bind(this)
+        this.invite = this.invite.bind(this)
     }
 
-    async componentDidMount() {
-        this.setState({users: this.allUsers})
-        // TODO fetch user with waiting icon
-
-
-
-        // [{senderName: "Andrina"}]
-        const received = await api.get(`/friendrequests/received`);
-
-        // [{receiverName: "Andrina"}]
-        const sent = await api.get(`/friendrequests/sent`);
-
-        // [{friends: [{username: "Andrina", status: "Free || Busy || Offline"}]]
-        const friends = await api.get(`/myfriends`);
+    componentDidMount() {
+        this.refreshUsers()
     }
 
+    async refreshUsers() {
+        let [friendUsers, sentUsers, receivedUsers] = await Promise.all([
+            this.fetchAndTransformFriends(), 
+            this.fetchAndTransformSent(), 
+            this.fetchAndTransformReceived()
+        ]);
+
+        let users = friendUsers.concat(sentUsers).concat(receivedUsers)
+        this.setState({filteredUsers: users})
+        this.allUsers = users
+    }
+
+    async fetchAndTransformFriends() {
+        try {
+            const response = await api.get(`/myfriends`);
+            this.setState({ serverError: null })
+            return response.data.friends.map(friend => {
+                return createUser(friend.username, "friend@friend.ch", friend.status, "friend")
+            })
+        } catch (error) {
+            this.setState({ serverError: handleError(error) })
+        }
+    }
+
+    async fetchAndTransformSent() {
+        try {
+            const response = await api.get(`/friendrequests/sent`);
+            this.setState({ serverError: null })
+            return response.data.map(sent => {
+                return createUser(sent.receiverName, "sent@sent.ch", "Sent", "sent")
+            })
+        } catch (error) {
+            this.setState({ serverError: handleError(error) })
+        }
+    }
+
+    async fetchAndTransformReceived() {
+        try {
+            const response = await api.get(`/friendrequests/received`);
+            this.setState({ serverError: null })
+            return response.data.map(received => {
+                return createUser(received.senderName, "received@received.ch", "Received", "received")
+            })
+        } catch (error) {
+            this.setState({ serverError: handleError(error) })
+        }
+    }
 
     handleClearValue() {
         let newUsernameOrEmail = ""
@@ -81,24 +120,22 @@ class FriendsFilter extends React.Component {
         this.setState({users: filteredUsers})
     }
 
-    onClickStatus(username) {
-        console.log("clicked " + username)
-
-        // TODO Sandro send invitation to clicked user
+    invite(username) {
+        this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/invite`, {username: username});
     }
 
-
-    /**
-     * Confirm link: api.get(`/friendrequests/accept`); + senderName: "Andrina" (I want to confirm Andrina's request)
-     * Confirm link: api.get(`/friendrequests/decline`);
-     * 
-     * When in Create New GAme -> Free should be transformed to Link Invite
-     * websocket send to '/app/gamesession/{gameSessionId}/invite'  + username: "Andrina"
-     * 
-     **/
-
     render() {
-        let {usernameOrEmail, users, serverError, isSubmitting} = this.state
+        let {usernameOrEmail, filteredUsers, serverError, isSubmitting, withInvitation} = this.state
+
+        if(this.props.withInvitation) {
+            filteredUsers = filteredUsers.map(user => {
+                if(user.status === "Free") {
+                    user.status = "Invite"
+                    user.invite = () => this.invite(user.username)
+                }
+                return user
+            })
+        }
 
         return (
             <div>
@@ -111,11 +148,17 @@ class FriendsFilter extends React.Component {
                     onChange={this.handleOnChange}
                     onClearValue={this.handleClearValue}
                 />
-                <BoxWithUsers withFilter users={users} isSubmitting={isSubmitting} onClickStatus={this.onClickStatus}/>
+                <BoxWithUsers 
+                    withFilter 
+                    users={filteredUsers} 
+                    isSubmitting={isSubmitting} 
+                    withInvitation={withInvitation}
+                    refreshUsers={this.refreshUsers}
+                />
                 <div className="link-below-box"><p className="clickable">Refresh</p></div>
              </div>
         );
     }
 }
 
-export default withRouter(FriendsFilter);
+export default withRouter(withWebsocketContext(FriendsFilter));

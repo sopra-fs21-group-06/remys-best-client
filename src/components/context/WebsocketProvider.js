@@ -6,7 +6,7 @@ export const WebsocketContext = React.createContext();
 
 export const withWebsocketContext = WrappedComponent => props => (
     <WebsocketContext.Consumer>
-        {value => <WrappedComponent {...props} contextValue={value}/>}
+        {value => <WrappedComponent {...props} websocketContext={value}/>}
     </WebsocketContext.Consumer>
 );
 
