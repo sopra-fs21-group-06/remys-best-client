@@ -5,8 +5,8 @@ import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Box from '../../components/Box';
 import avatar from '../../img/avatar.png'
-import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
-import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
+import { WebsocketContext } from '../../components/context/WebsocketProvider';
+import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
 import sessionManager from "../../helpers/sessionManager";
 

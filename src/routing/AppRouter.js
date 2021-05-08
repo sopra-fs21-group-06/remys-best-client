@@ -3,7 +3,7 @@ import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Login from "../views/unauth/Login";
 import Register from "../views/unauth/Register";
-import WebsocketProvider from "../components/websocket/WebsocketProvider";
+import WebsocketProvider from "../components/context/WebsocketProvider";
 import Home from "../views/auth/Home";
 import EditProfile from "../views/auth/EditProfile";
 import WaitingRoom from "../views/auth/WaitingRoom";

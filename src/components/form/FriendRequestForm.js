@@ -47,8 +47,19 @@ const rules = {
 const handlers = {
   onFormSubmit: async (values) => {
     try {
-        // TODO Sandro -> api server call
-        console.log("SUBMIT WITH " + values.username)
+      const requestBody = JSON.stringify({
+          receiverName: values.username
+      });
+      const response = await api.post(`/friendrequests`, requestBody);
+
+
+      // server
+      //response.data.error.message
+
+
+      // status OK -> alert firned successfully requested -> triggered pending reload
+
+
     } catch (error) {
         return error;
     }

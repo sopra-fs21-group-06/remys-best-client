@@ -35,10 +35,22 @@ class FriendsFilter extends React.Component {
         this.onClickStatus = this.onClickStatus.bind(this)
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.setState({users: this.allUsers})
         // TODO fetch user with waiting icon
+
+
+
+        // [{senderName: "Andrina"}]
+        const received = await api.get(`/friendrequests/received`);
+
+        // [{receiverName: "Andrina"}]
+        const sent = await api.get(`/friendrequests/sent`);
+
+        // [{friends: [{username: "Andrina", status: "Free || Busy || Offline"}]]
+        const friends = await api.get(`/myfriends`);
     }
+
 
     handleClearValue() {
         let newUsernameOrEmail = ""
@@ -74,6 +86,16 @@ class FriendsFilter extends React.Component {
 
         // TODO Sandro send invitation to clicked user
     }
+
+
+    /**
+     * Confirm link: api.get(`/friendrequests/accept`); + senderName: "Andrina" (I want to confirm Andrina's request)
+     * Confirm link: api.get(`/friendrequests/decline`);
+     * 
+     * When in Create New GAme -> Free should be transformed to Link Invite
+     * websocket send to '/app/gamesession/{gameSessionId}/invite'  + username: "Andrina"
+     * 
+     **/
 
     render() {
         let {usernameOrEmail, users, serverError, isSubmitting} = this.state

@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 
 class Blurred extends React.Component {
 
@@ -31,4 +30,4 @@ class Blurred extends React.Component {
     }
 }
 
-export default withRouter(Blurred);
+export default Blurred;

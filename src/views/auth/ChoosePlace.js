@@ -7,8 +7,8 @@ import Board from "../../components/ingame/Board";
 import Box from "../../components/Box";
 import { colors } from "../../helpers/constants";
 import { createChannel } from '../../helpers/modelUtils';
-import { WebsocketContext } from '../../components/websocket/WebsocketProvider';
-import WebsocketConsumer from '../../components/websocket/WebsocketConsumer';
+import { WebsocketContext } from '../../components/context/WebsocketProvider';
+import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import avatar from '../../img/avatar.png';
 import sessionManager from "../../helpers/sessionManager";
 
