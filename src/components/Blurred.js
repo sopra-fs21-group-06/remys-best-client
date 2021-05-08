@@ -21,6 +21,7 @@ class Blurred extends React.Component {
 
         return (
             <div className={"blurred-element "} style={borderRadiusStyle}>
+                {this.props.counter && <div className="counter">{this.props.counter}</div>}
                 <div className={"container " + (this.props.className ? this.props.className : '')} style={sizeStyle}>
                     <div className="bg" style={borderRadiusStyle}></div>
                     <div className="content" style={{...borderRadiusStyle, ...borderStyle}}>{this.props.children}</div>

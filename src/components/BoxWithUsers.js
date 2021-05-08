@@ -30,8 +30,8 @@ class BoxWithUsers extends React.Component {
                     withFilter && 
                     <div className="user-filter">
                         <p onClick={() => this.changeFilterMode("friends")} className={filterMode == "friends" ? "active" : ""}>Friends</p>
-                        <p onClick={() => this.changeFilterMode("pending")} className={filterMode == "pending" ? "active" : ""}>Pending</p>
-                        <p onClick={() => this.changeFilterMode("requests")} className={filterMode == "requests" ? "active" : ""}>Requests</p>
+                        <p onClick={() => this.changeFilterMode("sent")} className={filterMode == "sent" ? "active" : ""}>Pending</p>
+                        <p onClick={() => this.changeFilterMode("received")} className={filterMode == "received" ? "active" : ""}>Requests</p>
                     </div>
                 }
                 {

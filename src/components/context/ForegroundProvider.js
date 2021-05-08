@@ -6,7 +6,7 @@ export const ForegroundContext = React.createContext();
 
 export const withForegroundContext = WrappedComponent => props => (
     <ForegroundContext.Consumer>
-        {value => <WrappedComponent {...props} foregroundContextValue={value}/>}
+        {value => <WrappedComponent {...props} foregroundContext={value}/>}
     </ForegroundContext.Consumer>
 );
 
@@ -17,33 +17,49 @@ class ForegroundProvider extends Component {
     this.state = {
       isAlertShown: false,
       componentToShowAsAlert: null,
+      countdown: null,
       showAlert: (componentToShowAsAlert, removeAfterInMilliseconds) => {
         this.showAlert(componentToShowAsAlert, removeAfterInMilliseconds)
       },
+      openAlert: (componentToShowAsAlert) => {
+        this.openAlert(componentToShowAsAlert)
+      },
+      closeAlert: () => {
+        this.closeAlert()
+      },
+      setCountdown: (countdown) => {
+        this.setState({countdown: countdown})
+      }
     };
   }
 
   showAlert(componentToShowAsAlert, removeAfterInMilliseconds) {
+    this.openAlert(componentToShowAsAlert)
+
+    setTimeout(() => { 
+      this.closeAlert()
+    }, removeAfterInMilliseconds);
+  }
+
+  openAlert(componentToShowAsAlert) {
     this.setState({
       componentToShowAsAlert: componentToShowAsAlert
     }, this.setState({
       isAlertShown: true,
-    }, () => {
-      setTimeout(() => { 
-        this.setState({
-          isAlertShown: false,
-        })
-      }, removeAfterInMilliseconds);
     }))
   }
 
+  closeAlert() {
+    this.setState({isAlertShown: false })
+  }
+
   render() {
-    let {componentToShowAsAlert, isAlertShown} = this.state
+    let {componentToShowAsAlert, isAlertShown, countdown} = this.state
     return (
         <ForegroundContext.Provider value={this.state}>
             <div className="foreground">
                 <FadeInOut in={isAlertShown}>
-                  <Alert component={componentToShowAsAlert}/>
+                  <Alert component={componentToShowAsAlert} countdown={countdown} />
                 </FadeInOut>
                 {this.props.children}
             </div>

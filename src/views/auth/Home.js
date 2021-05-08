@@ -6,18 +6,17 @@ import NavigationBox from "../../components/NavigationBox"
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
 import { api } from "../../helpers/api";
 import sessionManager from "../../helpers/sessionManager";
-import { WebsocketContext } from '../../components/context/WebsocketProvider';
+import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
+import Invitation from '../../components/alert/Invitation';
 import { createChannel } from '../../helpers/modelUtils';
 
 class Home extends React.Component {
 
-  static contextType = WebsocketContext;
-
   constructor() {
     super();
     this.state = {
-      username: localStorage.getItem("username")
+      username: localStorage.getItem("username"),
     };
 
     this.channels = [
@@ -26,34 +25,24 @@ class Home extends React.Component {
     ]
   }
 
-  handleInvitationMessage(msg) {
-    // msg.hostName , msg.gameSessionId
-
-
-
-
-    // open Alert with Invitation
-
-  }
-
-  handleCountdownMessage(msg) {
-    //msg.currentCounter
-
-    // update alert
-  }
-
-
-
   componentWillUnmount() {
-    this.context.sockClient.send('/app/home/unregister', {});
+    this.props.websocketContext.sockClient.send('/app/home/unregister', {});
   }
 
   register() {
-    this.context.sockClient.send('/app/home/register', {});
+    this.props.websocketContext.sockClient.send('/app/home/register', {});
   }
 
-  openAlert() {
-    this.props.foregroundContextValue.showAlert(<p>foo</p>, 5000);
+  handleInvitationMessage(msg) {
+    this.props.foregroundContext.openAlert(<Invitation 
+      hostName={msg.hostName}
+      gameSessionId={msg.gameSessionId}
+      closeAlert={this.props.foregroundContext.closeAlert} />
+    );
+  }
+
+  handleCountdownMessage(msg) {
+    this.props.foregroundContext.setCountdown(parseInt(msg.currentCounter))
   }
 
   async onClickCreateNewGame() {
@@ -82,7 +71,6 @@ class Home extends React.Component {
                   onClick={() => this.onClickCreateNewGame()}
                 />
                 <p className="below-box">or just wait here to get invited</p>
-                <p onClick={() => this.openAlert()}>open alert</p>
               </div>
               <div className="col">
                 <p className="above-box">Want to change your profile?</p>
@@ -104,4 +92,4 @@ class Home extends React.Component {
   }
 }
 
-export default withRouter(withForegroundContext(Home));
+export default withRouter(withForegroundContext(withWebsocketContext(Home)));

@@ -5,14 +5,12 @@ import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Box from '../../components/Box';
 import avatar from '../../img/avatar.png'
-import { WebsocketContext } from '../../components/context/WebsocketProvider';
+import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
 import sessionManager from "../../helpers/sessionManager";
 
 class WaitingRoom extends React.Component {
-
-  static contextType = WebsocketContext;
 
   constructor() {
     super();
@@ -27,11 +25,11 @@ class WaitingRoom extends React.Component {
   }
   
   componentWillUnmount() {
-    this.context.sockClient.send('/app/waiting-room/unregister', {});
+    this.props.websocketContext.sockClient.send('/app/waiting-room/unregister', {});
   }
 
   register() {
-    this.context.sockClient.send('/app/waiting-room/register', {});
+    this.props.websocketContext.sockClient.send('/app/waiting-room/register', {});
   }
 
   handleWaitingRoomMessage(msg) {
@@ -83,4 +81,4 @@ class WaitingRoom extends React.Component {
   }
 }
 
-export default withRouter(WaitingRoom);
+export default withRouter(withWebsocketContext(WaitingRoom));

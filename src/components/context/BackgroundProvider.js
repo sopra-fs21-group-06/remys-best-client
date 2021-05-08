@@ -5,7 +5,7 @@ export const BackgroundContext = React.createContext();
 
 export const withBackgroundContext = WrappedComponent => props => (
     <BackgroundContext.Consumer>
-        {value => <WrappedComponent {...props} backgroundContextValue={value}/>}
+        {value => <WrappedComponent {...props} backgroundContext={value}/>}
     </BackgroundContext.Consumer>
 );
 

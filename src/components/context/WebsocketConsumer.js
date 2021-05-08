@@ -10,27 +10,27 @@ class WebsocketConsumer extends React.Component {
 
     componentDidMount() {
         // CASE 1 – websocket connection is already established (when switching from AuthRoute to AuthRoute)
-        if(this.props.contextValue.isConnected) {
+        if(this.props.websocketContext.isConnected) {
             this.uponConnectionEstablished()
         }
     }
 
     componentDidUpdate(prevProps) {
         // CASE 2 – wait until connection has been established (when switching from UnauthRoute to AuthRoute or on AuthRoute page reload)
-        if (this.props.contextValue.isConnected && prevProps.contextValue !== this.props.contextValue) {
+        if (this.props.websocketContext.isConnected && prevProps.websocketContext !== this.props.websocketContext) {
             this.uponConnectionEstablished()
         }
     }
 
     uponConnectionEstablished() {
-        this.props.contextValue.handleSubscribe(this.props.channels)
+        this.props.websocketContext.handleSubscribe(this.props.channels)
         if(this.props.connectionCallback) {
             this.props.connectionCallback()
         }
     }
 
     componentWillUnmount() {
-        this.props.contextValue.handleUnsubscribe(this.props.channels)
+        this.props.websocketContext.handleUnsubscribe(this.props.channels)
     }
 
     render() {
