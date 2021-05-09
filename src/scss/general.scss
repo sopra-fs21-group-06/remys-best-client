@@ -234,6 +234,18 @@ div.box {
                     &:last-of-type {
                         margin-bottom: 0;
                     }
+
+                    .accept {
+                        position: absolute;
+                        top: 9px;
+                        right: 0;
+                    }
+
+                    .reject {
+                        position: absolute;
+                        bottom: 9px;
+                        right: 0;
+                    }
                 }
 
                 .loading {
@@ -357,10 +369,10 @@ div.box {
 
 .alert {
     width: auto;
-    position: absolute;
+    position: fixed;
     top: 16px;
     right: 16px;
-    //min-width: 350;
+    z-index: 999999;
 
     .invitation {
 

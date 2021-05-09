@@ -1,18 +1,11 @@
 import React from "react";
 import wood from '../../img/board.png';
-import styled from 'styled-components';
 import { initMarbles, computeFields } from '../../helpers/remysBestUtils';
 import Marble from './Marble';
 import Field from './Field';
-import { colors } from '../../helpers/constants'
 import { ThrowIn } from '../transitions/ThrowIn';
 import { TransitionGroup } from 'react-transition-group';
 import Card from "./hand/Card";
-import { createMarble } from '../../helpers/modelUtils'
-import { GameContext } from '../../views/auth/Game';
-import WebsocketConsumer from '../context/WebsocketConsumer';
-import { createChannel } from '../../helpers/modelUtils';
-import sessionManager from "../../helpers/sessionManager";
 
 class Board extends React.Component {
 

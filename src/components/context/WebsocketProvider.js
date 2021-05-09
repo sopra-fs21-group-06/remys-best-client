@@ -4,11 +4,13 @@ import { createSockClient } from "../../helpers/SockClientRemy";
 
 export const WebsocketContext = React.createContext();
 
-export const withWebsocketContext = WrappedComponent => props => (
+export const withWebsocketContext = WrappedComponent => {
+  return React.forwardRef((props, ref) => (
     <WebsocketContext.Consumer>
-        {value => <WrappedComponent {...props} websocketContext={value}/>}
+        {value => <WrappedComponent {...props} websocketContext={value} ref={ref}/>}
     </WebsocketContext.Consumer>
-);
+  ));
+};
 
 /**
  * This component manages the websocket session, holds the currently subscribed channels 

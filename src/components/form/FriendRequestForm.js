@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { withFormValidation }  from './withFormValidation';
 import { withRouter } from 'react-router-dom';
 import { api } from "../../helpers/api";
 import { ServerError, SubmitButton, ValidatedInput} from "../../helpers/formUtils"
 import InfoMessage from "../alert/InfoMessage"
-import { withForegroundContext } from '../context/ForegroundProvider';
+import { ForegroundContext } from '../context/ForegroundProvider';
 
 const FriendRequestFormSkeleton = (props) => {
   const {
@@ -17,9 +17,13 @@ const FriendRequestFormSkeleton = (props) => {
     isSubmitting
   } = props;
 
+  const foregroundContext = useContext(ForegroundContext);
+
   const handleOnFormSubmit = async () => {
     try {
       await onFormSubmit();
+      foregroundContext.showAlert(<InfoMessage text={`${values.username} successfully requested`}/>, 3000);
+      setTimeout(() => {this.props.refreshUsers().bind(this)}, 1000);
     } catch (e) {
       // errors are handled directly in onFormSubmit
     } finally {
@@ -63,11 +67,7 @@ const handlers = {
       const requestBody = JSON.stringify({
           receiverName: values.username
       });
-      const response = await api.post(`/friendrequests`, requestBody);
-
-      if(response.status === 200) {
-        this.props.foregroundContext.showAlert(<InfoMessage text={`${values.username} successfully requested`}/>, 3000);
-      }
+      await api.post(`/friendrequests`, requestBody);
     } catch (error) {
         return error;
     }
@@ -76,4 +76,4 @@ const handlers = {
 
 const FriendRequestForm = withFormValidation(initialValues, rules, handlers, FriendRequestFormSkeleton);
 
-export default withRouter(withForegroundContext(FriendRequestForm));
+export default withRouter(FriendRequestForm);

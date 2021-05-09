@@ -3,7 +3,6 @@ import { api, handleError } from "../helpers/api";
 import { ServerError, ValidatedClearableInput} from "../helpers/formUtils"
 import BoxWithUsers from "./BoxWithUsers"
 import debounce from 'lodash.debounce'
-import { withRouter } from 'react-router-dom';
 import { withWebsocketContext } from './context/WebsocketProvider';
 import sessionManager from "../helpers/sessionManager";
 import { createUser } from "../helpers/modelUtils";
@@ -37,6 +36,7 @@ class FriendsFilter extends React.Component {
         this.handleOnChange = this.handleOnChange.bind(this)
         this.handleClearValue = this.handleClearValue.bind(this)
         this.invite = this.invite.bind(this)
+        this.refreshUsers = this.refreshUsers.bind(this)
     }
 
     componentDidMount() {
@@ -53,6 +53,8 @@ class FriendsFilter extends React.Component {
         let users = friendUsers.concat(sentUsers).concat(receivedUsers)
         this.setState({filteredUsers: users})
         this.allUsers = users
+
+        console.log("refreshed users")
     }
 
     async fetchAndTransformFriends() {
@@ -115,7 +117,7 @@ class FriendsFilter extends React.Component {
         }
 
         let filteredUsers = this.allUsers.filter(user => {
-            return user.username.toLowerCase().includes(searchTerm.toLowerCase())
+            return user.getUsername().toLowerCase().includes(searchTerm.toLowerCase())
         })
         this.setState({users: filteredUsers})
     }
@@ -129,9 +131,9 @@ class FriendsFilter extends React.Component {
 
         if(this.props.withInvitation) {
             filteredUsers = filteredUsers.map(user => {
-                if(user.status === "Free") {
-                    user.status = "Invite"
-                    user.invite = () => this.invite(user.username)
+                if(user.getStatus() === "Free") {
+                    user.setStatus("Invite")
+                    user.setInvite(this.invite(user.getUsername()))
                 }
                 return user
             })
@@ -155,10 +157,10 @@ class FriendsFilter extends React.Component {
                     withInvitation={withInvitation}
                     refreshUsers={this.refreshUsers}
                 />
-                <div className="link-below-box"><p className="clickable">Refresh</p></div>
+                <div className="link-below-box"><p onClick={() => this.refreshUsers()}className="clickable">Refresh</p></div>
              </div>
         );
     }
 }
 
-export default withRouter(withWebsocketContext(FriendsFilter));
+export default withWebsocketContext(FriendsFilter);
