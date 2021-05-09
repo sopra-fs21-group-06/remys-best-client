@@ -23,7 +23,7 @@ const FriendRequestFormSkeleton = (props) => {
     try {
       await onFormSubmit();
       foregroundContext.showAlert(<InfoMessage text={`${values.username} successfully requested`}/>, 3000);
-      setTimeout(() => {this.props.refreshUsers().bind(this)}, 1000);
+      props.refreshUsers();
     } catch (e) {
       // errors are handled directly in onFormSubmit
     } finally {

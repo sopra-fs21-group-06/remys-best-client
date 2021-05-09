@@ -3,26 +3,28 @@ import React from 'react';
 class Blurred extends React.Component {
 
     render() {
+        let {counter, borderRadius, size, hasBorder, className} = this.props
+
         var borderRadiusStyle = {};
-        if(this.props.borderRadius) {
-            borderRadiusStyle.borderRadius = this.props.borderRadius + "px"
+        if(borderRadius) {
+            borderRadiusStyle.borderRadius = borderRadius + "px"
         }
 
         var borderStyle = {};
-        if(this.props.hasBorder) {
+        if(hasBorder) {
             borderStyle.border = "1px solid #a6a6a6"
         }
 
         var sizeStyle = {};
-        if(this.props.size) {
-            sizeStyle.width = this.props.size + "px";
-            sizeStyle.height = this.props.size + "px";
+        if(size) {
+            sizeStyle.width = size + "px";
+            sizeStyle.height = size + "px";
         } 
 
         return (
-            <div className={"blurred-element "} style={borderRadiusStyle}>
-                {this.props.counter && <div className="counter">{this.props.counter}</div>}
-                <div className={"container " + (this.props.className ? this.props.className : '')} style={sizeStyle}>
+            <div className={"blurred-element " + (counter ? "counter-container" : "")} style={borderRadiusStyle}>
+                {counter && <div className="counter">{counter}</div>}
+                <div className={"container " + (className ? className : '')} style={sizeStyle}>
                     <div className="bg" style={borderRadiusStyle}></div>
                     <div className="content" style={{...borderRadiusStyle, ...borderStyle}}>{this.props.children}</div>
                 </div>

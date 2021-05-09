@@ -115,16 +115,19 @@ button {
 
 
 div.blurred-element {
-    position: relative;
 
-    .counter {
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 11;
-        transform: translate(33%, -33%);
+    &.counter-container {
+        position: relative;
+
+        .counter {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 11;
+            transform: translate(33%, -33%);
+        }
     }
-
+    
     .container {
         position: relative;
 
@@ -148,6 +151,7 @@ div.blurred-element {
             height: 100%;
         }
     }
+    
 }
 
 div.avatar-box {
@@ -239,20 +243,31 @@ div.box {
                         position: absolute;
                         top: 9px;
                         right: 0;
+                        color: $green;
                     }
 
                     .reject {
                         position: absolute;
                         bottom: 9px;
                         right: 0;
+                        color: $red;
                     }
                 }
 
                 .loading {
                     position: relative;
+                    width: inherit;
+                    height: inherit;
 
                     .loader-wrapper {
-                        @include centerer;
+                        position: absolute;
+                        top: 45%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+
+                        .loader {
+                            color: $grey-light;
+                        }
                     }
                 }
             }
