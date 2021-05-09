@@ -115,16 +115,19 @@ button {
 
 
 div.blurred-element {
-    position: relative;
 
-    .counter {
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 11;
-        transform: translate(33%, -33%);
+    &.counter-container {
+        position: relative;
+
+        .counter {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 11;
+            transform: translate(33%, -33%);
+        }
     }
-
+    
     .container {
         position: relative;
 
@@ -148,6 +151,7 @@ div.blurred-element {
             height: 100%;
         }
     }
+    
 }
 
 div.avatar-box {

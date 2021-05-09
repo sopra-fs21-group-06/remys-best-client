@@ -10,13 +10,13 @@ class Notifications extends React.Component {
         return (
             <TransitionGroup className="notification-list">
                 {Object.keys(this.props.notifications).reverse().map(key => {
-                    let {username, action, card} = this.props.notifications[key];
+                    let {playerName, action, card} = this.props.notifications[key];
                     return (
                         <PopInOrSlideDown key={key}>
                             <Blurred className="notification-container" borderRadius={15} hasBorder={true}>
                                 <div className="notification">
-                                    {username && action && card ? 
-                                        <p><span>{username}</span> {action} <span>{card}</span></p> 
+                                    {playerName && action && card ? 
+                                        <p><span>{playerName}</span> {action} <span>{card}</span></p> 
                                         : 
                                         <p><span>{action}</span></p>
                                     }
