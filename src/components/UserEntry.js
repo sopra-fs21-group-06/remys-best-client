@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import avatar from '../img/avatar.png';
 import Avatar from './Avatar';
 import { api, handleError } from "../helpers/api";
+import { userCategories } from "../helpers/constants";
 
 class UserEntry extends React.Component {
 
@@ -12,7 +13,8 @@ class UserEntry extends React.Component {
                 senderName: username
             });
             await api.post(`/friendrequests/accept`, requestBody);
-            setTimeout(() => {this.props.refreshUsers()}, 1000);
+            //setTimeout(() => {this.props.refreshUsers()}, 1000).bind(this);
+            this.props.refreshUsers()
         } catch (error) {
             console.log(error)
             // catch error?
@@ -25,7 +27,8 @@ class UserEntry extends React.Component {
                 senderName: username
             });
             await api.post(`/friendrequests/decline`, requestBody);
-            setTimeout(() => {this.props.refreshUsers()}, 1000);
+            //setTimeout(() => {this.props.refreshUsers()}, 1000).bind(this);
+            this.props.refreshUsers()
         } catch (error) {
             console.log(error)
             // catch error?
@@ -40,7 +43,7 @@ class UserEntry extends React.Component {
                 <Avatar img={avatar} />
                 <p className="username">{user.getUsername()}</p>
                 <p className="email">{user.getEmail()}</p>
-                {user.getCategory() === "received" ? 
+                {user.getCategory() === userCategories.RECEIVED ? 
                     <React.Fragment>
                         <p onClick={() => this.accept(user.getUsername())} className="accept clickable">Accept</p>
                         <p onClick={() => this.reject(user.getUsername())} className="reject clickable">Reject</p>

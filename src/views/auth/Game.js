@@ -39,11 +39,14 @@ class Game extends React.Component {
         moveNameToPlay: null,
         marblesToPlay: []
       }
+
       this.requestMoves = this.requestMoves.bind(this);
       this.requestPossibleMarbles = this.requestPossibleMarbles.bind(this);
       this.play = this.play.bind(this);
       this.reset = this.reset.bind(this);
       this.requestPossibleTargetFields = this.requestPossibleTargetFields.bind(this)
+      this.throwAway = this.throwAway.bind(this)
+
       this.gameId = sessionManager.getGameId();
       this.channels = [
         createChannel(`/topic/game/${this.gameId}/facts`, (msg) => this.handleFactsMessage(msg)),
@@ -231,24 +234,21 @@ class Game extends React.Component {
       this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
     }
 
+    async throwAway() {
+      const response = await api.get(`/game/${this.gameId}/throw-away`);
+
+      // TODO response data ?? list with card codes
+    }
+
     play() {
       let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleToPlay = this.boardRef.current.getMarbleToPlay();
-
-      //TODO no clue which attribute needs to be sent
-        let marbles = [{marbleId: marbleToPlay.getId(), targetFieldKey: this.boardRef.current.getTargetField().getKey()}];
-        //let targetField = this.boardRef.current.getTargetField();
-        //marbles.targetFielKey = this.boardRef.current.getTargetField().getKey();
-
-
+      let marbles = [{marbleId: marbleToPlay.getId(), targetFieldKey: this.boardRef.current.getTargetField().getKey()}];
       this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/play`, {
         code: cardToPlay.getCode(), 
         moveName: moveNameToPlay, 
         marbles: marbles
-
-        // TODO targetField(s) submission
-        // fieldKey (e.g. "4GREEN", "8BLUE")
       });
 
       this.reset();
@@ -280,7 +280,7 @@ class Game extends React.Component {
                 <Notifications notifications={this.state.notifications} />
                 <Board size={500} ref={this.boardRef} requestPossibleTargetFields={this.requestPossibleTargetFields} myHandContainerRef={this.myHandContainerRef}/>
                 <HandContainer position="my">
-                  <MyHand ref={this.myHandContainerRef} myHandRef={this.myHandRef} mode={this.state.mode} requestMoves={this.requestMoves} requestPossibleMarbles={this.requestPossibleMarbles} play={this.play} reset={this.reset}>
+                  <MyHand ref={this.myHandContainerRef} myHandRef={this.myHandRef} mode={this.state.mode} requestMoves={this.requestMoves} requestPossibleMarbles={this.requestPossibleMarbles} play={this.play} reset={this.reset} throwAway={this.throwAway}>
                     <Hand ref={this.myHandRef} isActive={this.state.mode !== roundModes.IDLE}/>
                   </MyHand>
                 </HandContainer>

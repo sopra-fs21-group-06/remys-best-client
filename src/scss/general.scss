@@ -239,20 +239,31 @@ div.box {
                         position: absolute;
                         top: 9px;
                         right: 0;
+                        color: $green;
                     }
 
                     .reject {
                         position: absolute;
                         bottom: 9px;
                         right: 0;
+                        color: $red;
                     }
                 }
 
                 .loading {
                     position: relative;
+                    width: inherit;
+                    height: inherit;
 
                     .loader-wrapper {
-                        @include centerer;
+                        position: absolute;
+                        top: 45%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+
+                        .loader {
+                            color: $grey-light;
+                        }
                     }
                 }
             }
