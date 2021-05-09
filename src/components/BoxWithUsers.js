@@ -1,8 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import Box from './Box';
-import avatar from '../img/avatar.png';
-import Avatar from './Avatar';
 import UserEntry from './UserEntry';
 
 class BoxWithUsers extends React.Component {
@@ -22,7 +20,7 @@ class BoxWithUsers extends React.Component {
         let {withFilter, users, isSubmitting, title, withInvitation, refreshUsers} = this.props
         let {filterMode} = this.state
         let usersToShow = users.filter(user => {
-            return user.category === filterMode
+            return user.getCategory() === filterMode
         });
 
         return (
@@ -53,7 +51,7 @@ class BoxWithUsers extends React.Component {
                         usersToShow.map(user => {
                             return (
                                 <UserEntry 
-                                    key={user.username} 
+                                    key={user.getUsername()} 
                                     user={user} 
                                     withInvitation={withInvitation}
                                     refreshUsers={refreshUsers}
