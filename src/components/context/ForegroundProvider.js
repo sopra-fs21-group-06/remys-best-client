@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import Alert from "../alert/Alert";
+import Overlay from "../Overlay";
 import { FadeInOut } from "../transitions/FadeInOut";
 
 export const ForegroundContext = React.createContext();
@@ -18,6 +19,7 @@ class ForegroundProvider extends Component {
       isAlertShown: false,
       componentToShowAsAlert: null,
       countdown: null,
+      componentToOpenInOverlay: null,
       showAlert: (componentToShowAsAlert, removeAfterInMilliseconds) => {
         this.showAlert(componentToShowAsAlert, removeAfterInMilliseconds)
       },
@@ -29,7 +31,13 @@ class ForegroundProvider extends Component {
       },
       setCountdown: (countdown) => {
         this.setState({countdown: countdown})
-      }
+      },
+      openOverlay: (componentToOpenInOverlay) => {
+        this.openOverlay(componentToOpenInOverlay)
+      },
+      closeOverlay: () => {
+        this.closeOverlay()
+      },
     };
   }
 
@@ -53,13 +61,29 @@ class ForegroundProvider extends Component {
     this.setState({isAlertShown: false })
   }
 
+  openOverlay(componentToOpenInOverlay) {
+    this.setState({
+      isOverlayOpened: true,
+      componentToOpenInOverlay: componentToOpenInOverlay
+    })
+  }
+
+  closeOverlay() {
+    this.setState({
+      isOverlayOpened: false,
+    })
+  }
+
   render() {
-    let {componentToShowAsAlert, isAlertShown, countdown} = this.state
+    let {componentToShowAsAlert, isAlertShown, countdown, isOverlayOpened, componentToOpenInOverlay} = this.state
     return (
         <ForegroundContext.Provider value={this.state}>
             <div className="foreground">
                 <FadeInOut in={isAlertShown}>
                   <Alert component={componentToShowAsAlert} countdown={countdown} />
+                </FadeInOut>
+                <FadeInOut in={isOverlayOpened}>
+                  <Overlay component={componentToOpenInOverlay} />
                 </FadeInOut>
                 {this.props.children}
             </div>
