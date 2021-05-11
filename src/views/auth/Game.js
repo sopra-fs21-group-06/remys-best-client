@@ -16,6 +16,7 @@ import { assignPlayersToColors, generateUUID } from '../../helpers/remysBestUtil
 import sessionManager from "../../helpers/sessionManager";
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
+import { withForegroundContext } from '../../components/context/ForegroundProvider';
 import { api } from '../../helpers/api';
 
 class Game extends React.Component {
@@ -94,10 +95,15 @@ class Game extends React.Component {
     }
 
     handleTurnChangedMessage(msg) {
+      let playerName = msg.playerName
       if(this.isMyPlayerName(msg.playerName)) {
         this.setState({ mode: roundModes.MY_TURN })
+        playerName = "your"
+      } else {
+        playerName += "'s"
       }
-      // TODO show current turn big message over whole screen
+      
+      this.props.foregroundContext.displayCurrentTurnMessage(playerName)
     }
 
     handleThrowAwayMessage(msg) {
@@ -298,6 +304,10 @@ class Game extends React.Component {
      this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/ready`, {});
     }
 
+    test() {
+      this.props.foregroundContext.displayCurrentTurnMessage("your")
+    }
+
     render() {
       let gameEnd = {
         pathname: '/game-end',
@@ -311,7 +321,7 @@ class Game extends React.Component {
         <WebsocketConsumer channels={this.channels} connectionCallback={() => this.sendReadyMessage()}>
           <View className="game" withFooterHidden withDogImgHidden linkMode={viewLinks.BASIC}>
             <main>
-                <Facts facts={this.state.facts}/>
+                <Facts facts={this.state.facts} onClick={() => this.test()}/>
                 <Notifications notifications={this.state.notifications} />
                 <Board size={500} ref={this.boardRef} requestPossibleTargetFields={this.requestPossibleTargetFields} myHandContainerRef={this.myHandContainerRef}/>
                 <HandContainer position="my">
@@ -336,4 +346,4 @@ class Game extends React.Component {
     }
 }
 
-export default withRouter(withBackgroundContext(withWebsocketContext(Game)));
+export default withRouter(withBackgroundContext(withForegroundContext(withWebsocketContext(Game))));

@@ -84,8 +84,44 @@
 }
 */
 
-/////@at-root
 
+.moveOut-enter,
+.moveOut-enter-active,
+.moveOut-enter-done,
+.moveOut-exit,
+.moveOut-exit-active {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 99999999;
+}
+
+
+.moveOut-enter {
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0;
+}
+
+.moveOut-enter-active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    transition: all 500ms ease-in; 
+}
+
+.moveOut-enter-done {
+    transform: translate(-50%, -50%);
+}
+
+.moveOut-exit {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.moveOut-exit-active {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+    transition: all 500ms ease-out; 
+}
 
 
 // todo pick up and then fadeout? not both the same time
