@@ -1,12 +1,13 @@
 import React from 'react';
+import Blurred from './Blurred';
 
 class Overlay extends React.Component {
 
     render() {
         return (
-            <div className="overlay">
+            <Blurred className="overlay">
                 {this.props.component}
-            </div>
+            </Blurred>
         );
     }
 }

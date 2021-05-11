@@ -5,9 +5,9 @@ import { createSockClient } from "../../helpers/SockClientRemy";
 export const WebsocketContext = React.createContext();
 
 export const withWebsocketContext = WrappedComponent => {
-  return React.forwardRef((props, ref) => (
+  return React.forwardRef((props, forwardRef) => (
     <WebsocketContext.Consumer>
-        {value => <WrappedComponent {...props} websocketContext={value} ref={ref}/>}
+        {value => <WrappedComponent {...props} websocketContext={value} ref={forwardRef}/>}
     </WebsocketContext.Consumer>
   ));
 };

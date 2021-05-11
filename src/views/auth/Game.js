@@ -266,7 +266,14 @@ class Game extends React.Component {
     }
 
     play() {
-      let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
+      let cardToPlay;
+      if(this.myHandContainerRef.current.isJokerRaised()) {
+        // select joker as card to play
+        cardToPlay = this.myHandContainerRef.current.getRaisedCard(true);
+      } else {
+        cardToPlay = this.myHandContainerRef.current.getRaisedCard();
+      }
+
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleToPlay = this.boardRef.current.getMarbleToPlay();
 

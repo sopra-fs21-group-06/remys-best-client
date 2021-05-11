@@ -5,11 +5,13 @@ import { FadeInOut } from "../transitions/FadeInOut";
 
 export const ForegroundContext = React.createContext();
 
-export const withForegroundContext = WrappedComponent => props => (
+export const withForegroundContext = WrappedComponent => {
+  return React.forwardRef((props, forwardRef) => (
     <ForegroundContext.Consumer>
-        {value => <WrappedComponent {...props} foregroundContext={value}/>}
+        {value => <WrappedComponent {...props} foregroundContext={value} ref={forwardRef}/>}
     </ForegroundContext.Consumer>
-);
+  ));
+};
 
 class ForegroundProvider extends Component {
 
