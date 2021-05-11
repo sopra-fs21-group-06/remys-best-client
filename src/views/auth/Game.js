@@ -52,6 +52,7 @@ class Game extends React.Component {
         createChannel(`/topic/game/${this.gameId}/facts`, (msg) => this.handleFactsMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/notification`, (msg) => this.handleNotificationMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/turn`, (msg) => this.handleTurnChangedMessage(msg)),
+        createChannel(`/topic/game/${this.gameId}/throwaway`, (msg) => this.handleThrowAwayMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
         createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/game-end`, (msg) => this.handlePlayerDisconnection(msg))
@@ -97,6 +98,20 @@ class Game extends React.Component {
         this.setState({ mode: roundModes.MY_TURN })
       }
       // TODO show current turn big message over whole screen
+    }
+
+    handleThrowAwayMessage(msg) {
+      let cardsToThrowAway = msg.cardCodes.map(cardCode => {
+        return this.getCardFromCode(cardCode)
+      }) 
+      let player = this.state.players.find(player => player.getPlayerName() === msg.playerName)
+
+      player.getHandRef().current.removeAllCards()
+
+      player.getHandRef().current.alignCards(cardsToThrowAway)
+      setTimeout(function(){ 
+          this.boardRef.current.throwInAllCards(player, cardsToThrowAway);
+      }.bind(this), 500);
     }
 
     handlePlayedMessage(msg) {
@@ -236,15 +251,28 @@ class Game extends React.Component {
 
     async throwAway() {
       const response = await api.get(`/game/${this.gameId}/throw-away`);
+      let playableCardCodes = response.data
 
-      // TODO response data ?? list with card codes
+      console.log(response.data)
+
+      if(playableCardCodes.length > 0) {
+
+        this.myHandContainerRef.current.handlePlayableCards(playableCardCodes);
+
+      
+
+        // TODO maybe display a message?
+      }
     }
 
     play() {
       let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleToPlay = this.boardRef.current.getMarbleToPlay();
+
+      // TODO send multiple values on seven (hold stateofSeven)
       let marbles = [{marbleId: marbleToPlay.getId(), targetFieldKey: this.boardRef.current.getTargetField().getKey()}];
+      
       this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/play`, {
         code: cardToPlay.getCode(), 
         moveName: moveNameToPlay, 

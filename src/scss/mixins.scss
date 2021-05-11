@@ -153,6 +153,18 @@ https: //stackoverflow.com/questions/66696971/css3-increment-text-after-animatio
     }
 }
 
+@keyframes moveTopDown {
+    0% {
+        //transform: translate(-50%, -37.5%);
+        opacity: 0.7;
+    }
+
+    100% {
+        //transform: translate(-50%, -62.5%);
+        opacity: 1;
+    }
+}
+
 
 
 @mixin pulse($color) {

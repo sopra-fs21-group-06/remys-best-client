@@ -17,10 +17,10 @@ class MyHand extends React.Component {
             raisedCard: null,
             moves: [],
             selectedMoveName: null,
-            isMarbleChosen: false
+            isMarbleChosen: false,
         };
         this.gameId = sessionManager.getGameId();
-        this.handleRaiseCard = this.handleRaiseCard.bind(this);
+        this.onCardClick = this.onCardClick.bind(this);
     }
 
     handleRaiseCard(card) {
@@ -36,6 +36,20 @@ class MyHand extends React.Component {
             });
         }
         this.props.myHandRef.current.raiseCard(card);
+    }
+
+    handlePlayableCards(playableCardCodes) {
+        playableCardCodes.forEach(cardCode => {
+            this.props.myHandRef.current.markCardAsPlayable(cardCode)
+        })
+    }
+
+    onCardClick(card) {
+        this.handleRaiseCard(card)
+
+        if(card.getIsPlayable()) {
+            this.props.myHandRef.current.resetMarkedCardsAsPlayable()
+        }
     }
 
     exchange() {
@@ -118,7 +132,9 @@ class MyHand extends React.Component {
                     </FadeInOut>
                 </div>
                 <div className="my-hand-wrapper">
-                    {React.cloneElement(this.props.children, { onCardClick: this.handleRaiseCard})}
+                    {React.cloneElement(this.props.children, { 
+                        onCardClick: this.onCardClick,
+                    })}
                 </div>
                 <div className="card-menu">
                     <FadeInOut in={this.props.mode === roundModes.EXCHANGE && raisedCard != null}>
