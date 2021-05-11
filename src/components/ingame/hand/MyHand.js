@@ -6,6 +6,8 @@ import { WebsocketContext } from '../../context/WebsocketProvider';
 import sessionManager from "../../../helpers/sessionManager";
 import checkmark from '../../../img/checkmark.png';
 import arrowRight from '../../../img/arrow-right.png';
+import { withForegroundContext } from '../../context/ForegroundProvider';
+import CardOverview from '../../CardOverview';
 
 class MyHand extends React.Component {
 
@@ -15,12 +17,14 @@ class MyHand extends React.Component {
         super();
         this.state = {
             raisedCard: null,
+            chosenJokerCard: null,
             moves: [],
             selectedMoveName: null,
             isMarbleChosen: false,
         };
         this.gameId = sessionManager.getGameId();
         this.onCardClick = this.onCardClick.bind(this);
+        this.handleJokerCardChosen = this.handleJokerCardChosen.bind(this);
     }
 
     handleRaiseCard(card) {
@@ -44,11 +48,21 @@ class MyHand extends React.Component {
         })
     }
 
-    onCardClick(card) {
-        this.handleRaiseCard(card)
+    handleJokerCardChosen(jokerCard, chosenCard) {
+        this.props.foregroundContext.closeOverlay()
+        this.setState({ chosenJokerCard: chosenCard }, this.handleRaiseCard(jokerCard))
 
+    }
+
+    onCardClick(card) {
         if(card.getIsPlayable()) {
             this.props.myHandRef.current.resetMarkedCardsAsPlayable()
+        }
+        
+        if(this.props.mode === roundModes.MY_TURN && (card.getCode() === "X1" || card.getCode() === "X2") && !card.getIsRaised()) {
+            this.props.foregroundContext.openOverlay(<CardOverview jokerCard={card} handleJokerCardChosen={this.handleJokerCardChosen} />);
+        } else {
+            this.handleRaiseCard(card)
         }
     }
 
@@ -67,8 +81,16 @@ class MyHand extends React.Component {
         this.setState({ moves: moves })
     }
 
-    getRaisedCard() {
+    getRaisedCard(showActualJokerCard) {
+        // pretend chosen joker card as raised card
+        if(this.state.chosenJokerCard && !showActualJokerCard) {
+            return this.state.chosenJokerCard
+        }
         return this.state.raisedCard;
+    }
+
+    isJokerRaised() {
+        return this.state.chosenJokerCard !== null;
     }
 
     getMoveNameToPlay() {
@@ -88,6 +110,7 @@ class MyHand extends React.Component {
 
     resetRaiseCard() {
         this.handleRaiseCard(null)
+        this.setState({ chosenJokerCard: null })
     }
 
     resetMoves() {
@@ -132,9 +155,7 @@ class MyHand extends React.Component {
                     </FadeInOut>
                 </div>
                 <div className="my-hand-wrapper">
-                    {React.cloneElement(this.props.children, { 
-                        onCardClick: this.onCardClick,
-                    })}
+                    {React.cloneElement(this.props.children, { onCardClick: this.onCardClick })}
                 </div>
                 <div className="card-menu">
                     <FadeInOut in={this.props.mode === roundModes.EXCHANGE && raisedCard != null}>
@@ -184,4 +205,4 @@ class MyHand extends React.Component {
     }
 }
 
-export default MyHand;
+export default withForegroundContext(MyHand);

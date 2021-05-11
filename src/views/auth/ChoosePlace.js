@@ -76,6 +76,10 @@ class ChoosePlace extends React.Component {
     return myPartner ? myPartner.playerName : "nobody yet";
   }
 
+  isMyPlayer(playerName) {
+    return playerName === localStorage.getItem("username")
+  }
+
   render() {
     return (
       <WebsocketConsumer channels={this.channels}>
@@ -91,7 +95,7 @@ class ChoosePlace extends React.Component {
                       return (
                           <p key={player.playerName}>
                             <span>{player.playerName}</span> – {player.color ? player.color : "not chosen yet"} 
-                            {player.color ? <span className="remove" onClick={() => this.handleChangeColor(null)}></span> : null}
+                            {player.color && this.isMyPlayer(player.playerName) ? <span className="remove" onClick={() => this.handleChangeColor(null)}></span> : null}
                           </p>
                       );
                   })}

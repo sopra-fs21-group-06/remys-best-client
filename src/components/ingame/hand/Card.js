@@ -2,6 +2,14 @@ import React from "react";
 
 class Card extends React.Component { 
 
+    onCardClick(card) {
+        if(card.getCode() === "X1" || card.getCode() === "X2") {
+            // open overlay
+            return
+        }
+        this.props.onCardClick(card)
+    }
+
     render() {
         let {card} = this.props;
 
