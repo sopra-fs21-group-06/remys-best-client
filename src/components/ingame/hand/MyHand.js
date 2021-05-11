@@ -51,7 +51,6 @@ class MyHand extends React.Component {
     handleJokerCardChosen(jokerCard, chosenCard) {
         this.props.foregroundContext.closeOverlay()
         this.setState({ chosenJokerCard: chosenCard }, this.handleRaiseCard(jokerCard))
-
     }
 
     onCardClick(card) {
@@ -71,6 +70,7 @@ class MyHand extends React.Component {
         this.context.sockClient.send(`/app/game/${this.gameId}/card-exchange`, {code: cardToExchange.getCode()});
         this.props.myHandRef.current.removeCard(cardToExchange)
         this.resetRaiseCard()
+        this.props.updateMode(roundModes.IDLE)
     }
 
     updateSelectedMoveName(moveName) {
@@ -126,7 +126,7 @@ class MyHand extends React.Component {
     }
 
     render() {
-        let {selectedMoveName, isMarbleChosen, raisedCard, moves} = this.state
+        let {selectedMoveName, isMarbleChosen, raisedCard, moves, cardToExchange} = this.state
         let isPlayButtonActive = selectedMoveName != null && isMarbleChosen
         let isResetButtonActive = selectedMoveName != null
         let isThrowAwayVisible = selectedMoveName == null

@@ -95,7 +95,7 @@ class ForegroundProvider extends Component {
       this.setState({
         isTurnMessageDisplayed: false,
       })
-    }, 500); // 1/2 of animation duration
+    }, 1000); // 1/2 of animation duration
   }
 
   render() {

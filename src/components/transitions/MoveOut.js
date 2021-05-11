@@ -9,7 +9,7 @@ export class MoveOut extends React.Component{
     render() {
         const extendedProps = { 
             ...this.props,
-            timeout: 1000, // has to be the same amount as in fadeInOut.scss
+            timeout: 2000, // has to be the same amount as in fadeInOut.scss
             classNames: "moveOut" ,
             unmountOnExit: true,
             mountOnEnter: true
