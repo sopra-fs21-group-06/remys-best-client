@@ -67,6 +67,7 @@ export const createCard = (code, imgUrl) => {
     let _code = code;
     let _imgUrl = imgUrl;
     let _isRaised = false;
+    let _isPlayable = false;
     let _style = {};
     let _name = getCardNameFromCode(code)
     let _value = getCardValueFromCode(code)
@@ -76,6 +77,8 @@ export const createCard = (code, imgUrl) => {
         getImgUrl: () => _imgUrl,
         getIsRaised: () => _isRaised,
         setIsRaised: (isRaised) => _isRaised = isRaised,
+        getIsPlayable: () => _isPlayable,
+        setIsPlayable: (isPlayable) => _isPlayable = isPlayable,
         getStyle: () => _style,
         setStyle: (style) => _style = style,
         getName: () => _name,

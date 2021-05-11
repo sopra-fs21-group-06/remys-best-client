@@ -92,6 +92,20 @@ class Board extends React.Component {
       });
     }
 
+    throwInAllCards(player, alignedCards) {
+        this.setState(prevState => {
+            let handRot = player.getHandRot();
+
+            alignedCards.forEach(card => {
+                let style = card.getStyle();
+                style.rot = handRot
+                card.setStyle(style)
+            })
+
+            return {playedCards: prevState.playedCards.concat(alignedCards)};
+      });
+    }
+
     moveMarble(marbleId, targetFieldKey) {
         // pick up
         this.setState(prevState => {

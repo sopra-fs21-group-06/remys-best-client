@@ -41,14 +41,6 @@
                 border-radius: 5px;
                 transition: 0.5s ease;
                 user-select: none;
-
-                &.raisable {
-                    //border: 3px solid $blue-light;
-
-                    &:hover {
-                        cursor: pointer;
-                    }
-                }
             }
         }
     }
@@ -82,6 +74,28 @@
 
             .my-hand-wrapper {
                 flex: 2;
+
+                .card-wrapper {
+
+                    .card {
+                        
+                        &.raisable:hover {
+                            cursor: pointer;
+                        }
+
+                        &.playable {
+                            //border: 3px solid $blue;
+                            //border-radius: 7px;
+                        }
+                    }
+                }
+
+                .help {
+
+                    .card:not(.playable) {
+                        filter: brightness(33%);
+                    }
+                }
             }
 
             .card-menu {
