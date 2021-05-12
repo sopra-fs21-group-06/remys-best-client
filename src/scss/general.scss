@@ -489,3 +489,15 @@ div.box {
         }
     }
 }
+
+
+.turn-message {
+
+    p {
+        font-size: 75px;
+
+        span {
+            font-weight: $semi-bold;
+        }
+    }
+}

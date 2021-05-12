@@ -222,8 +222,6 @@ export const computeFields = (boardSize) => {
     rotateAndAddFieldPositions(fields, blueFields, 180, colors.RED);
     rotateAndAddFieldPositions(fields, blueFields, 90, colors.YELLOW);
 
-    //console.log(fields)
-
     fields = fields.map(field => {
         let fieldModel = createField(field.index, field.left, field.top, field.color, FIELD_SIZE, COLORED_BORDER_WIDTH, field.isColorShown);
         return fieldModel;

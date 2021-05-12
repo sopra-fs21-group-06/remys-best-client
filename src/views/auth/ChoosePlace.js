@@ -102,7 +102,6 @@ class ChoosePlace extends React.Component {
                   <p><span>You</span> are with <span>{this.getMyPartner()}</span></p>
                 </Box>
                 <div className="below-box"><Link to="/home">Leave and return to Home</Link></div>
-                <div className="below-box"><Link to="/game">Game</Link></div>
               </div>
               <div className="col-right">
                 <div className="board-container" style={{width: 500, height: 500}}>
