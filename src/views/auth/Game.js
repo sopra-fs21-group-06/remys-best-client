@@ -64,7 +64,6 @@ class Game extends React.Component {
 
     componentDidMount() {
       let allCards = Object.keys(cardImages).map(cardCode => {
-        // TODO load img in memory, cache images
         return createCard(cardCode, cardImages[cardCode])
       })
       this.setState({allCards: allCards});

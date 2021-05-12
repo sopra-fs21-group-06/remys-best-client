@@ -1,6 +1,7 @@
 import React from 'react';
 import { cardImages } from '../helpers/constants'
 import { createCard } from '../helpers/modelUtils'
+import { DelayedFadeInOut } from './transitions/DelayedFadeInOut';
 
 class CardOverview extends React.Component {
 
@@ -17,7 +18,9 @@ class CardOverview extends React.Component {
                 <div className="card-container">
                     {hearCardImages.map(cardCode => {
                         return (
-                            <img className="card" key={cardCode} onClick={() => this.onClickCard(cardCode)} src={cardImages[cardCode]} alt={cardCode} />
+                            <DelayedFadeInOut in={true}>
+                                <img className="card" key={cardCode} onClick={() => this.onClickCard(cardCode)} src={cardImages[cardCode]} alt={cardCode} />
+                            </DelayedFadeInOut>
                         )
                     })}
                 </div>
