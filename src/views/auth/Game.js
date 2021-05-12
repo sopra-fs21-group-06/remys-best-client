@@ -273,8 +273,7 @@ class Game extends React.Component {
     async requestPossibleTargetFields() {
       let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
-      let marbleToPlay = this.boardRef.current.getMarbleToPlay();
-      let marbleId = marbleToPlay.getId();
+      let marbleId = this.boardRef.current.getMarbleToPlay().getId();
       let remainingSevenMoves = this.boardRef.current.getRemainingSevenMoves();
 
       const response = await api.get(`/game/${this.gameId}/possible-target-fields`, { params: { 
@@ -309,8 +308,13 @@ class Game extends React.Component {
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleToPlay = this.boardRef.current.getMarbleToPlay();
 
-      // TODO send multiple values on seven (hold stateofSeven)
-      let marbles = [{marbleId: marbleToPlay.getId(), targetFieldKey: this.boardRef.current.getTargetField().getKey()}];
+      let marbles = [];
+
+      if(this.myHandContainerRef.current.isSevenRaised()) {
+        marbles = this.boardRef.current.getSevenMoves();
+      } else {
+        marbles.push({marbleId: marbleToPlay.getId(), targetFieldKey: this.boardRef.current.getTargetField().getKey()})
+      }
       
       this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/play`, {
         code: cardToPlay.getCode(), 

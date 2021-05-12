@@ -97,6 +97,8 @@ class MyHand extends React.Component {
         let raisedCard = this.getRaisedCard();
         let raisedCardValue = raisedCard.getCode().slice(0, 1)
 
+        console.log(raisedCardValue)
+
         if(raisedCardValue === "7") {
             return true
         }
@@ -107,8 +109,8 @@ class MyHand extends React.Component {
         return this.state.selectedMoveName;
     }
 
-    setIsMarbleAndTargetFieldChosen(isMarbleChosen) {
-        this.setState({isMarbleAndTargetFieldChosen: isMarbleChosen})
+    setIsMarbleAndTargetFieldChosen(isMarbleAndTargetFieldChosen) {
+        this.setState({isMarbleAndTargetFieldChosen: isMarbleAndTargetFieldChosen})
     }
 
     resetAll() {
@@ -136,8 +138,8 @@ class MyHand extends React.Component {
     }
 
     render() {
-        let {selectedMoveName, isMarbleChosen, raisedCard, moves} = this.state
-        let isPlayButtonActive = selectedMoveName != null && isMarbleChosen
+        let {selectedMoveName, isMarbleAndTargetFieldChosen, raisedCard, moves} = this.state
+        let isPlayButtonActive = selectedMoveName != null && isMarbleAndTargetFieldChosen
         let isResetButtonActive = selectedMoveName != null
         let isThrowAwayVisible = selectedMoveName == null
 
@@ -147,7 +149,7 @@ class MyHand extends React.Component {
             arrowRightTop = 0 * distance
         } else if(raisedCard != null && selectedMoveName == null) {
             arrowRightTop = 1 * distance
-        } else if(raisedCard != null && selectedMoveName != null && !isMarbleChosen) {
+        } else if(raisedCard != null && selectedMoveName != null && !isMarbleAndTargetFieldChosen) {
             arrowRightTop = 2 * distance
         } else {
             arrowRightTop = 3 * distance
@@ -187,7 +189,7 @@ class MyHand extends React.Component {
                             <p>Pick Move</p>
                         </div>
                         <div className={"step " + (raisedCard != null && selectedMoveName != null ? '' : 'inactive')}>
-                            <DelayedFadeInOut in={raisedCard != null && selectedMoveName != null && isMarbleChosen}>
+                            <DelayedFadeInOut in={raisedCard != null && selectedMoveName != null && isMarbleAndTargetFieldChosen}>
                                 <img className="checkmark" src={checkmark} />
                             </DelayedFadeInOut>
                             <p>Pick Marble + Target</p>

@@ -17,7 +17,7 @@ class Notifications extends React.Component {
                                 <div className="notification">
                                     <p>
                                         {playerName && <span>{playerName} </span> } 
-                                        {playerName && action && card ? action : <span>{action}</span>} 
+                                        {(playerName || card) && action ? action : <span>{action}</span>} 
                                         {card && <span> {card}</span> } 
                                     </p> 
                                 </div>

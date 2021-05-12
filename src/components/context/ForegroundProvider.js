@@ -84,8 +84,6 @@ class ForegroundProvider extends Component {
   }
 
   displayCurrentTurnMessage(playerName) {
-    console.log(playerName)
-
     this.setState({
       isTurnMessageDisplayed: true,
       turnNameToDisplay: playerName

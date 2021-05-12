@@ -138,7 +138,7 @@ class Board extends React.Component {
         }.bind(this), 1000);
     }
 
-    selectMarble(marbleToSelect) {
+    selectMarble(marbleToSelect, callback) {
         this.setState(prevState => {
             const marbles = prevState.marbles.map(marble => {
                 if (marbleToSelect && marble.getId() == marbleToSelect.getId()) {
@@ -149,16 +149,14 @@ class Board extends React.Component {
                 return marble;
             });
             return {marbles: marbles};
-        });     
+        }, callback);     
     }
 
     async selectMarbleToPlay(marbleToPlay) {
         this.resetMovableMarbles()
-        this.selectMarble(marbleToPlay)
-
-        // TODO wait for it
-        await new Promise(resolve => setTimeout(resolve, 500));
-        this.props.requestPossibleTargetFields()
+        this.selectMarble(marbleToPlay, () => {
+            this.props.requestPossibleTargetFields()
+        })
     }
 
     selectTargetField(targetField) {
@@ -175,7 +173,8 @@ class Board extends React.Component {
             return {fields: fields};
         });
 
-        if(!this.props.myHandContainerRef.current.isSevenRaised()) {
+        // handle seven
+        if(this.props.myHandContainerRef.current.isSevenRaised()) {
             let sevenMove = {marbleId: this.getMarbleToPlay().getId(), targetFieldKey: targetField.getKey()}
             this.setState({
                 sevenMoves: [
@@ -184,6 +183,7 @@ class Board extends React.Component {
                 ],
             }, async () => {
                 let remainingSevenMoves = await this.requestRemainingSevenMoves()
+                console.log(remainingSevenMoves)
                 this.setState({
                     remainingSevenMoves: remainingSevenMoves
                 }, () => {
@@ -218,6 +218,10 @@ class Board extends React.Component {
 
     getRemainingSevenMoves() {
         return this.state.remainingSevenMoves
+    }
+
+    getSevenMoves() {
+        return this.state.sevenMoves
     }
 
     resetAll() {
