@@ -98,7 +98,7 @@
 
 
 .moveOut-enter {
-    transform: translate(-50%, -50%) scale(0.6);
+    transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .moveOut-exit-active {
-    transform: translate(-50%, -50%) scale(1.4);
+    transform: translate(-50%, -50%) scale(1.3);
     opacity: 0;
     transition: all 1000ms ease-out;
 }

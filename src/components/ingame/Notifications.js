@@ -15,11 +15,11 @@ class Notifications extends React.Component {
                         <PopInOrSlideDown key={key}>
                             <Blurred className="notification-container" borderRadius={15} hasBorder={true}>
                                 <div className="notification">
-                                    {playerName && action && card ? 
-                                        <p><span>{playerName}</span> {action} <span>{card}</span></p> 
-                                        : 
-                                        <p><span>{action}</span></p>
-                                    }
+                                    <p>
+                                        {playerName && <span>{playerName} </span> } 
+                                        {playerName && action && card ? action : <span>{action}</span>} 
+                                        {card && <span> {card}</span> } 
+                                    </p> 
                                 </div>
                             </Blurred>
                         </PopInOrSlideDown>

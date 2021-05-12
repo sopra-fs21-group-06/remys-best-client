@@ -20,7 +20,7 @@ class MyHand extends React.Component {
             chosenJokerCard: null,
             moves: [],
             selectedMoveName: null,
-            isMarbleChosen: false,
+            isMarbleAndTargetFieldChosen: false,
         };
         this.gameId = sessionManager.getGameId();
         this.onCardClick = this.onCardClick.bind(this);
@@ -93,19 +93,29 @@ class MyHand extends React.Component {
         return this.state.chosenJokerCard !== null;
     }
 
+    isSevenRaised() {
+        let raisedCard = this.getRaisedCard();
+        let raisedCardValue = raisedCard.getCode().slice(0, 1)
+
+        if(raisedCardValue === "7") {
+            return true
+        }
+        return false
+    }
+
     getMoveNameToPlay() {
         return this.state.selectedMoveName;
     }
 
-    setIsMarbleChosen(isMarbleChosen) {
-        this.setState({isMarbleChosen: isMarbleChosen})
+    setIsMarbleAndTargetFieldChosen(isMarbleChosen) {
+        this.setState({isMarbleAndTargetFieldChosen: isMarbleChosen})
     }
 
     resetAll() {
         this.resetRaiseCard()
         this.resetMoves()
         this.resetSelectedMoveName()
-        this.resetIsMarbleChosen()
+        this.resetIsMarbleAndTargetFieldChosen()
     }
 
     resetRaiseCard() {
@@ -121,12 +131,12 @@ class MyHand extends React.Component {
         this.setState({ selectedMoveName: null })
     }
 
-    resetIsMarbleChosen() {
-        this.setState({ isMarbleChosen: false })
+    resetIsMarbleAndTargetFieldChosen() {
+        this.setState({ isMarbleAndTargetFieldChosen: false })
     }
 
     render() {
-        let {selectedMoveName, isMarbleChosen, raisedCard, moves, cardToExchange} = this.state
+        let {selectedMoveName, isMarbleChosen, raisedCard, moves} = this.state
         let isPlayButtonActive = selectedMoveName != null && isMarbleChosen
         let isResetButtonActive = selectedMoveName != null
         let isThrowAwayVisible = selectedMoveName == null

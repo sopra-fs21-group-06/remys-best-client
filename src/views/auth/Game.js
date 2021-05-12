@@ -32,14 +32,14 @@ class Game extends React.Component {
       this.partnerHandRef = React.createRef();
 
       this.state = {
-        players: assignPlayersToColors(this.props.location.state.players, this.myHandRef, this.rightHandRef, this.partnerHandRef, this.leftHandRef),
         facts: [],
         notifications: [],
         allCards: [],
         mode: roundModes.IDLE,
+        players: assignPlayersToColors(this.props.location.state.players, this.myHandRef, this.rightHandRef, this.partnerHandRef, this.leftHandRef),
+        currentTurnPlayerName: null,
         moveNameToPlay: null,
         marblesToPlay: [],
-        currentTurnPlayerName: null
       }
 
       this.requestMoves = this.requestMoves.bind(this);
@@ -257,11 +257,13 @@ class Game extends React.Component {
 
     async requestPossibleMarbles(moveName) {
         this.myHandContainerRef.current.updateSelectedMoveName(moveName);
-
+        
         let raisedCard = this.myHandContainerRef.current.getRaisedCard();
+        let remainingSevenMoves = this.boardRef.current.getRemainingSevenMoves();
         const response = await api.get(`/game/${this.gameId}/possible-marbles`, { params: { 
             code: raisedCard.getCode(),
-            moveName: moveName
+            moveName: moveName,
+            remainingSevenMoves: remainingSevenMoves
         } });
         this.boardRef.current.updatePossibleMarbles(response.data.marbles);
 
@@ -273,11 +275,13 @@ class Game extends React.Component {
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleToPlay = this.boardRef.current.getMarbleToPlay();
       let marbleId = marbleToPlay.getId();
+      let remainingSevenMoves = this.boardRef.current.getRemainingSevenMoves();
 
       const response = await api.get(`/game/${this.gameId}/possible-target-fields`, { params: { 
           code: cardToPlay.getCode(), 
           moveName: moveNameToPlay, 
-          marbleId: marbleId
+          marbleId: marbleId,
+          remainingSevenMoves: remainingSevenMoves
       } });
 
       let possibleTargetFieldKeys = response.data.targetFieldKeys
@@ -341,10 +345,25 @@ class Game extends React.Component {
             <main>
                 <Facts facts={this.state.facts} />
                 <Notifications notifications={this.state.notifications} />
-                <Board size={500} ref={this.boardRef} requestPossibleTargetFields={this.requestPossibleTargetFields} myHandContainerRef={this.myHandContainerRef}/>
+                <Board 
+                  size={500} 
+                  ref={this.boardRef} 
+                  requestPossibleMarbles={this.requestPossibleMarbles}
+                  requestPossibleTargetFields={this.requestPossibleTargetFields} 
+                  myHandContainerRef={this.myHandContainerRef}
+                />
                 <HandContainer position="my">
-                  <MyHand ref={this.myHandContainerRef} myHandRef={this.myHandRef} mode={this.state.mode} requestMoves={this.requestMoves} requestPossibleMarbles={this.requestPossibleMarbles} play={this.play} reset={this.reset} throwAway={this.throwAway} updateMode={this.updateMode}>
-                    <Hand ref={this.myHandRef} isActive={this.state.mode !== roundModes.IDLE}/>
+                  <MyHand 
+                    ref={this.myHandContainerRef} 
+                    myHandRef={this.myHandRef} 
+                    mode={this.state.mode} 
+                    requestMoves={this.requestMoves} 
+                    requestPossibleMarbles={this.requestPossibleMarbles} 
+                    play={this.play} 
+                    reset={this.reset} 
+                    throwAway={this.throwAway} 
+                    updateMode={this.updateMode}>
+                      <Hand ref={this.myHandRef} isActive={this.state.mode !== roundModes.IDLE}/>
                   </MyHand>
                 </HandContainer>
                 <HandContainer position="left">
