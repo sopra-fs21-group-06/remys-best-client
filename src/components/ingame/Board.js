@@ -1,6 +1,7 @@
 import React from "react";
 import wood from '../../img/board.png';
 import { initMarbles, computeFields } from '../../helpers/remysBestUtils';
+import { createPreviewMarble } from '../../helpers/modelUtils';
 import Marble from './Marble';
 import Field from './Field';
 import { ThrowIn } from '../transitions/ThrowIn';
@@ -175,7 +176,12 @@ class Board extends React.Component {
 
         // handle seven
         if(this.props.myHandContainerRef.current.isSevenRaised()) {
-            let sevenMove = {marbleId: this.getMarbleToPlay().getId(), targetFieldKey: targetField.getKey()}
+            let targetFieldKey = targetField.getKey()
+            let marbleToPlay = this.getMarbleToPlay()
+
+            this.addOrUpdatePreviewMarble(marbleToPlay, targetFieldKey)
+            let sevenMove = {marbleId: marbleToPlay.getId(), targetFieldKey: targetFieldKey}
+
             this.setState({
                 sevenMoves: [
                     ...this.state.sevenMoves,
@@ -224,6 +230,29 @@ class Board extends React.Component {
         return this.state.sevenMoves
     }
 
+    addOrUpdatePreviewMarble(marbleToPlay, targetFieldKey) {
+        let originMarbleId = marbleToPlay.getId() 
+        let previewMarble = this.state.marbles.find(marble => marble.getIsCorrespondingPreviewMarble(originMarbleId));
+
+        // update
+        if(previewMarble) {
+            this.setState(prevState => {
+                const marbles = prevState.marbles.map(marble => {
+                    if (marble.getId() == previewMarble) {
+                        marble.setFieldKey(targetFieldKey);
+                    } 
+                    return marble;
+                });
+                return {marbles: marbles};
+            });
+        } 
+        // add
+        else {
+            previewMarble = createPreviewMarble(originMarbleId, targetFieldKey, marbleToPlay.getColor())
+            this.setState({ marbles: [...this.state.marbles, previewMarble] })
+        }
+    }
+
     resetAll() {
         this.resetMovableMarbles()
         this.resetSelectedMarble()
@@ -239,7 +268,12 @@ class Board extends React.Component {
     }
 
     resetSevenMoves() {
-        this.setState({ sevenMoves: [], remainingSevenMoves: 7 })
+        let marblesWithoutPreviewMarbles = this.state.marbles.filter(marble => !marble.getIsPreviewMarble())
+        this.setState({ 
+            sevenMoves: [], 
+            remainingSevenMoves: 7,
+            marbles: marblesWithoutPreviewMarbles
+        })
     }
 
     setBottomClass(bottomClass) {

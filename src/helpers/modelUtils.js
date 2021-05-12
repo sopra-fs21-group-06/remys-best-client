@@ -1,4 +1,4 @@
-import { getCardNameFromCode, getCardValueFromCode } from './remysBestUtils'
+import { getCardNameFromCode, getCardValueFromCode, generateUUID } from './remysBestUtils'
 
 export const createField = (id, left, top, color, size, borderWidth, isColorShown) => {
     let _id = id;
@@ -28,13 +28,14 @@ export const createField = (id, left, top, color, size, borderWidth, isColorShow
     });
 };
 
-export const createMarble = (id, fieldKey, color, isMovable, isVisible) => {
+const Marble = (id, fieldKey, color, isPreviewMarble) => {
     let _id = id;
     let _fieldKey = String(fieldKey);
     let _color = color;
-    let _isMovable = isMovable;
-    let _isVisible = isVisible;
+    let _isMovable = false;
+    let _isVisible = true;
     let _isSelected = false;
+    let _isPreviewMarble = isPreviewMarble;
 
     return ({
         getId: () => _id,
@@ -47,7 +48,17 @@ export const createMarble = (id, fieldKey, color, isMovable, isVisible) => {
         setIsVisible: (isVisible) => _isVisible = isVisible,
         getIsSelected: () => _isSelected,
         setIsSelected: (isSelected) => _isSelected = isSelected,
+        getIsPreviewMarble: () => _isPreviewMarble,
+        getIsCorrespondingPreviewMarble: (originMarbleId) => _isPreviewMarble && _id === originMarbleId + "_preview",
     });
+};
+
+export const createMarble = (id, fieldKey, color) => {
+    return Marble(id, fieldKey, color, false)
+};
+
+export const createPreviewMarble = (originMarbleId, fieldKey, color) => {
+    return Marble(originMarbleId + "_preview", fieldKey, color, true)
 };
 
 export const createChannel = (name, callback) => {
