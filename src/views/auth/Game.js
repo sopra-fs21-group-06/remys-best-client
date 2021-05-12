@@ -160,6 +160,8 @@ class Game extends React.Component {
         })
       }.bind(this), 1500);
 
+
+      // TODO NOT WORKING
       if(marblesToSendHome !== undefined) {
         setTimeout(function() { 
           marblesToSendHome.forEach(marbleToSendHome => {
@@ -258,14 +260,16 @@ class Game extends React.Component {
         this.myHandContainerRef.current.updateSelectedMoveName(moveName);
         
         let raisedCard = this.myHandContainerRef.current.getRaisedCard();
-        let remainingSevenMoves = this.boardRef.current.getRemainingSevenMoves();
-        const response = await api.get(`/game/${this.gameId}/possible-marbles`, { params: { 
+        let sevenMoves = this.boardRef.current.getSevenMoves();
+
+        const requestBody = JSON.stringify({
             code: raisedCard.getCode(),
             moveName: moveName,
-            remainingSevenMoves: remainingSevenMoves
-        } });
-        this.boardRef.current.updatePossibleMarbles(response.data.marbles);
+            sevenMoves: sevenMoves
+        });
+        const response = await api.post(`/game/${this.gameId}/possible-marbles`, requestBody);
 
+        this.boardRef.current.updatePossibleMarbles(response.data.marbles);
         this.myHandContainerRef.current.resetMoves()
     }
 
@@ -273,14 +277,16 @@ class Game extends React.Component {
       let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleId = this.boardRef.current.getMarbleToPlay().getId();
-      let remainingSevenMoves = this.boardRef.current.getRemainingSevenMoves();
+      let sevenMoves = this.boardRef.current.getSevenMoves();
 
-      const response = await api.get(`/game/${this.gameId}/possible-target-fields`, { params: { 
+      const requestBody = JSON.stringify({
           code: cardToPlay.getCode(), 
           moveName: moveNameToPlay, 
           marbleId: marbleId,
-          remainingSevenMoves: remainingSevenMoves
-      } });
+          sevenMoves: sevenMoves
+      });
+
+      const response = await api.post(`/game/${this.gameId}/possible-target-fields`, requestBody);
 
       let possibleTargetFieldKeys = response.data.targetFieldKeys
       this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
