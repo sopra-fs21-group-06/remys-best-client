@@ -58,6 +58,7 @@ class MyHand extends React.Component {
             this.props.myHandRef.current.resetMarkedCardsAsPlayable()
         }
         
+        // if joker
         if(this.props.mode === roundModes.MY_TURN && (card.getCode() === "X1" || card.getCode() === "X2") && !card.getIsRaised()) {
             this.props.foregroundContext.openOverlay(<CardOverview jokerCard={card} handleJokerCardChosen={this.handleJokerCardChosen} />);
         } else {

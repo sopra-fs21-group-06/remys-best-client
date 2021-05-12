@@ -2,26 +2,21 @@ import React, { Component } from "react";
 import AppRouter from "./routing/AppRouter";
 import BackgroundProvider from './components/context/BackgroundProvider';
 import ForegroundProvider from "./components/context/ForegroundProvider";
+import { cardImages } from "./helpers/constants";
+import dogCard from "./img/dog-card.png"
 
 class App extends Component {
 
-  /*
+  // preload card images
   componentDidMount() {
-     Promise.all(R.take(limit, imgUrls).map(checkImage)).then(() => {
-       this.setState(() => ({ imagesLoaded: true })
-    )}, () => {
-      console.error('could not load images')
-    })
+    Object.keys(cardImages).forEach((cardCode) => {
+        const img = new Image();
+        img.src = cardImages[cardCode]
+    });
+
+    const img = new Image();
+    img.src = dogCard
   }
-
-  checkImage = path =>
-    new Promise(resolve => {
-        const img = new Image()
-        img.onload = () => resolve(path)
-        img.onerror = () => reject()
-
-        img.src = path
-    })*/
        
   render() {
     return (

@@ -233,16 +233,16 @@ export const initMarbles = () => {
     let marbles = [];
     let i = 0;
     for (i = 0; i < 4; i++) {
-        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.BLUE.name, colors.BLUE, false, true));
+        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.BLUE.name, colors.BLUE));
     }
     for (i = 4; i < 8; i++) {
-        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.GREEN.name, colors.GREEN, false, true));
+        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.GREEN.name, colors.GREEN));
     }
     for (i = 8; i < 12; i++) {
-        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.RED.name, colors.RED, false, true));
+        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.RED.name, colors.RED));
     }
     for (i = 12; i < 16; i++) {
-        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.YELLOW.name, colors.YELLOW, false, true));
+        marbles.push(createMarble(i, String(kennelFieldIds[i%4]) + colors.YELLOW.name, colors.YELLOW));
     }
 
     return marbles;
