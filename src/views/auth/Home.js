@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import View from "../View";
 import { viewLinks } from "../../helpers/constants";
 import NavigationBox from "../../components/NavigationBox"
+import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
@@ -21,6 +22,10 @@ class Home extends React.Component {
       createChannel(`/user/queue/invitation`, (msg) => this.handleInvitationMessage(msg)),
       createChannel(`/user/queue/countdown`, (msg) => this.handleCountdownMessage(msg)),
     ]
+  }
+
+  componentDidMount() {
+    this.props.backgroundContext.dispatch({type: `BLUE-bottom`})
   }
 
   componentWillUnmount() {
@@ -91,4 +96,4 @@ class Home extends React.Component {
   }
 }
 
-export default withRouter(withForegroundContext(withWebsocketContext(Home)));
+export default withRouter(withBackgroundContext(withForegroundContext(withWebsocketContext(Home))));

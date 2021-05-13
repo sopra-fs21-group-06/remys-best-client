@@ -1,17 +1,13 @@
 import React from "react";
 import wood from '../../img/board.png';
-import styled from 'styled-components';
 import { initMarbles, computeFields } from '../../helpers/remysBestUtils';
+import { createPreviewMarble } from '../../helpers/modelUtils';
 import Marble from './Marble';
 import Field from './Field';
-import { colors } from '../../helpers/constants'
 import { ThrowIn } from '../transitions/ThrowIn';
 import { TransitionGroup } from 'react-transition-group';
 import Card from "./hand/Card";
-import { createMarble } from '../../helpers/modelUtils'
-import { GameContext } from '../../views/auth/Game';
-import WebsocketConsumer from '../context/WebsocketConsumer';
-import { createChannel } from '../../helpers/modelUtils';
+import { api } from '../../helpers/api';
 import sessionManager from "../../helpers/sessionManager";
 
 class Board extends React.Component {
@@ -19,14 +15,18 @@ class Board extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            size: this.props.size, // this.props.size? -> always width 100% make wrapper around each board with dynamic sizes? on resize recompute
+            size: this.props.size,
             fields: [],
             marbles: [],
             playedCards: [],
-            bottomClass: "BLUE-bottom"
+            bottomClass: "BLUE-bottom",
+            sevenMoves: [],
+            remainingSevenMoves: 7
         };
         this.selectMarbleToPlay = this.selectMarbleToPlay.bind(this)
         this.selectTargetField = this.selectTargetField.bind(this)
+
+        this.gameId = sessionManager.getGameId();
     }
 
     componentDidMount() {       
@@ -63,7 +63,6 @@ class Board extends React.Component {
         this.setState({marbles: newMarbles});
     }
 
-    // TODO call with data received from backend, in game view component
     updatePossibleTargetFields(possibleTargetFieldKeys) {
         let newFields = [];
 
@@ -99,6 +98,20 @@ class Board extends React.Component {
       });
     }
 
+    throwInAllCards(player, alignedCards) {
+        this.setState(prevState => {
+            let handRot = player.getHandRot();
+
+            alignedCards.forEach(card => {
+                let style = card.getStyle();
+                style.rot = handRot
+                card.setStyle(style)
+            })
+
+            return {playedCards: prevState.playedCards.concat(alignedCards)};
+      });
+    }
+
     moveMarble(marbleId, targetFieldKey) {
         // pick up
         this.setState(prevState => {
@@ -126,7 +139,7 @@ class Board extends React.Component {
         }.bind(this), 1000);
     }
 
-    selectMarble(marbleToSelect) {
+    selectMarble(marbleToSelect, callback) {
         this.setState(prevState => {
             const marbles = prevState.marbles.map(marble => {
                 if (marbleToSelect && marble.getId() == marbleToSelect.getId()) {
@@ -137,16 +150,14 @@ class Board extends React.Component {
                 return marble;
             });
             return {marbles: marbles};
-        });     
+        }, callback);     
     }
 
     async selectMarbleToPlay(marbleToPlay) {
         this.resetMovableMarbles()
-        this.selectMarble(marbleToPlay)
-
-        // TODO wait for it
-        await new Promise(resolve => setTimeout(resolve, 500));
-        this.props.requestPossibleTargetFields()
+        this.selectMarble(marbleToPlay, () => {
+            this.props.requestPossibleTargetFields()
+        })
     }
 
     selectTargetField(targetField) {
@@ -161,9 +172,46 @@ class Board extends React.Component {
                 return field;
             });
             return {fields: fields};
-        });     
+        });
 
-        this.props.myHandContainerRef.current.setIsMarbleChosen(true);
+        // handle seven
+        if(this.props.myHandContainerRef.current.isSevenRaised()) {
+            let targetFieldKey = targetField.getKey()
+            let marbleToPlay = this.getMarbleToPlay()
+
+            this.addOrUpdatePreviewMarble(marbleToPlay, targetFieldKey)
+            let sevenMove = {marbleId: marbleToPlay.getId(), targetFieldKey: targetFieldKey}
+
+            this.setState({
+                sevenMoves: [
+                    ...this.state.sevenMoves,
+                    sevenMove
+                ],
+            }, async () => {
+                let remainingSevenMoves = await this.requestRemainingSevenMoves()
+                console.log(remainingSevenMoves)
+                this.setState({
+                    remainingSevenMoves: remainingSevenMoves
+                }, () => {
+                    if(this.state.remainingSevenMoves > 0) {
+                        this.props.requestPossibleMarbles(this.props.myHandContainerRef.current.getMoveNameToPlay())
+                    } else {
+                        this.props.myHandContainerRef.current.setIsMarbleAndTargetFieldChosen(true);
+                    }
+                })
+            });            
+        } else {
+            this.props.myHandContainerRef.current.setIsMarbleAndTargetFieldChosen(true);
+        }
+    }
+
+    async requestRemainingSevenMoves() {
+        const requestBody = JSON.stringify({
+            sevenMoves: this.state.sevenMoves
+        });
+        const response = await api.post(`/game/${this.gameId}/remaining-seven-moves`, requestBody);
+
+        return parseInt(response.data.remainingSevenMoves)
     }
 
     getMarbleToPlay() {
@@ -174,9 +222,41 @@ class Board extends React.Component {
         return this.state.fields.find(field => field.getIsTargetField());
     }
 
+    getRemainingSevenMoves() {
+        return this.state.remainingSevenMoves
+    }
+
+    getSevenMoves() {
+        return this.state.sevenMoves
+    }
+
+    addOrUpdatePreviewMarble(marbleToPlay, targetFieldKey) {
+        let originMarbleId = marbleToPlay.getId() 
+        let previewMarble = this.state.marbles.find(marble => marble.getIsCorrespondingPreviewMarble(originMarbleId));
+
+        // update
+        if(previewMarble) {
+            this.setState(prevState => {
+                const marbles = prevState.marbles.map(marble => {
+                    if (marble.getId() == previewMarble) {
+                        marble.setFieldKey(targetFieldKey);
+                    } 
+                    return marble;
+                });
+                return {marbles: marbles};
+            });
+        } 
+        // add
+        else {
+            previewMarble = createPreviewMarble(originMarbleId, targetFieldKey, marbleToPlay.getColor())
+            this.setState({ marbles: [...this.state.marbles, previewMarble] })
+        }
+    }
+
     resetAll() {
         this.resetMovableMarbles()
         this.resetSelectedMarble()
+        this.resetSevenMoves()
     }
 
     resetMovableMarbles() {
@@ -185,6 +265,15 @@ class Board extends React.Component {
 
     resetSelectedMarble() {
         this.selectMarble(null);
+    }
+
+    resetSevenMoves() {
+        let marblesWithoutPreviewMarbles = this.state.marbles.filter(marble => !marble.getIsPreviewMarble())
+        this.setState({ 
+            sevenMoves: [], 
+            remainingSevenMoves: 7,
+            marbles: marblesWithoutPreviewMarbles
+        })
     }
 
     setBottomClass(bottomClass) {

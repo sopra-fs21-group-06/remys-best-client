@@ -95,6 +95,20 @@ class Hand extends React.Component {
         return cards;
     }
 
+    markCardAsPlayable(cardCode) {
+        this.setState(prevState => {
+            const cards = prevState.cards.map(card => {
+                if (card.getCode() == cardCode) {
+                    card.setIsPlayable(true);
+                } else {
+                    card.setIsPlayable(false);
+                }
+                return card;
+            });
+            return {cards: cards};
+        });
+    }
+
     raiseCard(cardToRaise) {
         this.setState(prevState => {
             const cards = prevState.cards.map(card => {
@@ -149,12 +163,21 @@ class Hand extends React.Component {
             this.setState({cards: alignedCards});
         }.bind(this), 50); 
     }
+
+    removeAllCards() {
+        this.setState({cards: []});
+    }
+
+    resetMarkedCardsAsPlayable() {
+        this.markCardAsPlayable(null)
+    }
     
     render() {
+        let {cards} = this.state
         return (  
             <div className="hand-wrapper">
-                <div className="hand">
-                    {this.state.cards.map(card => {
+                <div className={"hand " + (cards.find(card => card.getIsPlayable()) === undefined ? '' : 'help')}>
+                    {cards.map(card => {
                         return (
                             <Card 
                                 key={card.getCode()} 

@@ -16,6 +16,7 @@ import { assignPlayersToColors, generateUUID } from '../../helpers/remysBestUtil
 import sessionManager from "../../helpers/sessionManager";
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
+import { withForegroundContext } from '../../components/context/ForegroundProvider';
 import { api } from '../../helpers/api';
 
 class Game extends React.Component {
@@ -31,24 +32,30 @@ class Game extends React.Component {
       this.partnerHandRef = React.createRef();
 
       this.state = {
-        players: assignPlayersToColors(this.props.location.state.players, this.myHandRef, this.rightHandRef, this.partnerHandRef, this.leftHandRef),
         facts: [],
         notifications: [],
         allCards: [],
         mode: roundModes.IDLE,
+        players: assignPlayersToColors(this.props.location.state.players, this.myHandRef, this.rightHandRef, this.partnerHandRef, this.leftHandRef),
+        currentTurnPlayerName: null,
         moveNameToPlay: null,
-        marblesToPlay: []
+        marblesToPlay: [],
       }
+
       this.requestMoves = this.requestMoves.bind(this);
       this.requestPossibleMarbles = this.requestPossibleMarbles.bind(this);
       this.play = this.play.bind(this);
       this.reset = this.reset.bind(this);
       this.requestPossibleTargetFields = this.requestPossibleTargetFields.bind(this)
+      this.throwAway = this.throwAway.bind(this)
+      this.updateMode = this.updateMode.bind(this)
+
       this.gameId = sessionManager.getGameId();
       this.channels = [
         createChannel(`/topic/game/${this.gameId}/facts`, (msg) => this.handleFactsMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/notification`, (msg) => this.handleNotificationMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/turn`, (msg) => this.handleTurnChangedMessage(msg)),
+        createChannel(`/topic/game/${this.gameId}/throwaway`, (msg) => this.handleThrowAwayMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
         createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/game-end`, (msg) => this.handlePlayerDisconnection(msg))
@@ -57,7 +64,6 @@ class Game extends React.Component {
 
     componentDidMount() {
       let allCards = Object.keys(cardImages).map(cardCode => {
-        // TODO load img in memory, cache images
         return createCard(cardCode, cardImages[cardCode])
       })
       this.setState({allCards: allCards});
@@ -77,12 +83,14 @@ class Game extends React.Component {
       // inject key for rendering
       notification.key = +new Date()
 
-      this.setState({
-          notifications: [
-              ...this.state.notifications,
-              notification
-          ],
-      });
+      let notifications = this.state.notifications
+      notifications.push(notification)
+      if(notifications.length > 5) {
+        // remove first element (oldest one)
+        notifications.shift()
+      }
+
+      this.setState({ notifications: notifications });
 
       if(notification.action === "Card Exchange") {
         this.setState({ mode: roundModes.EXCHANGE })
@@ -90,10 +98,38 @@ class Game extends React.Component {
     }
 
     handleTurnChangedMessage(msg) {
-      if(this.isMyPlayerName(msg.playerName)) {
-        this.setState({ mode: roundModes.MY_TURN })
+      let playerName = msg.playerName
+      let mode
+      if(this.isMyPlayerName(playerName)) {
+        mode = roundModes.MY_TURN
+        playerName = "your"
+      } else {
+        mode = roundModes.IDLE
+        playerName += "'s"
       }
-      // TODO show current turn big message over whole screen
+
+      if(this.state.currentTurnPlayerName === null) {
+        this.props.foregroundContext.displayCurrentTurnMessage(playerName)
+      }
+
+      this.setState({ 
+        mode: mode,
+        currentTurnPlayerName: playerName
+      })
+    }
+
+    handleThrowAwayMessage(msg) {
+      let cardsToThrowAway = msg.cardCodes.map(cardCode => {
+        return this.getCardFromCode(cardCode)
+      }) 
+      let player = this.state.players.find(player => player.getPlayerName() === msg.playerName)
+
+      player.getHandRef().current.removeAllCards()
+
+      player.getHandRef().current.alignCards(cardsToThrowAway)
+      setTimeout(function(){ 
+          this.boardRef.current.throwInAllCards(player, cardsToThrowAway);
+      }.bind(this), 500);
     }
 
     handlePlayedMessage(msg) {
@@ -124,11 +160,24 @@ class Game extends React.Component {
         })
       }.bind(this), 1500);
 
-      setTimeout(function() { 
-        marblesToSendHome.forEach(marbleToSendHome => {
-          this.boardRef.current.moveMarble(marbleToSendHome.marbleId, marbleToSendHome.targetFieldKey);
-        })
-      }.bind(this), 3000);
+
+      // TODO NOT WORKING
+      if(marblesToSendHome !== undefined) {
+        setTimeout(function() { 
+          marblesToSendHome.forEach(marbleToSendHome => {
+            this.boardRef.current.moveMarble(marbleToSendHome.marbleId, marbleToSendHome.targetFieldKey);
+          })
+        }.bind(this), 2500);
+
+        setTimeout(function() { 
+          this.props.foregroundContext.displayCurrentTurnMessage(this.state.currentTurnPlayerName)
+        }.bind(this), 3500);
+
+      } else {
+        setTimeout(function() { 
+          this.props.foregroundContext.displayCurrentTurnMessage(this.state.currentTurnPlayerName)
+        }.bind(this), 2500);
+      }
     }
 
     handleCardsReceivedMessage(msg) {
@@ -145,16 +194,17 @@ class Game extends React.Component {
         this.rightHandRef.current.addCards(this.generateOtherCards(cardAmount))
         this.partnerHandRef.current.addCards(this.generateOtherCards(cardAmount))
       } else {
+        // card from partner received
         this.setState({ mode: roundModes.IDLE})
       }
     }
 
     handlePlayerDisconnection(msg) {
-      if(msg.aborted!=null){
+      if(msg.aborted!=null) {
         this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.aborted, mode:'aborted'}})
-      }else if(this.getMyPlayerName in msg.won){
+      } else if(this.getMyPlayerName in msg.won){
         this.props.history.push({pathname: '/game-end', state: { mode:'won'}})
-      }else{
+      } else{
         this.props.history.push({pathname: '/game-end', state: { mode:'lost'}})
       }
     }
@@ -196,6 +246,10 @@ class Game extends React.Component {
       return otherCards;
     }
 
+    updateMode(mode) {
+      this.setState({ mode: mode})
+    }
+
     async requestMoves() {
         let raisedCard = this.myHandContainerRef.current.getRaisedCard();
         const response = await api.get(`/game/${this.gameId}/moves`, { params: { code: raisedCard.getCode() } });
@@ -204,51 +258,73 @@ class Game extends React.Component {
 
     async requestPossibleMarbles(moveName) {
         this.myHandContainerRef.current.updateSelectedMoveName(moveName);
-
+        
         let raisedCard = this.myHandContainerRef.current.getRaisedCard();
-        const response = await api.get(`/game/${this.gameId}/possible-marbles`, { params: { 
-            code: raisedCard.getCode(),
-            moveName: moveName
-        } });
-        this.boardRef.current.updatePossibleMarbles(response.data.marbles);
+        let sevenMoves = this.boardRef.current.getSevenMoves();
 
+        const requestBody = JSON.stringify({
+            code: raisedCard.getCode(),
+            moveName: moveName,
+            sevenMoves: sevenMoves
+        });
+        const response = await api.post(`/game/${this.gameId}/possible-marbles`, requestBody);
+
+        this.boardRef.current.updatePossibleMarbles(response.data.marbles);
         this.myHandContainerRef.current.resetMoves()
     }
 
     async requestPossibleTargetFields() {
       let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
-      let marbleToPlay = this.boardRef.current.getMarbleToPlay();
-      let marbleId = marbleToPlay.getId();
+      let marbleId = this.boardRef.current.getMarbleToPlay().getId();
+      let sevenMoves = this.boardRef.current.getSevenMoves();
 
-      const response = await api.get(`/game/${this.gameId}/possible-target-fields`, { params: { 
+      const requestBody = JSON.stringify({
           code: cardToPlay.getCode(), 
           moveName: moveNameToPlay, 
-          marbleId: marbleId
-      } });
+          marbleId: marbleId,
+          sevenMoves: sevenMoves
+      });
+
+      const response = await api.post(`/game/${this.gameId}/possible-target-fields`, requestBody);
 
       let possibleTargetFieldKeys = response.data.targetFieldKeys
       this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
     }
 
+    async throwAway() {
+      const response = await api.get(`/game/${this.gameId}/throw-away`);
+      let playableCardCodes = response.data
+
+      if(playableCardCodes.length > 0) {
+        this.myHandContainerRef.current.handlePlayableCards(playableCardCodes);
+      }
+    }
+
     play() {
-      let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
+      let cardToPlay;
+      if(this.myHandContainerRef.current.isJokerRaised()) {
+        // select joker as card to play
+        cardToPlay = this.myHandContainerRef.current.getRaisedCard(true);
+      } else {
+        cardToPlay = this.myHandContainerRef.current.getRaisedCard();
+      }
+
       let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
       let marbleToPlay = this.boardRef.current.getMarbleToPlay();
 
-      //TODO no clue which attribute needs to be sent
-        let marbles = [{marbleId: marbleToPlay.getId(), targetFieldKey: this.boardRef.current.getTargetField().getKey()}];
-        //let targetField = this.boardRef.current.getTargetField();
-        //marbles.targetFielKey = this.boardRef.current.getTargetField().getKey();
+      let marbles = [];
 
-
+      if(this.myHandContainerRef.current.isSevenRaised()) {
+        marbles = this.boardRef.current.getSevenMoves();
+      } else {
+        marbles.push({marbleId: marbleToPlay.getId(), targetFieldKey: this.boardRef.current.getTargetField().getKey()})
+      }
+      
       this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/play`, {
         code: cardToPlay.getCode(), 
         moveName: moveNameToPlay, 
         marbles: marbles
-
-        // TODO targetField(s) submission
-        // fieldKey (e.g. "4GREEN", "8BLUE")
       });
 
       this.reset();
@@ -276,12 +352,27 @@ class Game extends React.Component {
         <WebsocketConsumer channels={this.channels} connectionCallback={() => this.sendReadyMessage()}>
           <View className="game" withFooterHidden withDogImgHidden linkMode={viewLinks.BASIC}>
             <main>
-                <Facts facts={this.state.facts}/>
+                <Facts facts={this.state.facts} />
                 <Notifications notifications={this.state.notifications} />
-                <Board size={500} ref={this.boardRef} requestPossibleTargetFields={this.requestPossibleTargetFields} myHandContainerRef={this.myHandContainerRef}/>
+                <Board 
+                  size={500} 
+                  ref={this.boardRef} 
+                  requestPossibleMarbles={this.requestPossibleMarbles}
+                  requestPossibleTargetFields={this.requestPossibleTargetFields} 
+                  myHandContainerRef={this.myHandContainerRef}
+                />
                 <HandContainer position="my">
-                  <MyHand ref={this.myHandContainerRef} myHandRef={this.myHandRef} mode={this.state.mode} requestMoves={this.requestMoves} requestPossibleMarbles={this.requestPossibleMarbles} play={this.play} reset={this.reset}>
-                    <Hand ref={this.myHandRef} isActive={this.state.mode !== roundModes.IDLE}/>
+                  <MyHand 
+                    ref={this.myHandContainerRef} 
+                    myHandRef={this.myHandRef} 
+                    mode={this.state.mode} 
+                    requestMoves={this.requestMoves} 
+                    requestPossibleMarbles={this.requestPossibleMarbles} 
+                    play={this.play} 
+                    reset={this.reset} 
+                    throwAway={this.throwAway} 
+                    updateMode={this.updateMode}>
+                      <Hand ref={this.myHandRef} isActive={this.state.mode !== roundModes.IDLE}/>
                   </MyHand>
                 </HandContainer>
                 <HandContainer position="left">
@@ -301,4 +392,4 @@ class Game extends React.Component {
     }
 }
 
-export default withRouter(withBackgroundContext(withWebsocketContext(Game)));
+export default withRouter(withBackgroundContext(withForegroundContext(withWebsocketContext(Game))));

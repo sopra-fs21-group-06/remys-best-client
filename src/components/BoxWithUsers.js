@@ -1,28 +1,29 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import Box from './Box';
-import avatar from '../img/avatar.png';
-import Avatar from './Avatar';
 import UserEntry from './UserEntry';
+import { userCategories } from "../helpers/constants";
 
 class BoxWithUsers extends React.Component {
 
     constructor() {
         super();
         this.state = {
-            filterMode: "friends"
+            filteredCategory: userCategories.FRIENDS
         };
     }
 
-    changeFilterMode(newFilterMode) {
-        this.setState({filterMode: newFilterMode})
+    changeCategory(newCategory) {
+        this.setState({filteredCategory: newCategory})
     }
 
     render() {
         let {withFilter, users, isSubmitting, title, withInvitation, refreshUsers} = this.props
-        let {filterMode} = this.state
+        let {filteredCategory} = this.state
+        let {FRIENDS, SENT, RECEIVED} = userCategories
+
         let usersToShow = users.filter(user => {
-            return user.category === filterMode
+            return user.getCategory() === filteredCategory
         });
 
         return (
@@ -30,9 +31,9 @@ class BoxWithUsers extends React.Component {
                 {
                     withFilter && 
                     <div className="user-filter">
-                        <p onClick={() => this.changeFilterMode("friends")} className={filterMode == "friends" ? "active" : ""}>Friends</p>
-                        <p onClick={() => this.changeFilterMode("sent")} className={filterMode == "sent" ? "active" : ""}>Sent</p>
-                        <p onClick={() => this.changeFilterMode("received")} className={filterMode == "received" ? "active" : ""}>Received</p>
+                        <p onClick={() => this.changeCategory(FRIENDS)} className={filteredCategory == FRIENDS ? "active" : ""}>{FRIENDS}</p>
+                        <p onClick={() => this.changeCategory(SENT)} className={filteredCategory == SENT ? "active" : ""}>{SENT}</p>
+                        <p onClick={() => this.changeCategory(RECEIVED)} className={filteredCategory == RECEIVED ? "active" : ""}>{RECEIVED}</p>
                     </div>
                 }
                 {
@@ -53,7 +54,7 @@ class BoxWithUsers extends React.Component {
                         usersToShow.map(user => {
                             return (
                                 <UserEntry 
-                                    key={user.username} 
+                                    key={user.getUsername()} 
                                     user={user} 
                                     withInvitation={withInvitation}
                                     refreshUsers={refreshUsers}

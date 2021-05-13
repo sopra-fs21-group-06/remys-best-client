@@ -25,6 +25,7 @@ class Marble extends React.Component {
         let colorHexDark = lightenOrDarkenColor(colorHex, -70);
         let isMovable = marble.getIsMovable();
         let isVisible = marble.getIsVisible();
+        let isPreviewMarble = marble.getIsPreviewMarble();
         let isOnTargetField = field.getIsPossibleTargetField()
 
         let styles = {
@@ -40,7 +41,7 @@ class Marble extends React.Component {
             <PickUpAndDrop in={isVisible}>
                 <div 
                     onClick={this.getOnClick(isMovable, isOnTargetField, marble, field)} 
-                    className={`marble ${colorName}` + (isMovable ? ' movable' : '') + (isOnTargetField ? ' clickable' : '')} 
+                    className={`marble ${colorName}` + (isMovable ? ' movable' : '') + (isOnTargetField ? ' clickable' : '') + (isPreviewMarble ? ' preview' : '')} 
                     style={styles}>
                 </div>
             </PickUpAndDrop>

@@ -3,14 +3,17 @@ import { withRouter } from 'react-router-dom';
 import avatar from '../img/avatar.png';
 import Avatar from './Avatar';
 import { api, handleError } from "../helpers/api";
+import { userCategories } from "../helpers/constants";
 
 class UserEntry extends React.Component {
 
     async accept(username) {
         try {
-            await api.get(`/friendrequests/accept`, { params: { 
+            const requestBody = JSON.stringify({
                 senderName: username
-            } });
+            });
+            await api.post(`/friendrequests/accept`, requestBody);
+            //setTimeout(() => {this.props.refreshUsers()}, 1000).bind(this);
             this.props.refreshUsers()
         } catch (error) {
             console.log(error)
@@ -20,9 +23,11 @@ class UserEntry extends React.Component {
 
     async reject(username) {
         try {
-            await api.get(`/friendrequests/decline`, { params: { 
+            const requestBody = JSON.stringify({
                 senderName: username
-            } });
+            });
+            await api.post(`/friendrequests/decline`, requestBody);
+            //setTimeout(() => {this.props.refreshUsers()}, 1000).bind(this);
             this.props.refreshUsers()
         } catch (error) {
             console.log(error)
@@ -34,17 +39,17 @@ class UserEntry extends React.Component {
         let {user, withInvitation} = this.props
 
         return (
-            <div className="user-entry" key={user.username}>
+            <div className="user-entry">
                 <Avatar img={avatar} />
-                <p className="username">{user.username}</p>
-                <p className="email">{user.email}</p>
-                {user.category === "received" ? 
-                    <p onClick={withInvitation ? () => user.invite() : null} className={"status " + (user.invite ? 'invite' : '')}>{user.status}</p>
-                :
+                <p className="username">{user.getUsername()}</p>
+                <p className="email">{user.getEmail()}</p>
+                {user.getCategory() === userCategories.RECEIVED ? 
                     <React.Fragment>
-                        <p onClick={this.accept(user.username)} className="accept">Accept</p>
-                        <p onClick={this.reject(user.username)} className="reject">Reject</p>
+                        <p onClick={() => this.accept(user.getUsername())} className="accept clickable">Accept</p>
+                        <p onClick={() => this.reject(user.getUsername())} className="reject clickable">Reject</p>
                     </React.Fragment>
+                :
+                    <p onClick={withInvitation ? () => user.getInvite()() : null} className={"status " + (user.getInvite() ? 'invite' : '')}>{user.getStatus()}</p>
                 }
             </div>
         );
