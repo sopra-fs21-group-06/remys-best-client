@@ -9,6 +9,8 @@ import { withWebsocketContext } from '../../components/context/WebsocketProvider
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import Invitation from '../../components/alert/Invitation';
 import { createChannel } from '../../helpers/modelUtils';
+import { api } from '../../helpers/api';
+import sessionManager from "../../helpers/sessionManager";
 
 class Home extends React.Component {
 
@@ -17,6 +19,8 @@ class Home extends React.Component {
     this.state = {
       username: localStorage.getItem("username"),
     };
+
+    this.invitationRef = React.createRef();
 
     this.channels = [
       createChannel(`/user/queue/invitation`, (msg) => this.handleInvitationMessage(msg)),
@@ -29,6 +33,9 @@ class Home extends React.Component {
   }
 
   componentWillUnmount() {
+    if(this.invitationRef.current) {
+      this.invitationRef.current.reject()
+    }
     this.props.websocketContext.sockClient.send('/app/home/unregister', {});
   }
 
@@ -38,21 +45,28 @@ class Home extends React.Component {
 
   handleInvitationMessage(msg) {
     this.props.foregroundContext.openAlert(<Invitation 
+      ref={this.invitationRef}
       hostName={msg.hostName}
       gameSessionId={msg.gameSessionId}
       closeAlert={this.props.foregroundContext.closeAlert} />
     );
+    this.props.foregroundContext.setAlertCountdown(null)
   }
 
   handleCountdownMessage(msg) {
-    this.props.foregroundContext.setCountdown(parseInt(msg.currentCounter))
+    let countdown = parseInt(msg.currentCounter)
+
+    if(countdown <= 0 && this.invitationRef.current) {
+      this.invitationRef.current.reject()
+    } else {
+      this.props.foregroundContext.setAlertCountdown(countdown)
+    }
   }
 
   async onClickCreateNewGame() {
-    /*
     const response = await api.get(`/create-gamesession`);
     let gameSessionId = response.data.gameSessionId
-    sessionManager.setGameSessionId(gameSessionId)*/
+    sessionManager.setGameSessionId(gameSessionId)
     this.props.history.push('/create-new-game')
   }
 

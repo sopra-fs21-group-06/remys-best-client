@@ -22,7 +22,7 @@ class ForegroundProvider extends Component {
     this.state = {
       isAlertShown: false,
       componentToShowAsAlert: null,
-      countdown: null,
+      alertCountdown: null,
       componentToOpenInOverlay: null,
       isTurnMessageDisplayed: false,
       turnNameToDisplay: "",
@@ -35,8 +35,8 @@ class ForegroundProvider extends Component {
       closeAlert: () => {
         this.closeAlert()
       },
-      setCountdown: (countdown) => {
-        this.setState({countdown: countdown})
+      setAlertCountdown: (alertCountdown) => {
+        this.setState({alertCountdown: alertCountdown})
       },
       openOverlay: (componentToOpenInOverlay) => {
         this.openOverlay(componentToOpenInOverlay)
@@ -97,12 +97,12 @@ class ForegroundProvider extends Component {
   }
 
   render() {
-    let {componentToShowAsAlert, isAlertShown, countdown, isOverlayOpened, componentToOpenInOverlay, isTurnMessageDisplayed, turnNameToDisplay} = this.state
+    let {componentToShowAsAlert, isAlertShown, alertCountdown, isOverlayOpened, componentToOpenInOverlay, isTurnMessageDisplayed, turnNameToDisplay} = this.state
     return (
         <ForegroundContext.Provider value={this.state}>
             <div className="foreground">
                 <FadeInOut in={isAlertShown}>
-                  <Alert component={componentToShowAsAlert} countdown={countdown} />
+                  <Alert component={componentToShowAsAlert} alertCountdown={alertCountdown} />
                 </FadeInOut>
                 <FadeInOut in={isOverlayOpened}>
                   <Overlay component={componentToOpenInOverlay} />

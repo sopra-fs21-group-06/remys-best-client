@@ -6,8 +6,9 @@ import BoxWithUsers from '../../components/BoxWithUsers';
 import FriendsFilter from '../../components/FriendsFilter';
 import sessionManager from "../../helpers/sessionManager";
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
-import { createChannel } from '../../helpers/modelUtils';
+import { createChannel, createUser } from '../../helpers/modelUtils';
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
+import { userCategories } from '../../helpers/constants';
 
 class CreateNewGame extends React.Component {
 
@@ -23,6 +24,7 @@ class CreateNewGame extends React.Component {
       createChannel(`/topic/gamesession/${this.gameSessionId}/gamesession-end`, (msg) => this.handleGameSessionEndMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/invited-user`, (msg) => this.handleInvitedUserMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/countdown`, (msg) => this.handleCountdownMessage(msg)),
+      // todo endpoint accepted users (if some has accepted, if someone leaves)
     ]
   }
 
@@ -35,22 +37,34 @@ class CreateNewGame extends React.Component {
   }
 
   handleInvitedUserMessage(msg) {
-    let invitedUser = {username: msg.username, email: "inviteduser@foo.ch"}
-    this.setState(prevState => { 
-      return {currentPlayers: [...prevState.currentPlayers, invitedUser]};
-    });
+    let invitedUsers = msg.invitedUsers.map(invitedUser => {
+      return createUser(invitedUser.username, "inviteduser@foo.ch", null, userCategories.INVITED)
+    })
+
+    let currentPlayersWithoutInvitedOnes = this.state.currentPlayers.filter(player => {
+      return player.getCategory() !== userCategories.INVITED
+    })
+
+    console.log(currentPlayersWithoutInvitedOnes)
+    console.log(currentPlayersWithoutInvitedOnes.concat(invitedUsers))
+
+    this.setState({currentPlayers: currentPlayersWithoutInvitedOnes.concat(invitedUsers)});
   }
 
   handleCountdownMessage(msg) {
     this.setState(prevState => {
         const currentPlayers = prevState.currentPlayers.map(currentPlayer => {
-            if (currentPlayer.username === msg.username) {
-                currentPlayer.status = msg.currentCounter
+            if (currentPlayer.getUsername() === msg.username) {
+                currentPlayer.setStatus(msg.currentCounter)
             } 
             return currentPlayer;
         });
         return {currentPlayers: currentPlayers};
     });
+  }
+
+  fillUpWithRandomPlayers() {
+    // TODO call endpoint
   }
 
   // TODO align boxes horizontally dynamically with refs and on compDidM
@@ -68,8 +82,8 @@ class CreateNewGame extends React.Component {
               <div className="col">
                 <p className="above-box">After getting invited your friend has 15 seconds to accept your invitation. If the invitation has been accepted it will be marked in the list below, otherwise your friend will be removed. It is possible to invite friends several times in a row or fill your game up with random players.</p>
                 <div className="current-players">
-                  <BoxWithUsers title="Current Players" users={this.state.currentPlayers}/>
-                  <div className="link-below-box"><p className="clickable">Fill up with random players</p></div>
+                  <BoxWithUsers title="Current Players" users={this.state.currentPlayers} />
+                  <div className="link-below-box"><p className="clickable" onClick={() => this.fillUpWithRandomPlayers()}>Fill up with random players</p></div>
                 </div>
               </div>
             </main>
