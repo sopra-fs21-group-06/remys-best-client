@@ -52,14 +52,14 @@ export const handModes = {
 export const userCategories = {
 	FRIENDS: "Friends",
 	SENT: "Sent",
-	RECEIVED : "Received"
+	RECEIVED: "Received",
+	INVITED: "Invited"
 }
 
 export const userStatus = {
 	FREE: "Free",
+	BUSY: "Busy",
 	INVITE: "Invite",
-	SENT: "Sent",
-	RECEIVED : "Received"
 }
 
 export const cardImages = {

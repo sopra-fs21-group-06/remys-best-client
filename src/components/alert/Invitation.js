@@ -5,24 +5,18 @@ import sessionManager from "../../helpers/sessionManager"
 class Invitation extends React.Component {
 
     reject() {
-        // TODO? send rejection (send rejection to server?)
+        // TODO send to backend: stop counter on backend and remove from invited users list
         this.props.closeAlert()
     }
 
     accept() {
         // TODO? send acception (send acception to server?)
-        this.props.closeAlert()
         sessionManager.setGameSessionId(this.props.gameSessionId)
         this.props.history.push('/create-new-game')
     }
 
     render() {
         let {countdown, hostName} = this.props
-
-        if(parseInt(countdown) <= 0) {
-            console.log(parseInt(countdown))
-            this.props.closeAlert()
-        }
 
         return (
             <Box borderRadius="16" counter={countdown}>

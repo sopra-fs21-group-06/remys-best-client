@@ -124,6 +124,7 @@ export const createUser = (username, email, status, category) => {
         getUsername: () => _username,
         getEmail: () => _email,
         getStatus: () => _status,
+        setStatus: (status) => _status = status,
         getCategory: () => _category,
         getInvite: () => _invite,
         setInvite: (invite) => _invite = invite,
