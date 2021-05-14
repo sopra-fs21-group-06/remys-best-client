@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import NavigationBox from "../../components/NavigationBox"
+import sessionManager from "../../helpers/sessionManager";
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
@@ -8,7 +9,6 @@ import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import Invitation from '../../components/alert/Invitation';
 import { createChannel } from '../../helpers/modelUtils';
 import { api } from '../../helpers/api';
-import sessionManager from "../../helpers/sessionManager";
 import AuthView from '../AuthView';
 
 class Home extends React.Component {
