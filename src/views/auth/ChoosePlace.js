@@ -24,7 +24,13 @@ class ChoosePlace extends React.Component {
     this.gameId = sessionManager.getGameId();
     this.channels = [
       createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
+      createChannel(`/topic/game/${this.gameId}/game-end`,(msg)=> this.handlePlayerDisconnection(msg))
     ]
+  }
+  handlePlayerDisconnection(msg) {
+    if(msg.aborted!=null) {
+      this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.aborted, mode:'aborted'}})
+    }
   }
 
   handleChoosePlaceMessage(msg){

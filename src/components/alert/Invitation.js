@@ -5,12 +5,13 @@ import sessionManager from "../../helpers/sessionManager"
 class Invitation extends React.Component {
 
     reject() {
-        // TODO send to backend: stop counter on backend and remove from invited users list
+        this.props.websocketContext.sockClient.send(`/app/game-session-request/${this.props.gameSessionId}/reject`, { token: localStorage.getItem("token"),  gameSessionId: this.props.gameSessionId});
         this.props.closeAlert()
     }
 
     accept() {
-        // TODO? send acception (send acception to server?)
+        this.props.websocketContext.sockClient.send(`/app/game-session-request/${this.props.gameSessionId}/accept`, { token: localStorage.getItem("token"),  gameSessionId: this.props.gameSessionId});
+        this.props.closeAlert()
         sessionManager.setGameSessionId(this.props.gameSessionId)
         this.props.history.push('/create-new-game')
     }
