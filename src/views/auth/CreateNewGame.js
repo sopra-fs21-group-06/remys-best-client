@@ -18,11 +18,14 @@ class CreateNewGame extends React.Component {
       currentPlayers: [],
     };
 
+
     this.gameSessionId = sessionManager.getGameSessionId();
     this.channels = [
       createChannel(`/topic/gamesession/${this.gameSessionId}/gamesession-end`, (msg) => this.handleGameSessionEndMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/invited-user`, (msg) => this.handleInvitedUserMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/countdown`, (msg) => this.handleCountdownMessage(msg)),
+      createChannel(`/topic/game-session/${this.gameSessionId}/accepted`,(msg) => this.handleNewUserMessage(msg)),
+      createChannel(`/user/queue/gamesession/${this.gameSessionId}/ready`, (msg) => this.handleGameReadyMessage(msg))
       // todo endpoint accepted users (if some has accepted, if someone leaves)
     ]
   }
@@ -62,8 +65,22 @@ class CreateNewGame extends React.Component {
     });
   }
 
+  handleNewUserMessage(msg){
+    let acceptedUsers = msg.users.map(acceptedUser => {
+      return createUser(acceptedUser.username, "friend@friend.ch", null, userCategories.ACCEPTED)
+    })
+
+    this.setState({currentPlayers: acceptedUsers});
+    
+  }
+
   fillUpWithRandomPlayers() {
-    // TODO call endpoint
+    this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/fill-up`,{});
+  }
+
+  handleGameReadyMessage(msg){
+    sessionManager.setGameId(msg.gameId)
+    this.props.history.push({pathname: '/choose-place', state: {players: msg.players}})
   }
 
   // TODO align boxes horizontally dynamically with refs and on compDidM

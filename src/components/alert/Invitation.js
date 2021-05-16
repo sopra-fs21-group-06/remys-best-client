@@ -5,13 +5,13 @@ import sessionManager from "../../helpers/sessionManager"
 class Invitation extends React.Component {
 
     reject() {
-        this.props.websocketContext.sockClient.send(`/app/game-session-request/${this.props.gameSessionId}/reject`, { token: localStorage.getItem("token"),  gameSessionId: this.props.gameSessionId});
+        console.log(this.props.websocketContext);
+        this.props.websocketContext.sockClient.send(`/app/game-session-request/${this.props.gameSessionId}/reject`, { gameSessionId: this.props.gameSessionId});
         this.props.closeAlert()
     }
 
     accept() {
-        this.props.websocketContext.sockClient.send(`/app/game-session-request/${this.props.gameSessionId}/accept`, { token: localStorage.getItem("token"),  gameSessionId: this.props.gameSessionId});
-        this.props.closeAlert()
+        this.props.websocketContext.sockClient.send(`/app/game-session-request/${this.props.gameSessionId}/accept`, {  gameSessionId: this.props.gameSessionId});
         sessionManager.setGameSessionId(this.props.gameSessionId)
         this.props.history.push('/create-new-game')
     }

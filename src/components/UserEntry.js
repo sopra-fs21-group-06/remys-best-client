@@ -60,13 +60,17 @@ class UserEntry extends React.Component {
                 <Avatar img={avatar} />
                 <p className="username">{user.getUsername()}</p>
                 <p className="email">{user.getEmail()}</p>
-                {user.getCategory() === userCategories.RECEIVED ? 
+                {user.getCategory() === userCategories.RECEIVED && user.getCategory!==userCategories.ACCEPTED ? 
                     <React.Fragment>
                         <p onClick={() => this.acceptFriendRequest(user.getUsername())} className="accept clickable">Accept</p>
                         <p onClick={() => this.rejectFriendRequest(user.getUsername())} className="reject clickable">Reject</p>
                     </React.Fragment>
                 :
                     <p onClick={isInvitable ? user.getInvite() : null} className={"status " + (isInvitable ? 'invite' : '')}>{user.getStatus()}</p>
+                }
+                {user.getCategory()=== userCategories.ACCEPTED ?
+                    null
+                : null
                 }
             </div>
         );

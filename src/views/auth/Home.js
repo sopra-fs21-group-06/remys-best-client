@@ -47,7 +47,10 @@ class Home extends React.Component {
       ref={this.invitationRef}
       hostName={msg.hostName}
       gameSessionId={msg.gameSessionId}
-      closeAlert={this.props.foregroundContext.closeAlert} />
+      closeAlert={this.props.foregroundContext.closeAlert} 
+      websocketContext={this.props.websocketContext}
+      history={this.props.history}
+      />
     );
     this.props.foregroundContext.setAlertCountdown(null)
   }
@@ -56,7 +59,7 @@ class Home extends React.Component {
     let countdown = parseInt(msg.currentCounter)
 
     if(countdown <= 0 && this.invitationRef.current) {
-      this.invitationRef.current.reject()
+      //this.invitationRef.current.reject()
     } else {
       this.props.foregroundContext.setAlertCountdown(countdown)
     }
