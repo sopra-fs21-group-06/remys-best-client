@@ -1,7 +1,5 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Board from "../../components/ingame/Board";
 import Box from "../../components/Box";
@@ -11,6 +9,7 @@ import { withWebsocketContext } from '../../components/context/WebsocketProvider
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import avatar from '../../img/avatar.png';
 import sessionManager from "../../helpers/sessionManager";
+import AuthView from '../AuthView';
 
 class ChoosePlace extends React.Component {
 
@@ -83,7 +82,7 @@ class ChoosePlace extends React.Component {
   render() {
     return (
       <WebsocketConsumer channels={this.channels}>
-        <View className="choose-place" withDogImgHidden linkMode={viewLinks.BASIC}>
+        <AuthView className="choose-place" withDogImgHidden>
           <main>
               <div className="col-left">
                 <div className="above-box">
@@ -119,7 +118,7 @@ class ChoosePlace extends React.Component {
                 </div>
               </div>
             </main>
-        </View>
+        </AuthView>
       </WebsocketConsumer>
     );
   }

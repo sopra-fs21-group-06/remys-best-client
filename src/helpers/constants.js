@@ -1,14 +1,7 @@
-export const viewLinks = {
-    BASIC: {
-        headerLink: {
-            to: "/instruction",
-            name: "Instruction"
-        },
-        footerLink: {
-            to: "/about",
-            name: "About"
-        }
-    }
+export const linksMode = {
+    UNAUTH: "UNAUTH",
+	AUTH: "AUTH",
+	IN_GAME: "IN_GAME"
 }
 
 export const roundModes = {

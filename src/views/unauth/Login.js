@@ -1,14 +1,13 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import LoginForm from '../../components/form/LoginForm';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants"
+import UnauthView from '../UnauthView';
 
 class Login extends React.Component {
 
   render() {
     return (
-      <View className="login"  linkMode={viewLinks.BASIC}>
+      <UnauthView className="login">
           <main className="large side-by-side">
             <div className="col">
               <h1>Welcome to Brändi Dog Online</h1>
@@ -23,7 +22,7 @@ class Login extends React.Component {
               <LoginForm />
             </div>
           </main>
-      </View>
+      </UnauthView>
     );
   }
 }

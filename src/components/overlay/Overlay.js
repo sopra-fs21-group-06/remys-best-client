@@ -1,5 +1,5 @@
 import React from 'react';
-import Blurred from './Blurred';
+import Blurred from '../Blurred';
 
 class Overlay extends React.Component {
 

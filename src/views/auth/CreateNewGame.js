@@ -1,7 +1,5 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants"
 import BoxWithUsers from '../../components/BoxWithUsers';
 import FriendsFilter from '../../components/FriendsFilter';
 import sessionManager from "../../helpers/sessionManager";
@@ -9,6 +7,7 @@ import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import { createChannel, createUser } from '../../helpers/modelUtils';
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import { userCategories } from '../../helpers/constants';
+import AuthView from '../AuthView';
 
 class CreateNewGame extends React.Component {
 
@@ -71,7 +70,7 @@ class CreateNewGame extends React.Component {
   render() {
     return (
       <WebsocketConsumer channels={this.channels}>
-        <View className="create-new-game" title="Create new game" linkMode={viewLinks.BASIC}>
+        <AuthView className="create-new-game" title="Create new game">
             <main className="large side-by-side">
               <div className="col">
                 <p className="above-box">Only friends which are on the home screen can be invited. If you are not friends just send a friend request and wait for the response.</p>
@@ -87,7 +86,7 @@ class CreateNewGame extends React.Component {
                 </div>
               </div>
             </main>
-        </View>
+        </AuthView>
       </WebsocketConsumer>
     );
   }

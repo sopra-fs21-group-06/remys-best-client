@@ -31,6 +31,9 @@ class WebsocketProvider extends React.Component {
       },
       connect: () => {
         this.connect()
+      },
+      disconnect: () => {
+        this.disconnect()
       }
     };    
     this.subscribedChannels = [];

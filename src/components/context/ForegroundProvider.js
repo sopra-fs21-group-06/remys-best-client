@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import Alert from "../alert/Alert";
-import Overlay from "../Overlay";
+import Overlay from "../overlay/Overlay";
 import { FadeInOut } from "../transitions/FadeInOut";
 import { MoveOut } from "../transitions/MoveOut";
 import TurnMessage from "../TurnMessage";
