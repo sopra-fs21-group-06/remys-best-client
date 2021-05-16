@@ -7,7 +7,7 @@ import sessionManager from "../../../helpers/sessionManager";
 import checkmark from '../../../img/checkmark.png';
 import arrowRight from '../../../img/arrow-right.png';
 import { withForegroundContext } from '../../context/ForegroundProvider';
-import CardOverview from '../../CardOverview';
+import CardOverview from '../../overlay/CardOverview';
 
 class MyHand extends React.Component {
 

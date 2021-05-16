@@ -1,7 +1,5 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants";
 import NavigationBox from "../../components/NavigationBox"
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
@@ -11,6 +9,7 @@ import Invitation from '../../components/alert/Invitation';
 import { createChannel } from '../../helpers/modelUtils';
 import { api } from '../../helpers/api';
 import sessionManager from "../../helpers/sessionManager";
+import AuthView from '../AuthView';
 
 class Home extends React.Component {
 
@@ -74,7 +73,7 @@ class Home extends React.Component {
   render() {
     return (
       <WebsocketConsumer channels={this.channels} connectionCallback={() => this.register()}>
-        <View title={"Welcome back, " + this.state.username}  linkMode={viewLinks.BASIC}>
+        <AuthView title={"Welcome back, " + this.state.username}>
           <main className="large side-by-side">
               <div className="col">
                 <p className="above-box">How do you want to play Brändi Dog?</p>
@@ -104,7 +103,7 @@ class Home extends React.Component {
                 />
               </div>
             </main>
-        </View>
+        </AuthView>
       </WebsocketConsumer>
     );
   }

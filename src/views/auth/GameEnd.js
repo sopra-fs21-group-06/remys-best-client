@@ -1,8 +1,7 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants";
 import sessionManager from "../../helpers/sessionManager";
+import AuthView from '../AuthView';
 
 class GameEnd extends React.Component {
 
@@ -34,12 +33,12 @@ class GameEnd extends React.Component {
     } 
 
     return (
-      <View className="game-end" title={title}  linkMode={viewLinks.BASIC}>
+      <AuthView className="game-end" title={title}>
         <main className="small">
             <p>{text}</p>      
             <p className="below-text"><Link to="/home">Leave and return to Home</Link></p>
           </main>
-      </View>
+      </AuthView>
     );
   }
 }

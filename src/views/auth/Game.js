@@ -6,7 +6,7 @@ import Hand from "../../components/ingame/hand/Hand";
 import dogCard from "../../img/dog-card.png"
 import HandContainer from "../../components/ingame/hand/HandContainer";
 import View from "../View";
-import { cardImages, gameEndModes, roundModes, viewLinks } from "../../helpers/constants";
+import { cardImages, gameEndModes, roundModes, linksMode } from "../../helpers/constants";
 import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
@@ -18,6 +18,7 @@ import { withWebsocketContext } from '../../components/context/WebsocketProvider
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
 import { api } from '../../helpers/api';
+import InGameView from '../InGameView';
 
 class Game extends React.Component {
 
@@ -350,7 +351,7 @@ class Game extends React.Component {
 
       return (
         <WebsocketConsumer channels={this.channels} connectionCallback={() => this.sendReadyMessage()}>
-          <View className="game" withFooterHidden withDogImgHidden linkMode={viewLinks.BASIC}>
+          <InGameView className="game">
             <main>
                 <Facts facts={this.state.facts} />
                 <Notifications notifications={this.state.notifications} />
@@ -386,7 +387,7 @@ class Game extends React.Component {
                 </HandContainer>
                 <Link to={gameEnd}>Game aborted</Link>
             </main>
-          </View>     
+          </InGameView>     
         </WebsocketConsumer>
       );
     }
