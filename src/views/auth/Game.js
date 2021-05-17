@@ -98,25 +98,27 @@ class Game extends React.Component {
       }
     }
 
+    // the display of the current turn message is triggered in handleThrowAwayMessage and handlePlayedMessage
     handleTurnChangedMessage(msg) {
+      let currentTurnPlayerName = this.state.currentTurnPlayerName
       let playerName = msg.playerName
       let mode
+
       if(this.isMyPlayerName(playerName)) {
         mode = roundModes.MY_TURN
-        playerName = "your"
       } else {
         mode = roundModes.IDLE
-        playerName += "'s"
-      }
-
-      if(this.state.currentTurnPlayerName === null) {
-        this.props.foregroundContext.displayCurrentTurnMessage(playerName)
       }
 
       this.setState({ 
         mode: mode,
         currentTurnPlayerName: playerName
-      })
+      }, () => {
+        // at the beginning of a round, TODO round switches??
+        if(currentTurnPlayerName === null) {
+          this.displayCurrentTurnMessage(playerName)
+        }
+      })      
     }
 
     handleThrowAwayMessage(msg) {
@@ -127,10 +129,11 @@ class Game extends React.Component {
 
       player.getHandRef().current.removeAllCards()
 
-      player.getHandRef().current.alignCards(cardsToThrowAway)
-      setTimeout(function(){ 
-          this.boardRef.current.throwInAllCards(player, cardsToThrowAway);
-      }.bind(this), 500);
+      let actions = [];
+      actions.push(() => this.boardRef.current.throwInAllCards(player, cardsToThrowAway))
+      actions.push(() => this.displayCurrentTurnMessage())
+
+      this.executeFunctionsSequentially(actions)
     }
 
     handlePlayedMessage(msg) {
@@ -151,33 +154,29 @@ class Game extends React.Component {
         player.getHandRef().current.removeRandomCard()
       }
 
-      setTimeout(function(){ 
-          this.boardRef.current.throwInCard(player, cardToPlay);
-      }.bind(this), 500);
+      let actions = [];
+      actions.push(() => this.boardRef.current.throwInCard(player, cardToPlay))
+      actions.push(() => marblesToMove.forEach(marbleToMove => {
+        this.boardRef.current.moveMarble(marbleToMove.marbleId, marbleToMove.targetFieldKey);
+      }))
 
-      setTimeout(function() { 
-        marblesToMove.forEach(marbleToMove => {
-          this.boardRef.current.moveMarble(marbleToMove.marbleId, marbleToMove.targetFieldKey);
-        })
-      }.bind(this), 1500);
+      if(marblesToSendHome.length !== 0) {
+        actions.push(() => marblesToSendHome.forEach(marbleToSendHome => {
+          this.boardRef.current.moveMarble(marbleToSendHome.marbleId, marbleToSendHome.targetFieldKey);
+        }))
+      }
 
+      actions.push(() => this.displayCurrentTurnMessage())
 
-      // TODO NOT WORKING
-      if(marblesToSendHome !== undefined) {
-        setTimeout(function() { 
-          marblesToSendHome.forEach(marbleToSendHome => {
-            this.boardRef.current.moveMarble(marbleToSendHome.marbleId, marbleToSendHome.targetFieldKey);
-          })
-        }.bind(this), 2500);
+      this.executeFunctionsSequentially(actions)
+    }
 
-        setTimeout(function() { 
-          this.props.foregroundContext.displayCurrentTurnMessage(this.state.currentTurnPlayerName)
-        }.bind(this), 3500);
-
-      } else {
-        setTimeout(function() { 
-          this.props.foregroundContext.displayCurrentTurnMessage(this.state.currentTurnPlayerName)
-        }.bind(this), 2500);
+    executeFunctionsSequentially(functions) {
+      // todo do it with resolve(), not with timeout
+      for(let i = 0; i < functions.length; i++) {
+        setTimeout(() => { 
+          functions[i]()
+        }, 500 + (i*1000));
       }
     }
 
@@ -251,6 +250,18 @@ class Game extends React.Component {
       this.setState({ mode: mode})
     }
 
+    displayCurrentTurnMessage() {
+      let currentTurnPlayerName = this.state.currentTurnPlayerName
+
+      if(this.isMyPlayerName(currentTurnPlayerName)) {
+        currentTurnPlayerName = "your"
+      } else {
+        currentTurnPlayerName += "'s"
+      }
+
+      this.props.foregroundContext.displayCurrentTurnMessage(currentTurnPlayerName)
+    }
+
     async requestMoves() {
         let raisedCard = this.myHandContainerRef.current.getRaisedCard();
         const response = await api.get(`/game/${this.gameId}/moves`, { params: { code: raisedCard.getCode() } });
@@ -270,7 +281,7 @@ class Game extends React.Component {
         });
         const response = await api.post(`/game/${this.gameId}/possible-marbles`, requestBody);
 
-        this.boardRef.current.updatePossibleMarbles(response.data.marbles);
+        this.boardRef.current.updateMovableMarbles(response.data.marbles);
         this.myHandContainerRef.current.resetMoves()
     }
 
