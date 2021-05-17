@@ -48,7 +48,7 @@ class View extends React.Component {
     let { withDogImgHidden, withFooterHidden} = this.props;
 
     return (
-      <div className="view">
+      <div className="view" id="view">
         <div className={"navigation-link header-link"}>
             <a onClick={() => this.openInstruction()}>Instruction</a>
         </div>
