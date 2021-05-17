@@ -48,6 +48,8 @@ class ForegroundProvider extends Component {
         this.displayCurrentTurnMessage(playerName)
       },
     };
+
+    this.closeOverlay = this.closeOverlay.bind(this)
   }
 
   showAlert(componentToShowAsAlert, removeAfterInMilliseconds) {
@@ -105,7 +107,7 @@ class ForegroundProvider extends Component {
                   <Alert component={componentToShowAsAlert} alertCountdown={alertCountdown} />
                 </FadeInOut>
                 <FadeInOut in={isOverlayOpened}>
-                  <Overlay component={componentToOpenInOverlay} />
+                  <Overlay component={componentToOpenInOverlay} closeOverlay={this.closeOverlay} />
                 </FadeInOut>
                 <MoveOut in={isTurnMessageDisplayed}>
                   <TurnMessage turnNameToDisplay={turnNameToDisplay} />
