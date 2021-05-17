@@ -24,7 +24,7 @@ class CreateNewGame extends React.Component {
       createChannel(`/topic/gamesession/${this.gameSessionId}/gamesession-end`, (msg) => this.handleGameSessionEndMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/invited-user`, (msg) => this.handleInvitedUserMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/countdown`, (msg) => this.handleCountdownMessage(msg)),
-      createChannel(`/topic/game-session/${this.gameSessionId}/accepted`,(msg) => this.handleNewUserMessage(msg)),
+      createChannel(`/topic/gamesession/${this.gameSessionId}/accepted`,(msg) => this.handleNewUserMessage(msg)),
       createChannel(`/user/queue/gamesession/${this.gameSessionId}/ready`, (msg) => this.handleGameReadyMessage(msg))
       // todo endpoint accepted users (if some has accepted, if someone leaves)
     ]
@@ -47,6 +47,7 @@ class CreateNewGame extends React.Component {
       return player.getCategory() !== userCategories.INVITED
     })
 
+    console.log("currentPlayersWithoutInvitedOnes")
     console.log(currentPlayersWithoutInvitedOnes)
     console.log(currentPlayersWithoutInvitedOnes.concat(invitedUsers))
 
@@ -56,7 +57,7 @@ class CreateNewGame extends React.Component {
   handleCountdownMessage(msg) {
     this.setState(prevState => {
         const currentPlayers = prevState.currentPlayers.map(currentPlayer => {
-            if (currentPlayer.getUsername() === msg.username&& currentPlayer.getCategory()!==userCategories.ACCEPTED) {
+            if (currentPlayer.getUsername() === msg.username) {
                 currentPlayer.setStatus(msg.currentCounter)
             } 
             return currentPlayer;
@@ -67,10 +68,16 @@ class CreateNewGame extends React.Component {
 
   handleNewUserMessage(msg){
     let acceptedUsers = msg.users.map(acceptedUser => {
-      return createUser(acceptedUser.username, "friend@friend.ch", null, userCategories.ACCEPTED)
+      return createUser(acceptedUser.username, "friend@friend.ch", "Accepted", userCategories.ACCEPTED)
+    })
+    let currentPlayersWithoutAcceptedOnes = this.state.currentPlayers.filter(player => {
+      return player.getCategory() !== userCategories.ACCEPTED
     })
 
-    this.setState({currentPlayers: acceptedUsers});
+    console.log("currentPlayersWithoutAcceptedOnes");
+    console.log(currentPlayersWithoutAcceptedOnes);
+    console.log(acceptedUsers);
+    this.setState({currentPlayers: currentPlayersWithoutAcceptedOnes.concat(acceptedUsers)});
     
   }
 
@@ -85,6 +92,7 @@ class CreateNewGame extends React.Component {
 
   // TODO align boxes horizontally dynamically with refs and on compDidM
   render() {
+    console.log(this.state.currentPlayers);
     return (
       <WebsocketConsumer channels={this.channels}>
         <AuthView className="create-new-game" title="Create new game">

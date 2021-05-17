@@ -75,10 +75,8 @@ const handlers = {
         const requestBody = JSON.stringify({
             email : values.email,
             password: values.password,
-            token: localStorage.getItem('token')
         });
         const response = await api.put(`/users`, requestBody);
-        values=initialValues;
     } catch (error) {
         return error;
     }

@@ -58,8 +58,7 @@ class Game extends React.Component {
         createChannel(`/topic/game/${this.gameId}/turn`, (msg) => this.handleTurnChangedMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/throwaway`, (msg) => this.handleThrowAwayMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
-        createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg)),
-        createChannel(`/topic/game/${this.gameId}/game-end`, (msg) => this.handlePlayerDisconnection(msg))
+        createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg))
       ]
     }
 
@@ -197,16 +196,6 @@ class Game extends React.Component {
       } else {
         // card from partner received
         this.setState({ mode: roundModes.IDLE})
-      }
-    }
-
-    handlePlayerDisconnection(msg) {
-      if(msg.aborted!=null) {
-        this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.aborted, mode:'aborted'}})
-      } else if(this.getMyPlayerName in msg.won){
-        this.props.history.push({pathname: '/game-end', state: { mode:'won'}})
-      } else{
-        this.props.history.push({pathname: '/game-end', state: { mode:'lost'}})
       }
     }
 
