@@ -35,7 +35,7 @@ class CreateNewGame extends React.Component {
   }
 
   handleGameSessionEndMessage(msg) {
-    this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.hostName, mode:'aborted'}})
+    this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.username, mode:'aborted'}})
   }
 
   handleInvitedUserMessage(msg) {
@@ -56,7 +56,7 @@ class CreateNewGame extends React.Component {
   handleCountdownMessage(msg) {
     this.setState(prevState => {
         const currentPlayers = prevState.currentPlayers.map(currentPlayer => {
-            if (currentPlayer.getUsername() === msg.username) {
+            if (currentPlayer.getUsername() === msg.username&& currentPlayer.getCategory()!==userCategories.ACCEPTED) {
                 currentPlayer.setStatus(msg.currentCounter)
             } 
             return currentPlayer;

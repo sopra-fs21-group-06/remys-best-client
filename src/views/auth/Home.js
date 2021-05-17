@@ -59,7 +59,7 @@ class Home extends React.Component {
     let countdown = parseInt(msg.currentCounter)
 
     if(countdown <= 0 && this.invitationRef.current) {
-      //this.invitationRef.current.reject()
+      this.invitationRef.current.reject()
     } else {
       this.props.foregroundContext.setAlertCountdown(countdown)
     }
