@@ -9,7 +9,7 @@ import { withWebsocketContext } from '../../components/context/WebsocketProvider
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import avatar from '../../img/avatar.png';
 import sessionManager from "../../helpers/sessionManager";
-import AuthView from '../AuthView';
+import InGameView from '../InGameView';
 
 class ChoosePlace extends React.Component {
 
@@ -23,7 +23,7 @@ class ChoosePlace extends React.Component {
     this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
     this.gameId = sessionManager.getGameId();
     this.channels = [
-      createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
+      createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg))
     ]
   }
 
@@ -82,7 +82,7 @@ class ChoosePlace extends React.Component {
   render() {
     return (
       <WebsocketConsumer channels={this.channels}>
-        <AuthView className="choose-place" withDogImgHidden>
+        <InGameView className="choose-place" >
           <main>
               <div className="col-left">
                 <div className="above-box">
@@ -118,7 +118,7 @@ class ChoosePlace extends React.Component {
                 </div>
               </div>
             </main>
-        </AuthView>
+        </InGameView>
       </WebsocketConsumer>
     );
   }

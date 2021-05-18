@@ -46,7 +46,8 @@ export const userCategories = {
 	FRIENDS: "Friends",
 	SENT: "Sent",
 	RECEIVED: "Received",
-	INVITED: "Invited"
+	INVITED: "Invited",
+	ACCEPTED: "Accepted"
 }
 
 export const userStatus = {

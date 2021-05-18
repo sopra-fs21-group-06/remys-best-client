@@ -18,11 +18,14 @@ class CreateNewGame extends React.Component {
       currentPlayers: [],
     };
 
+
     this.gameSessionId = sessionManager.getGameSessionId();
     this.channels = [
       createChannel(`/topic/gamesession/${this.gameSessionId}/gamesession-end`, (msg) => this.handleGameSessionEndMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/invited-user`, (msg) => this.handleInvitedUserMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/countdown`, (msg) => this.handleCountdownMessage(msg)),
+      createChannel(`/topic/gamesession/${this.gameSessionId}/accepted`,(msg) => this.handleNewUserMessage(msg)),
+      createChannel(`/user/queue/gamesession/${this.gameSessionId}/ready`, (msg) => this.handleGameReadyMessage(msg))
       // todo endpoint accepted users (if some has accepted, if someone leaves)
     ]
   }
@@ -32,7 +35,7 @@ class CreateNewGame extends React.Component {
   }
 
   handleGameSessionEndMessage(msg) {
-    this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.hostName, mode:'aborted'}})
+    this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.username, mode:'aborted'}})
   }
 
   handleInvitedUserMessage(msg) {
@@ -44,6 +47,7 @@ class CreateNewGame extends React.Component {
       return player.getCategory() !== userCategories.INVITED
     })
 
+    console.log("currentPlayersWithoutInvitedOnes")
     console.log(currentPlayersWithoutInvitedOnes)
     console.log(currentPlayersWithoutInvitedOnes.concat(invitedUsers))
 
@@ -62,12 +66,33 @@ class CreateNewGame extends React.Component {
     });
   }
 
+  handleNewUserMessage(msg){
+    let acceptedUsers = msg.users.map(acceptedUser => {
+      return createUser(acceptedUser.username, "friend@friend.ch", "Accepted", userCategories.ACCEPTED)
+    })
+    let currentPlayersWithoutAcceptedOnes = this.state.currentPlayers.filter(player => {
+      return player.getCategory() !== userCategories.ACCEPTED
+    })
+
+    console.log("currentPlayersWithoutAcceptedOnes");
+    console.log(currentPlayersWithoutAcceptedOnes);
+    console.log(acceptedUsers);
+    this.setState({currentPlayers: currentPlayersWithoutAcceptedOnes.concat(acceptedUsers)});
+    
+  }
+
   fillUpWithRandomPlayers() {
-    // TODO call endpoint
+    this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/fill-up`,{});
+  }
+
+  handleGameReadyMessage(msg){
+    sessionManager.setGameId(msg.gameId)
+    this.props.history.push({pathname: '/choose-place', state: {players: msg.players}})
   }
 
   // TODO align boxes horizontally dynamically with refs and on compDidM
   render() {
+    console.log(this.state.currentPlayers);
     return (
       <WebsocketConsumer channels={this.channels}>
         <AuthView className="create-new-game" title="Create new game">
