@@ -45,17 +45,17 @@ class View extends React.Component {
   }
 
   render() {
-    let { withDogImgHidden, withFooterHidden} = this.props;
+    let { withDogImgHidden, withFooterHidden, className, inGame, title} = this.props;
 
     return (
-      <div className="view" id="view">
+      <div className={"view " + (inGame ? 'ingame-view' : '')} id="view">
         <div className={"navigation-link header-link"}>
             <a onClick={() => this.openInstruction()}>Instruction</a>
         </div>
 
-        <div className={this.props.className}>
+        <div className={className}>
           {!withDogImgHidden && <img className="dog" src={dog} />}
-          {this.props.title && <h1 className="title">{this.props.title}</h1>}
+          {title && <h1 className="title">{title}</h1>}
           {this.props.children}
         </div>
         {!withFooterHidden && <footer><p>Brändi Dog is a card game made by <a target="_blank" href="https://www.braendi.ch/">Stiftung Brändi</a></p></footer>}

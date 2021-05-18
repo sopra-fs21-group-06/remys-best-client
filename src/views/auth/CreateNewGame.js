@@ -18,7 +18,6 @@ class CreateNewGame extends React.Component {
       currentPlayers: [],
     };
 
-
     this.gameSessionId = sessionManager.getGameSessionId();
     this.channels = [
       createChannel(`/topic/gamesession/${this.gameSessionId}/gamesession-end`, (msg) => this.handleGameSessionEndMessage(msg)),
@@ -26,7 +25,6 @@ class CreateNewGame extends React.Component {
       createChannel(`/topic/gamesession/${this.gameSessionId}/countdown`, (msg) => this.handleCountdownMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/accepted`,(msg) => this.handleNewUserMessage(msg)),
       createChannel(`/user/queue/gamesession/${this.gameSessionId}/ready`, (msg) => this.handleGameReadyMessage(msg))
-      // todo endpoint accepted users (if some has accepted, if someone leaves)
     ]
   }
 
@@ -35,7 +33,7 @@ class CreateNewGame extends React.Component {
   }
 
   handleGameSessionEndMessage(msg) {
-    this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.username, mode:'aborted'}})
+    this.props.history.push({pathname: '/game-end', state: {gameEndMessage: msg}})
   }
 
   handleInvitedUserMessage(msg) {

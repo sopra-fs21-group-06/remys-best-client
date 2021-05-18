@@ -4,13 +4,19 @@ import Blurred from '../Blurred';
 class Overlay extends React.Component {
 
     componentDidMount() {
-        var element = document.getElementById("view");
+        
+        var element = document.getElementById("foreground");
+        element.classList.add("fixed");
+        element = document.getElementById("view");
         element.classList.add("fixed");
     }
 
     componentWillUnmount() {
-        var element = document.getElementById("view");
+        var element = document.getElementById("foreground");
         element.classList.remove("fixed");
+        element = document.getElementById("view");
+        element.classList.remove("fixed");
+     
     }
 
     render() {
