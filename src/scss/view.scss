@@ -1,6 +1,10 @@
 .view {
     padding-bottom: 100px;
 
+    &.ingame-view {
+        padding-bottom: 0;
+    }
+
     .dog {
         width: 90px;
         display: block;
@@ -89,6 +93,7 @@
 
     .navigation-link {
         position: absolute;
+        z-index: 20;
 
         a {
             font-size: 22px;

@@ -1,11 +1,10 @@
 import React from 'react';
-import {Link, withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import Board from "../../components/ingame/Board";
 import MyHand from "../../components/ingame/hand/MyHand";
 import Hand from "../../components/ingame/hand/Hand";
 import dogCard from "../../img/dog-card.png"
 import HandContainer from "../../components/ingame/hand/HandContainer";
-import View from "../View";
 import { cardImages, gameEndModes, roundModes, linksMode } from "../../helpers/constants";
 import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
@@ -385,7 +384,6 @@ class Game extends React.Component {
                 <HandContainer position="partner">
                   <Hand ref={this.partnerHandRef} />
                 </HandContainer>
-                <Link to={gameEnd}>Game aborted</Link>
             </main>
           </InGameView>     
         </WebsocketConsumer>

@@ -75,7 +75,7 @@ class ForegroundProvider extends Component {
   openOverlay(componentToOpenInOverlay) {
     this.setState({
       isOverlayOpened: true,
-      componentToOpenInOverlay: componentToOpenInOverlay
+      componentToOpenInOverlay: componentToOpenInOverlay,
     })
   }
 
@@ -102,7 +102,7 @@ class ForegroundProvider extends Component {
     let {componentToShowAsAlert, isAlertShown, alertCountdown, isOverlayOpened, componentToOpenInOverlay, isTurnMessageDisplayed, turnNameToDisplay} = this.state
     return (
         <ForegroundContext.Provider value={this.state}>
-            <div className="foreground">
+            <div className="foreground" id="foreground">
                 <FadeInOut in={isAlertShown}>
                   <Alert component={componentToShowAsAlert} alertCountdown={alertCountdown} />
                 </FadeInOut>

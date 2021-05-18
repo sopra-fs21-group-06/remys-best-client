@@ -14,6 +14,7 @@ class InGameView extends React.Component {
       createChannel(`/topic/game/${this.gameId}/game-end`,(msg)=> this.handlePlayerDisconnection(msg))
     ]
   }
+  
   handlePlayerDisconnection(msg) {
     if(msg.aborted!=null) {
       this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.aborted, mode:'aborted'}})
@@ -26,7 +27,9 @@ class InGameView extends React.Component {
 
   render() {
     return (
-      <WebsocketConsumer channels={this.channels}><View linksMode={linksMode.IN_GAME} withFooterHidden withDogImgHidden {...this.props}/></WebsocketConsumer>
+      <WebsocketConsumer channels={this.channels}>
+        <View {...this.props} linksMode={linksMode.IN_GAME} withFooterHidden withDogImgHidden inGame/>
+      </WebsocketConsumer>
     );
   }
 }
