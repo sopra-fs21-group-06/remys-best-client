@@ -11,18 +11,12 @@ class InGameView extends React.Component {
     super();
     this.gameId = sessionManager.getGameId();
     this.channels = [
-      createChannel(`/topic/game/${this.gameId}/game-end`,(msg)=> this.handlePlayerDisconnection(msg))
+      createChannel(`/topic/game/${this.gameId}/game-end`,(msg)=> this.handleGameEndMessage(msg))
     ]
   }
   
-  handlePlayerDisconnection(msg) {
-    if(msg.aborted!=null) {
-      this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.aborted, mode:'aborted'}})
-    } else if(this.getMyPlayerName in msg.won){
-      this.props.history.push({pathname: '/game-end', state: { mode:'won'}})
-    } else{
-      this.props.history.push({pathname: '/game-end', state: { mode:'lost'}})
-    }
+  handleGameEndMessage(msg) {
+    this.props.history.push({pathname: '/game-end', state: {gameEndMessage: msg}})
   }
 
   render() {

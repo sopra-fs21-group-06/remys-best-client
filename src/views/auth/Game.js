@@ -5,7 +5,7 @@ import MyHand from "../../components/ingame/hand/MyHand";
 import Hand from "../../components/ingame/hand/Hand";
 import dogCard from "../../img/dog-card.png"
 import HandContainer from "../../components/ingame/hand/HandContainer";
-import { cardImages, gameEndModes, roundModes, linksMode } from "../../helpers/constants";
+import { cardImages, roundModes } from "../../helpers/constants";
 import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
@@ -340,14 +340,6 @@ class Game extends React.Component {
     }
 
     render() {
-      let gameEnd = {
-        pathname: '/game-end',
-        state: { 
-          mode: gameEndModes.ABORTED,
-          usernameWhichHasLeft: "Andrina"
-        }
-      }
-
       return (
         <WebsocketConsumer channels={this.channels} connectionCallback={() => this.sendReadyMessage()}>
           <InGameView className="game">
