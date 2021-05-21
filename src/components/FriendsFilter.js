@@ -38,9 +38,12 @@ class FriendsFilter extends React.Component {
             this.fetchAndTransformReceived()
         ]);
 
-        let allUsers = friendUsers.concat(sentUsers).concat(receivedUsers)
-        this.allUsers = allUsers
-        return allUsers
+        if(friendUsers && sentUsers && receivedUsers) {
+            let allUsers = friendUsers.concat(sentUsers).concat(receivedUsers)
+            this.allUsers = allUsers
+            return allUsers
+        }
+        return []
     }
 
     updateFilteredUsers(filteredUsers) {

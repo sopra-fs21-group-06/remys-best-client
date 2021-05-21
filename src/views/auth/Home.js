@@ -8,8 +8,9 @@ import { withWebsocketContext } from '../../components/context/WebsocketProvider
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import Invitation from '../../components/alert/Invitation';
 import { createChannel } from '../../helpers/modelUtils';
-import { api } from '../../helpers/api';
+import { api, handleError } from '../../helpers/api';
 import AuthView from '../AuthView';
+import ErrorMessage from '../../components/alert/ErrorMessage';
 
 class Home extends React.Component {
 
@@ -66,13 +67,16 @@ class Home extends React.Component {
   }
 
   async onClickCreateNewGame() {
-    const response = await api.get(`/create-gamesession`);
-    let gameSessionId = response.data.gameSessionId
-    sessionManager.setGameSessionId(gameSessionId)
-    this.props.history.push('/create-new-game')
+    try {
+      const response = await api.get(`/create-gamesession`);
+      let gameSessionId = response.data.gameSessionId
+      sessionManager.setGameSessionId(gameSessionId)
+      this.props.history.push('/create-new-game')
+    } catch (error) {
+      this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+    }
   }
 
-  // todo view withBasicLinks topLeftLink={} bottomRightLink={}
   render() {
     return (
       <WebsocketConsumer channels={this.channels} connectionCallback={() => this.register()}>

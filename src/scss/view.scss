@@ -5,10 +5,14 @@
         padding-bottom: 0;
     }
 
-    .dog {
+    .dog-container {
         width: 90px;
         display: block;
         margin: 40px auto;
+
+        .dog {
+            width: 100%;
+        }
     }
 
     h1  {

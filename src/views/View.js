@@ -5,11 +5,17 @@ import { withForegroundContext } from '../components/context/ForegroundProvider'
 import { withWebsocketContext } from '../components/context/WebsocketProvider';
 import Instruction from '../components/overlay/Instruction';
 import About from '../components/overlay/About';
-import { api } from "../helpers/api";
+import { api, handleError } from "../helpers/api";
 import { linksMode } from "../helpers/constants";
+import ErrorMessage from '../components/alert/ErrorMessage';
+import sessionManager from '../helpers/sessionManager';
 
-// TODO document.title = "In-Game - Frantic";
 class View extends React.Component {
+
+  constructor(){
+    super();
+    this.gameId = sessionManager.getGameId();
+  }
 
   openInstruction() {
     this.props.foregroundContext.openOverlay(<Instruction />);
@@ -23,20 +29,19 @@ class View extends React.Component {
     try {
       await api.post(`/users/logout`);
 
-      // remove the token into the local storage.
       localStorage.removeItem('token');
       localStorage.removeItem('username');
 
       this.props.history.push("/login");
       this.props.websocketContext.disconnect();
     } catch (error) {
-      return error;
+      this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
     }
   }
 
   getFooterLink() {
     if(this.props.linksMode === linksMode.IN_GAME) {
-      return <Link to="/home">Leave</Link>
+      return <Link to="/home" onClick={() => this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/leave`, {})}>Leave</Link>
     } else if(this.props.linksMode === linksMode.AUTH) {
       return <a onClick={() => this.logout()}>Logout</a>
     } else {
@@ -54,7 +59,7 @@ class View extends React.Component {
         </div>
 
         <div className={className}>
-          {!withDogImgHidden && <img className="dog" src={dog} />}
+          {!withDogImgHidden && <div className="dog-container"><Link to="/home"><img className="dog" src={dog} /></Link></div>}
           {title && <h1 className="title">{title}</h1>}
           {this.props.children}
         </div>

@@ -16,8 +16,9 @@ import sessionManager from "../../helpers/sessionManager";
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
-import { api } from '../../helpers/api';
+import { api, handleError } from '../../helpers/api';
 import InGameView from '../InGameView';
+import ErrorMessage from '../../components/alert/ErrorMessage';
 
 class Game extends React.Component {
 
@@ -170,11 +171,10 @@ class Game extends React.Component {
     }
 
     executeFunctionsSequentially(functions) {
-      // todo do it with resolve(), not with timeout
       for(let i = 0; i < functions.length; i++) {
         setTimeout(() => { 
           functions[i]()
-        }, 500 + (i*1000));
+        }, 500 + (i*1200));
       }
     }
 
@@ -185,7 +185,6 @@ class Game extends React.Component {
       
       this.getMyHandRef().current.addCards(myCards)
 
-      // TODO how to decide if it's the card from my partner?
       if(myCards.length > 1) {
         let cardAmount = myCards.length;
         this.leftHandRef.current.addCards(this.generateOtherCards(cardAmount))
@@ -252,52 +251,68 @@ class Game extends React.Component {
 
     async requestMoves() {
         let raisedCard = this.myHandContainerRef.current.getRaisedCard();
-        const response = await api.get(`/game/${this.gameId}/moves`, { params: { code: raisedCard.getCode() } });
-        this.myHandContainerRef.current.updateMoves(response.data.moves);
+        try {
+          const response = await api.get(`/game/${this.gameId}/moves`, { params: { code: raisedCard.getCode() } });
+          this.myHandContainerRef.current.updateMoves(response.data.moves);
+        } catch (error) {
+          this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+        }
     }
 
     async requestPossibleMarbles(moveName) {
-        this.myHandContainerRef.current.updateSelectedMoveName(moveName);
+        try {
+            this.myHandContainerRef.current.updateSelectedMoveName(moveName);
         
-        let raisedCard = this.myHandContainerRef.current.getRaisedCard();
-        let sevenMoves = this.boardRef.current.getSevenMoves();
+            let raisedCard = this.myHandContainerRef.current.getRaisedCard();
+            let sevenMoves = this.boardRef.current.getSevenMoves();
 
-        const requestBody = JSON.stringify({
-            code: raisedCard.getCode(),
-            moveName: moveName,
-            sevenMoves: sevenMoves
-        });
-        const response = await api.post(`/game/${this.gameId}/possible-marbles`, requestBody);
+            const requestBody = JSON.stringify({
+                code: raisedCard.getCode(),
+                moveName: moveName,
+                sevenMoves: sevenMoves
+            });
+            const response = await api.post(`/game/${this.gameId}/possible-marbles`, requestBody);
 
-        this.boardRef.current.updateMovableMarbles(response.data.marbles);
-        this.myHandContainerRef.current.resetMoves()
+            this.boardRef.current.updateMovableMarbles(response.data.marbles);
+            this.myHandContainerRef.current.resetMoves()
+        } catch (error) {
+            this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+        }
     }
 
     async requestPossibleTargetFields() {
-      let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
-      let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
-      let marbleId = this.boardRef.current.getMarbleToPlay().getId();
-      let sevenMoves = this.boardRef.current.getSevenMoves();
+      try {
+          let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
+          let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
+          let marbleId = this.boardRef.current.getMarbleToPlay().getId();
+          let sevenMoves = this.boardRef.current.getSevenMoves();
 
-      const requestBody = JSON.stringify({
-          code: cardToPlay.getCode(), 
-          moveName: moveNameToPlay, 
-          marbleId: marbleId,
-          sevenMoves: sevenMoves
-      });
+          const requestBody = JSON.stringify({
+              code: cardToPlay.getCode(), 
+              moveName: moveNameToPlay, 
+              marbleId: marbleId,
+              sevenMoves: sevenMoves
+          });
 
-      const response = await api.post(`/game/${this.gameId}/possible-target-fields`, requestBody);
+          const response = await api.post(`/game/${this.gameId}/possible-target-fields`, requestBody);
 
-      let possibleTargetFieldKeys = response.data.targetFieldKeys
-      this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
+          let possibleTargetFieldKeys = response.data.targetFieldKeys
+          this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
+      } catch (error) {
+          this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+      }
     }
 
     async throwAway() {
-      const response = await api.get(`/game/${this.gameId}/throw-away`);
-      let playableCardCodes = response.data
+      try {
+        const response = await api.get(`/game/${this.gameId}/throw-away`);
+        let playableCardCodes = response.data
 
-      if(playableCardCodes.length > 0) {
-        this.myHandContainerRef.current.handlePlayableCards(playableCardCodes);
+        if(playableCardCodes.length > 0) {
+          this.myHandContainerRef.current.handlePlayableCards(playableCardCodes);
+        }
+      } catch (error) {
+        this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
       }
     }
 

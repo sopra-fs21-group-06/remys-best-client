@@ -191,6 +191,12 @@ div.box {
         background-color: rgba(255, 255, 255, 0.5);
         padding: 17px 22px;
 
+        &.error-box {
+            background-color: #FFF0F1;
+            color: $red;
+            max-width: 400px;
+        }
+
         &.with-users {
             display: flex;
             flex-direction: column;
@@ -536,7 +542,8 @@ div.box {
 
     p {
         color: white;
-        margin-bottom:32px;
+        margin-bottom: 32px;
+        line-height: 1.4;
 
         span {
             font-weight: $semi-bold;

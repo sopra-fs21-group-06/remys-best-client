@@ -5,7 +5,9 @@ import Avatar from './Avatar';
 import { api, handleError } from "../helpers/api";
 import { userCategories, userStatus } from "../helpers/constants";
 import { withWebsocketContext } from './context/WebsocketProvider';
+import { withForegroundContext } from './context/ForegroundProvider';
 import sessionManager from "../helpers/sessionManager";
+import ErrorMessage from './alert/ErrorMessage';
 
 class UserEntry extends React.Component {
 
@@ -22,8 +24,7 @@ class UserEntry extends React.Component {
             await api.post(`/friendrequests/accept`, requestBody);
             this.props.refreshUsers()
         } catch (error) {
-            console.log(error)
-            // catch error?
+            this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
         }
     }
 
@@ -35,8 +36,7 @@ class UserEntry extends React.Component {
             await api.post(`/friendrequests/decline`, requestBody);
             this.props.refreshUsers()
         } catch (error) {
-            console.log(error)
-            // catch error?
+            this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
         }
     }
 
@@ -73,7 +73,7 @@ class UserEntry extends React.Component {
     }
 }
 
-export default withRouter(withWebsocketContext(UserEntry));
+export default withRouter(withForegroundContext(withWebsocketContext(UserEntry)));
 
 
 

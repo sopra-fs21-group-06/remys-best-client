@@ -7,8 +7,10 @@ import Field from './Field';
 import { ThrowIn } from '../transitions/ThrowIn';
 import { TransitionGroup } from 'react-transition-group';
 import Card from "./hand/Card";
-import { api } from '../../helpers/api';
+import { api, handleError } from '../../helpers/api';
 import sessionManager from "../../helpers/sessionManager";
+import { withForegroundContext } from '../context/ForegroundProvider';
+import ErrorMessage from "../alert/ErrorMessage";
 
 class Board extends React.Component {
 
@@ -205,12 +207,16 @@ class Board extends React.Component {
     }
 
     async requestRemainingSevenMoves() {
-        const requestBody = JSON.stringify({
-            sevenMoves: this.state.sevenMoves
-        });
-        const response = await api.post(`/game/${this.gameId}/remaining-seven-moves`, requestBody);
+        try {
+            const requestBody = JSON.stringify({
+                sevenMoves: this.state.sevenMoves
+            });
+            const response = await api.post(`/game/${this.gameId}/remaining-seven-moves`, requestBody);
 
-        return parseInt(response.data.remainingSevenMoves)
+            return parseInt(response.data.remainingSevenMoves)
+        } catch (error) {
+            this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+        }
     }
 
     getMarbleToPlay() {
@@ -359,4 +365,4 @@ class Board extends React.Component {
     }
 }
 
-export default Board;
+export default withForegroundContext(Board);
