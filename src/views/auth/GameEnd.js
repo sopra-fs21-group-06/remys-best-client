@@ -8,7 +8,6 @@ class GameEnd extends React.Component {
   constructor() {
     super();
     this.myUsername = localStorage.getItem("username")
-    sessionManager.setGameId(null)
   }
 
   render() {

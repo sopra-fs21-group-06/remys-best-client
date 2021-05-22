@@ -16,7 +16,6 @@ class ManageFriends extends React.Component {
      this.friendsFilterRef.current.refreshUsers()
    }
 
-    // todo view withBasicLinks topLeftLink={} bottomRightLink={}
     render() {
       return (
         <AuthView className="manage-friends" title="Manage Friends">

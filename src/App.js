@@ -9,12 +9,12 @@ class App extends Component {
 
   // preload card images
   componentDidMount() {
+    let img;
     Object.keys(cardImages).forEach((cardCode) => {
-        const img = new Image();
+        img = new Image();
         img.src = cardImages[cardCode]
     });
-
-    const img = new Image();
+    img = new Image();
     img.src = dogCard
   }
        

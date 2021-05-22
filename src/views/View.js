@@ -9,12 +9,25 @@ import { api, handleError } from "../helpers/api";
 import { linksMode } from "../helpers/constants";
 import ErrorMessage from '../components/alert/ErrorMessage';
 import sessionManager from '../helpers/sessionManager';
+import WebsocketConsumer from '../components/context/WebsocketConsumer';
 
 class View extends React.Component {
 
   constructor(){
     super();
     this.gameId = sessionManager.getGameId();
+    this.leaveGameIfUrlChangedManually = this.leaveGameIfUrlChangedManually.bind(this);
+  }
+
+  componentDidMount() {
+    let documentTitle = "Brändi Dog Online"
+    let username = localStorage.getItem("username")
+    let prefix = username + " – "
+    if(username && !document.title.includes(prefix)) {
+      document.title = prefix + documentTitle
+    } else if(!username) {
+      document.title = documentTitle
+    }
   }
 
   openInstruction() {
@@ -23,6 +36,19 @@ class View extends React.Component {
 
   openAbout() {
     this.props.foregroundContext.openOverlay(<About />);
+  }
+
+  leaveGameIfUrlChangedManually() {
+    // handle leave in game view via changing the url manually
+    if(!this.props.inGame && sessionManager.getGameId() !== null) {
+      this.handleLeaveGame()
+    }
+  }
+
+  handleLeaveGame() {
+    this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/leave`, {})
+    sessionManager.setGameId(null)
+    sessionManager.setGameViewPage(null);
   }
 
   async logout() {
@@ -41,7 +67,7 @@ class View extends React.Component {
 
   getFooterLink() {
     if(this.props.linksMode === linksMode.IN_GAME) {
-      return <Link to="/home" onClick={() => this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/leave`, {})}>Leave</Link>
+      return <Link to="/home" onClick={() => this.handleLeaveGame()}>Leave</Link>
     } else if(this.props.linksMode === linksMode.AUTH) {
       return <a onClick={() => this.logout()}>Logout</a>
     } else {
@@ -53,22 +79,24 @@ class View extends React.Component {
     let { withDogImgHidden, withFooterHidden, className, inGame, title} = this.props;
 
     return (
-      <div className={"view " + (inGame ? 'ingame-view' : '')} id="view">
-        <div className={"navigation-link header-link"}>
-            <a onClick={() => this.openInstruction()}>Instruction</a>
-        </div>
+      <WebsocketConsumer connectionCallback={this.leaveGameIfUrlChangedManually}>
+        <div className={"view " + (inGame ? 'ingame-view' : '')} id="view">
+          <div className={"navigation-link header-link"}>
+              <a onClick={() => this.openInstruction()}>Instruction</a>
+          </div>
 
-        <div className={className}>
-          {!withDogImgHidden && <div className="dog-container"><Link to="/home"><img className="dog" src={dog} /></Link></div>}
-          {title && <h1 className="title">{title}</h1>}
-          {this.props.children}
+          <div className={className}>
+            {!withDogImgHidden && <div className="dog-container"><Link to="/home"><img className="dog" src={dog} /></Link></div>}
+            {title && <h1 className="title">{title}</h1>}
+            {this.props.children}
+          </div>
+          {!withFooterHidden && <footer><p>Brändi Dog is a card game made by <a target="_blank" href="https://www.braendi.ch/">Stiftung Brändi</a></p></footer>}
+          
+          <div className={"navigation-link footer-link"}>
+            {this.getFooterLink()}
+          </div>
         </div>
-        {!withFooterHidden && <footer><p>Brändi Dog is a card game made by <a target="_blank" href="https://www.braendi.ch/">Stiftung Brändi</a></p></footer>}
-        
-        <div className={"navigation-link footer-link"}>
-          {this.getFooterLink()}
-        </div>
-      </div>
+      </WebsocketConsumer>
     );
   }
 }

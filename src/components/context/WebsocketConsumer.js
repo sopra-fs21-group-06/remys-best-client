@@ -8,6 +8,11 @@ import { withWebsocketContext } from './WebsocketProvider';
  */
 class WebsocketConsumer extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.channels = this.props.channels ? this.props.channels : []
+    }
+
     componentDidMount() {
         // CASE 1 – websocket connection is already established (when switching from AuthRoute to AuthRoute)
         if(this.props.websocketContext.isConnected) {
@@ -23,14 +28,14 @@ class WebsocketConsumer extends React.Component {
     }
 
     uponConnectionEstablished() {
-        this.props.websocketContext.handleSubscribe(this.props.channels)
+        this.props.websocketContext.handleSubscribe(this.channels)
         if(this.props.connectionCallback) {
             this.props.connectionCallback()
         }
     }
 
     componentWillUnmount() {
-        this.props.websocketContext.handleUnsubscribe(this.props.channels)
+        this.props.websocketContext.handleUnsubscribe(this.channels)
     }
 
     render() {

@@ -8,8 +8,9 @@ export default {
         return sessionStorage.getItem('gameId');
     },
     setGameId: (gameId) => {
-        if (gameId === undefined) {
+        if (gameId === null) {
             sessionStorage.removeItem('gameId');
+            return
         }
         sessionStorage.setItem('gameId', gameId);
     },
@@ -17,9 +18,20 @@ export default {
         return sessionStorage.getItem('gameSessionId');
     },
     setGameSessionId: (gameSessionId) => {
-        if (gameSessionId === undefined) {
+        if (gameSessionId === null) {
             sessionStorage.removeItem('gameSessionId');
+            return
         }
         sessionStorage.setItem('gameSessionId', gameSessionId);
+    },
+    getGameViewPage: () => {
+        return sessionStorage.getItem('gameViewPage');
+    },
+    setGameViewPage: (gameViewPage) => {
+        if (gameViewPage === null) {
+            sessionStorage.removeItem('gameViewPage');
+            return
+        }
+        sessionStorage.setItem('gameViewPage', gameViewPage);
     }
 }
