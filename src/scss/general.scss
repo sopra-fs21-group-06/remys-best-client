@@ -215,15 +215,9 @@ div.box {
                 
                     .username {
                         font-weight: $semi-bold;
-                        position: absolute;
-                        top: 9px;
+                        @include centerer(false, true);
                         left: 70px; // avatar width 60px
-                    }
-
-                    .email {
-                         position: absolute;
-                         bottom: 9px;
-                         left: 70px;
+                        max-width: calc(85% - 70px);
                     }
 
                     .status {

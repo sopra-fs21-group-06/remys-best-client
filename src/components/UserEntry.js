@@ -58,7 +58,6 @@ class UserEntry extends React.Component {
             <div className="user-entry">
                 <Avatar img={avatar} />
                 <p className="username">{user.getUsername() === localStorage.getItem("username") ? "You" : user.getUsername()}</p>
-                <p className="email">{user.getEmail()}</p>
                 {user.getCategory() === userCategories.RECEIVED ? 
                     <React.Fragment>
                         <p onClick={() => this.acceptFriendRequest(user.getUsername())} className="accept clickable">Accept</p>

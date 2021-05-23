@@ -69,7 +69,7 @@ class FriendsFilter extends React.Component {
             const response = await api.get(`/myfriends`);
             this.setState({ serverError: null })
             return response.data.friends.map(friend => {
-                return createUser(friend.username, "friend@friend.ch", friend.status, userCategories.FRIENDS)
+                return createUser(friend.username, friend.status, userCategories.FRIENDS)
             })
         } catch (error) {
             this.setState({ serverError: handleError(error) })
@@ -81,7 +81,7 @@ class FriendsFilter extends React.Component {
             const response = await api.get(`/friendrequests/sent`);
             this.setState({ serverError: null })
             return response.data.map(sent => {
-                return createUser(sent.receiverName, "sent@sent.ch", null, userCategories.SENT)
+                return createUser(sent.receiverName, null, userCategories.SENT)
             })
         } catch (error) {
             this.setState({ serverError: handleError(error) })
@@ -93,7 +93,7 @@ class FriendsFilter extends React.Component {
             const response = await api.get(`/friendrequests/received`);
             this.setState({ serverError: null })
             return response.data.map(received => {
-                return createUser(received.senderName, "received@received.ch", null, userCategories.RECEIVED)
+                return createUser(received.senderName, null, userCategories.RECEIVED)
             })
         } catch (error) {
             this.setState({ serverError: handleError(error) })

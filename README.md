@@ -10,9 +10,6 @@
     <img src="https://github.com/sopra-fs21-group-06/remys-best-client/workflows/Deploy%20Project/badge.svg"
          alt="Deployment Status">
   </a>
-  <a href="https://sonarcloud.io/dashboard?id=sopra-fs21-group-06_remys-best-client">
-      <img src="https://sonarcloud.io/api/project_badges/measure?project=sopra-fs21-group-06_remys-best-client&metric=alert_status">
-  </a>
 </p>
 
 ## Introduction
@@ -33,11 +30,11 @@ The [Home](src/views/auth/Home.js) view represents the first entry point for a u
 
 The [Waiting Room](src/views/auth/WaitingRoom.js) view is our central entity to enable users to play in a single player fashion without the need of knowing friends who want to play. The waiting room, which gets treated as a global queue, collects users until the amount of 4 users is reached, which is enough to start a game. At this point a new game will be started automatically with the first 4 users in the waiting room queue. On this view, two important websocket subscriptions are being established. One to receive the current user list everytime a user enters or leaves the waiting room. A second one to receive the gameId to get redirected to the correct game views after getting assigned to a game. The game assignment can either if the user is under the first 4 in the waiting room or when the user got fetched by a game host who decided to fill-up his game with people from the waiting room.
 
-The [Create New Game](src/views/auth/WaitingRoom.js) view acts as a alternative to the waiting room which a user can host a new game and invite its friends. A friend which has accepted a game invitation can then invite its friends and so on. This view receives a currently invited user list and a already accepted user list via two separated websocket subscriptions. The countdown for the invited user to accept a game invitation is set to 15 seconds and is also sent from the backend through a distinct websocket subscription.
+The [Create New Game](src/views/auth/CreateNewGame.js) view acts as a alternative to the waiting room which a user can host a new game and invite its friends. A friend which has accepted a game invitation can then invite its friends and so on. This view receives a currently invited user list and a already accepted user list via two separated websocket subscriptions. The countdown for the invited user to accept a game invitation is set to 15 seconds and is also sent from the backend through a distinct websocket subscription.
 
 The [Game](src/views/auth/Game.js) view manages all in-game packages (hands, board, move-requests, marble-requests etc). It recieves the game state and renders the view accordingly. 
 
-The Websocket Context is based on [React's Context](https://reactjs.org/docs/context.html) and consits of the [Websocket Provider](src/components/context/WebsocketProvider.js) and [Websocket Consumer](src/components/context/WebsocketConsumer.js). The Websocket Provider manages the websocket session, holds the currently subscribed channels and represents a parent for all components which are based on a websocket connection. It is automatically getting mounted if a user enters and unmounted if the users leaves the authentication section. On the other hand, the Websocket Consumer manages the subscription to specific websocket channels and represents a wrapper for all components which listen to websocket messages.
+The Websocket Context is based on [React's Context](https://reactjs.org/docs/context.html) and consists of the [Websocket Provider](src/components/context/WebsocketProvider.js) and [Websocket Consumer](src/components/context/WebsocketConsumer.js). The Websocket Provider manages the websocket session, holds the currently subscribed channels and represents a parent for all components which are based on a websocket connection. It is automatically getting mounted if a user enters and unmounted if the users leaves the authentication section. On the other hand, the Websocket Consumer manages the subscription to specific websocket channels and represents a wrapper for all components which listen to websocket messages.
 
 ## Launch & Development
 

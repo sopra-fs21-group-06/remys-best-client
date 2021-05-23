@@ -80,7 +80,7 @@ class CreateNewGame extends React.Component {
 
   handleInvitedUserMessage(msg) {
     let invitedUsers = msg.invitedUsers.map(invitedUser => {
-      return createUser(invitedUser.username, "inviteduser@foo.ch", null, userCategories.INVITED)
+      return createUser(invitedUser.username, null, userCategories.INVITED)
     })
 
     let currentPlayersWithoutInvitedOnes = this.state.currentPlayers.filter(player => {
@@ -104,7 +104,7 @@ class CreateNewGame extends React.Component {
 
   handleAcceptedUserMessage(msg){
     let acceptedUsers = msg.acceptedUsers.map(acceptedUser => {
-      return createUser(acceptedUser.username, "friend@friend.ch", "Accepted", userCategories.ACCEPTED)
+      return createUser(acceptedUser.username, "Accepted", userCategories.ACCEPTED)
     })
     let currentPlayersWithoutAcceptedOnes = this.state.currentPlayers.filter(player => {
       return player.getCategory() !== userCategories.ACCEPTED
