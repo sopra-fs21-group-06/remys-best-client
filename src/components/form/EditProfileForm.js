@@ -76,7 +76,7 @@ const handlers = {
             email : values.email,
             password: values.password,
         });
-        const response = await api.put(`/users`, requestBody);
+        await api.put(`/users`, requestBody);
     } catch (error) {
         return error;
     }

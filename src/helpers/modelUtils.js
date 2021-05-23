@@ -117,9 +117,8 @@ export const createPlayer = (playerName, handRef, handRot, colorName) => {
     });
 };
 
-export const createUser = (username, email, status, category) => {
+export const createUser = (username, status, category) => {
     let _username = username;
-    let _email = email;
     let _status = status;
     let _category = category;
     let _invite = null;
@@ -128,7 +127,6 @@ export const createUser = (username, email, status, category) => {
    
     return ({
         getUsername: () => _username,
-        getEmail: () => _email,
         getStatus: () => _status,
         setStatus: (status) => _status = status,
         getCategory: () => _category,

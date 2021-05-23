@@ -1,16 +1,16 @@
 import React from "react";
-import wood from '../../img/board.png';
-import { initMarbles, computeFields } from '../../helpers/remysBestUtils';
-import { createPreviewMarble } from '../../helpers/modelUtils';
+import wood from '../../../img/board.png';
+import { initMarbles, computeFields } from '../../../helpers/remysBestUtils';
+import { createPreviewMarble } from '../../../helpers/modelUtils';
 import Marble from './Marble';
 import Field from './Field';
-import { ThrowIn } from '../transitions/ThrowIn';
+import { ThrowIn } from '../../transitions/ThrowIn';
 import { TransitionGroup } from 'react-transition-group';
-import Card from "./hand/Card";
-import { api, handleError } from '../../helpers/api';
-import sessionManager from "../../helpers/sessionManager";
-import { withForegroundContext } from '../context/ForegroundProvider';
-import ErrorMessage from "../alert/ErrorMessage";
+import Card from "../hand/Card";
+import { api, handleError } from '../../../helpers/api';
+import sessionManager from "../../../helpers/sessionManager";
+import { withForegroundContext } from '../../context/ForegroundProvider';
+import ErrorMessage from "../../alert/ErrorMessage";
 
 class Board extends React.Component {
 

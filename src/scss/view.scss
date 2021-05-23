@@ -126,6 +126,21 @@
         }
     }
 
+    .manage-friends {
+
+        .friends-filter {
+            margin-bottom: 32px;
+            ;
+        }
+
+        .friend-request {
+            p {
+                margin-left: 10px;
+                margin-bottom: 8px;
+            }
+        }
+    }
+
     .waiting-room {
 
         .above-box {
@@ -274,4 +289,13 @@
             }
         }
     }
+
+    .game-end {
+        .below-text {
+            color: $black-light;
+            text-align: center;
+            margin-top: 16px;
+        }
+    }
 }
+
