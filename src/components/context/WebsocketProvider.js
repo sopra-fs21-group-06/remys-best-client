@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { createSockClient } from "../../helpers/SockClientRemy";
+import { createSockClient } from "../../helpers/sockClient";
+import sessionManager from '../../helpers/sessionManager';
 
 export const WebsocketContext = React.createContext();
 

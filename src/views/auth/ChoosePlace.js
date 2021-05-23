@@ -46,7 +46,7 @@ class ChoosePlace extends React.Component {
   }
 
   getMyPlayer(players) {
-    let myPlayername = localStorage.getItem("username") // TODO improvement?
+    let myPlayername = localStorage.getItem("username")
     return players.find(player => player.playerName == myPlayername)
   }
 
@@ -60,8 +60,6 @@ class ChoosePlace extends React.Component {
     let myPlayer = this.getMyPlayer(players)
     let myPartner;
 
-
-    // TODO compute team mate on backend?
     if(myPlayer.color == colors.BLUE.name) {
       myPartner = players.find(player => player.color == colors.RED.name)
     } else if(myPlayer.color == colors.GREEN.name) {
@@ -93,7 +91,7 @@ class ChoosePlace extends React.Component {
                   {this.state.players.map(player => {
                       return (
                           <p key={player.playerName}>
-                            <span>{player.playerName}</span> – {player.color ? player.color : "not chosen yet"} 
+                            <span>{this.isMyPlayer(player.playerName) ? "You" : player.playerName}</span> – {player.color ? player.color : "not chosen yet"} 
                             {player.color && this.isMyPlayer(player.playerName) ? <span className="remove" onClick={() => this.handleChangeColor(null)}></span> : null}
                           </p>
                       );

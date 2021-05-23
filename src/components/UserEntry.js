@@ -5,7 +5,9 @@ import Avatar from './Avatar';
 import { api, handleError } from "../helpers/api";
 import { userCategories, userStatus } from "../helpers/constants";
 import { withWebsocketContext } from './context/WebsocketProvider';
+import { withForegroundContext } from './context/ForegroundProvider';
 import sessionManager from "../helpers/sessionManager";
+import ErrorMessage from './alert/ErrorMessage';
 
 class UserEntry extends React.Component {
 
@@ -22,8 +24,7 @@ class UserEntry extends React.Component {
             await api.post(`/friendrequests/accept`, requestBody);
             this.props.refreshUsers()
         } catch (error) {
-            console.log(error)
-            // catch error?
+            this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
         }
     }
 
@@ -35,17 +36,15 @@ class UserEntry extends React.Component {
             await api.post(`/friendrequests/decline`, requestBody);
             this.props.refreshUsers()
         } catch (error) {
-            console.log(error)
-            // catch error?
+            this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
         }
     }
 
     inviteUserToGameSession(user) {
-        user.setStatus(userStatus.BUSY)
+        user.setStatus("Invited")
         this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/invite`, {username: user.getUsername()});
     }
 
-    // TODO myfriends -> on fetch  status = invited in user feedback bacakend side (15s then again to free)
     render() {
         let {user, withInvitation} = this.props
 
@@ -58,7 +57,7 @@ class UserEntry extends React.Component {
         return (
             <div className="user-entry">
                 <Avatar img={avatar} />
-                <p className="username">{user.getUsername()}</p>
+                <p className="username">{user.getUsername() === localStorage.getItem("username") ? "You" : user.getUsername()}</p>
                 <p className="email">{user.getEmail()}</p>
                 {user.getCategory() === userCategories.RECEIVED ? 
                     <React.Fragment>
@@ -73,7 +72,7 @@ class UserEntry extends React.Component {
     }
 }
 
-export default withRouter(withWebsocketContext(UserEntry));
+export default withRouter(withForegroundContext(withWebsocketContext(UserEntry)));
 
 
 

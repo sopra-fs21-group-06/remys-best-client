@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-import { getDomain, isProduction } from "../helpers/domainUtils";
+import { getDomain, isProduction } from "./domainUtils";
 
 export const createSockClient = () => {
     var state = {
@@ -14,8 +14,11 @@ export const createSockClient = () => {
     }
 
     const send = (destination, body) => {
+        if(!body) {
+            body = {};
+        }
         body.token = localStorage.getItem('token');
-        state.stomp.send(destination, {}, JSON.stringify(body ? body : {}));
+        state.stomp.send(destination, {}, JSON.stringify(body));
     }
 
     const stripResponse = (response) => {
@@ -24,16 +27,11 @@ export const createSockClient = () => {
 
     const handleError = (error) => {
         console.error(error);
-        //this._handleDisconnect("Socket error.");
     }
 
     const handleDisconnect = (reason) => {
-        console.log(reason)
+        console.log(`disconnet reason: ${reason}`)
         state.isConnected = false;
-        /*
-        for (let callback of this._disconnectCallbacks) {
-            callback(reason);
-        }*/
     }
 
     // return all public methods
@@ -41,7 +39,7 @@ export const createSockClient = () => {
         isConnected: () => state.isConnected,
         connect: (callback) =>  {
             try {
-                state.sock.close(); // TODO needed? 
+                state.sock.close();
             } catch {
             }
 

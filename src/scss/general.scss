@@ -140,7 +140,6 @@ div.blurred-element {
             height: 100%;
             backdrop-filter: blur(10px);
             background-color: rgba(255, 255, 255, 0.1);
-            // todo fallback browser support
         }
 
         .content {
@@ -190,6 +189,12 @@ div.box {
     .box-content {
         background-color: rgba(255, 255, 255, 0.5);
         padding: 17px 22px;
+
+        &.error-box {
+            background-color: #FFF0F1;
+            color: $red;
+            max-width: 400px;
+        }
 
         &.with-users {
             display: flex;
@@ -536,7 +541,8 @@ div.box {
 
     p {
         color: white;
-        margin-bottom:32px;
+        margin-bottom: 32px;
+        line-height: 1.4;
 
         span {
             font-weight: $semi-bold;

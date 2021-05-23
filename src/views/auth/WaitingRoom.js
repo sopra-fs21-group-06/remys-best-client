@@ -24,11 +24,11 @@ class WaitingRoom extends React.Component {
   }
   
   componentWillUnmount() {
-    this.props.websocketContext.sockClient.send('/app/waiting-room/unregister', {});
+    this.props.websocketContext.sockClient.send('/app/waiting-room/unregister');
   }
 
   register() {
-    this.props.websocketContext.sockClient.send('/app/waiting-room/register', {});
+    this.props.websocketContext.sockClient.send('/app/waiting-room/register');
   }
 
   handleWaitingRoomMessage(msg) {
