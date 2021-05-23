@@ -82,7 +82,7 @@ This view is where all the game takes place. Everything from the card handout, t
 
 ## Roadmap
 
-1. Implement all the components preparing server calls and server-response procedures
+1. Implement emailverification
 2. Minor bug fixes
 3. Mobile version?
 
