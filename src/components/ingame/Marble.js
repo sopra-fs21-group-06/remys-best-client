@@ -34,7 +34,6 @@ class Marble extends React.Component {
             top: top + 'px',
             width: size + 'px',
             height: size + 'px',
-            background: colorHexDark,
             background: `radial-gradient(circle at ${size/3}px ${size/3}px, ${colorHex}, ${colorHexDark})`
         };
 
