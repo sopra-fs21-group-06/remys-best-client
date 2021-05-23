@@ -305,7 +305,7 @@ class Board extends React.Component {
 
     resetSevenMoves() {
         let marblesWithoutPreviewMarbles = this.getMarblesWithoutPreviewMarbles()
-        marblesWithoutPreviewMarbles.map(marble => {
+        marblesWithoutPreviewMarbles.forEach(marble => {
             marble.setHasPreviewMarble(false)
             return marble
         })

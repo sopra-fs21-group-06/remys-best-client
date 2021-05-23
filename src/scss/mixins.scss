@@ -30,43 +30,6 @@
     transition-timing-function: cubic-bezier(.8, 0, .2, 1);
 }
 
-@mixin marble-styles1($color) {
-    $size: 20px; // size / 25 -> 400px / 25
-    display: block;
-    background: darken($color, 20%);
-    border-radius: 100%;
-    height: $size;
-    width: $size;
-    margin: 0;
-    background: radial-gradient(circle at $size/3 $size/3, $color, darken($color, 20%));
-}
-
-@mixin marble-styles1($color) {
-    $size: 20px; // size / 25 -> 400px / 25
-    display: block;
-    background: darken($color, 20%);
-    border-radius: 100%;
-    height: $size;
-    width: $size;
-    margin: 0;
-    background: radial-gradient(circle at $size/3 $size/3, $color, darken($color, 20%));
-}
-
-@mixin marble-styles2($color) {
-    $size: 15px;
-    width: $size;
-    height: $size;
-    border-radius: 50%;
-    box-shadow: inset 0 0 $size/8 #fff,
-        inset $size/15 0 $size/3.75 $color,
-        inset (-$size/15) $size/7 $size/3 darken($color, 20%),
-        inset $size/15 0 $size $color,
-        inset (-$size/15) 0 $size darken($color, 20%) //0 0 $size/6 #fff,
-        //(-$size/30) 0 $size/3.75 $blue,
-        //$size/30 0 $size/3.75 #0ff
-    ;
-}
-
 @mixin disappear {
     @for $i from 1 through 5 {
         &:nth-of-type(#{$i}) {
@@ -119,28 +82,6 @@
     }
 }
 
-/*
-
-#oboing {
-    align-self: flex-end;
-    animation-duration: 2s;
-    animation-iteration-count: infinite;
-    background-color: black;
-    height: 200px;
-    margin: 0 auto 0 auto;
-    transform-origin: bottom;
-    width: 200px;
-}
-
-https: //stackoverflow.com/questions/66696971/css3-increment-text-after-animation-complete
-
-#oboing {
-    animation-name: oboing;
-    animation-fill-mode: forwards;
-    -webkit-animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.280, 0.840, 0.420, 1);
-}*/
-
 @keyframes moveRightLeft {
     0% {
         transform: translate(-37.5%, -50%);
@@ -155,12 +96,10 @@ https: //stackoverflow.com/questions/66696971/css3-increment-text-after-animatio
 
 @keyframes moveTopDown {
     0% {
-        //transform: translate(-50%, -37.5%);
         opacity: 0.7;
     }
 
     100% {
-        //transform: translate(-50%, -62.5%);
         opacity: 1;
     }
 }

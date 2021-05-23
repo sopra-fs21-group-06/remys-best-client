@@ -205,9 +205,9 @@ export const computeFields = (boardSize) => {
     addFieldPosition(fixedFields, curPosition[0], curPosition[1], colors.BLUE, 16, true);
     addKennel(fixedFields, startingLeft, startingTop, colors.BLUE, kennelFieldIds[0])
     curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT, colors.BLUE, null, false)
-    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_RIGHT, colors.BLUE, null, false)
+    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_RIGHT, colors.BLUE)
     curPosition = addStraightLine(circleFields, curPosition[0], curPosition[1], directions.TO_BOTTOM_RIGHT, colors.BLUE, null, false)
-    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT, colors.BLUE, null, false)
+    curPosition = addCurvedLine(circleFields, curPosition[0], curPosition[1], directions.TO_TOP_RIGHT, colors.BLUE)
     circleFields.splice(-1,1)
     for (let i = 0; i < circleFields.length; i++) {
         circleFields[i].index = i+1;
