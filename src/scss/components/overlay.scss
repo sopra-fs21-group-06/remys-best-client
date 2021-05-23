@@ -1,0 +1,52 @@
+.overlay {
+    z-index: 999999;
+    min-height: 100vh;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+
+    a {
+        cursor: pointer;
+        color: white;
+    }
+
+    .close {
+        position: fixed;
+        top: $content-margin;
+        right: $content-margin;
+
+        a {
+            font-size: 22px;
+        }
+    }
+}
+
+.instruction,
+.about {
+    width: 90%;
+    max-width: 550px;
+    margin: auto;
+    padding-top: 32px;
+
+    h1 {
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    p {
+        color: white;
+        margin-bottom: 32px;
+        line-height: 1.4;
+
+        span {
+            font-weight: $semi-bold;
+        }
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    a {
+        text-decoration: underline;
+    }
+}

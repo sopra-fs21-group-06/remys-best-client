@@ -1,0 +1,36 @@
+.alert {
+    width: auto;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 999999;
+
+    .invitation {
+
+        position: relative;
+
+        .text {
+            margin-bottom: 8px;
+            max-width: 250px;
+
+            .host-name {
+                font-weight: $semi-bold;
+            }
+        }
+
+        .btn-wrapper {
+            overflow: hidden;
+
+            .accept {
+                float: left;
+                color: $green;
+            }
+
+            .reject {
+                float: left;
+                color: $red;
+                margin-right: 16px;
+            }
+        }
+    }
+}

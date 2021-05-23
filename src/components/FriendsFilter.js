@@ -4,7 +4,7 @@ import { ServerError, ValidatedClearableInput} from "../helpers/formUtils"
 import BoxWithUsers from "./BoxWithUsers"
 import debounce from 'lodash.debounce'
 import { createUser } from "../helpers/modelUtils";
-import { userCategories, userStatus } from "../helpers/constants";
+import { userCategories } from "../helpers/constants";
 
 class FriendsFilter extends React.Component {
 

@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,200;0,400;0,500;0,700;1,200;1,400;1,500;1,700&display=swap');
 
-/**
-This file contains the general and shared style of the application.
- */
 body {
     position: relative;
     height: 100%;
@@ -36,13 +33,28 @@ p {
     }
 }
 
-.user-box-title {
-    margin-left: 10px;
-    margin-bottom: 8px;
+h1 {
+    font-size: 25px;
+    font-weight: $bold;
+}
 
-    p {
-        color: $black-light;
-    }
+input,
+textarea,
+select,
+button {
+    font-family: inherit;
+    line-height: inherit;
+    font-size: inherit;
+    outline: none;
+}
+
+*:focus {
+    outline: none;
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
 }
 
 div.clickable {
@@ -50,11 +62,6 @@ div.clickable {
     &:hover {
         cursor: pointer;
     }
-}
-
-h1 {
-    font-size: 25px;
-    font-weight: $bold;
 }
 
 .background {
@@ -88,239 +95,6 @@ h1 {
     overflow: hidden;
     @include fullscreen;
 }
-
-.gameScreen {
-    position: fixed;
-    @include fullscreen;
-}
-
-input,
-textarea,
-select,
-button {
-    font-family: inherit;
-    line-height: inherit;
-    font-size: inherit;
-    outline: none;
-}
-
-*:focus {
-    outline: none;
-}
-
-* {
-    -webkit-font-smoothing: antialiased;
-    box-sizing: border-box;
-}
-
-
-div.blurred-element {
-
-    &.counter-container {
-        position: relative;
-
-        .counter {
-            position: absolute;
-            top: 0;
-            right: 0;
-            z-index: 11;
-            transform: translate(33%, -33%);
-        }
-    }
-    
-    .container {
-        position: relative;
-
-        .bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 9;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(10px);
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .content {
-            position: relative;
-            overflow: hidden;
-            z-index: 10;
-            width: 100%;
-            height: 100%;
-        }
-    }
-    
-}
-
-div.avatar-box {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    &.GREEN-bg {
-        background: rgba($green, 0.2);
-    }
-
-    &.RED-bg {
-        background: rgba($red, 0.2);
-    }
-
-    &.BLUE-bg {
-        background: rgba($blue, 0.2);
-    }
-
-    &.YELLOW-bg {
-        background: rgba($yellow, 0.2);
-    }
-
-    img {
-        width: 28px;
-        height: 28px;
-        margin-bottom: 4px;        
-        user-select: none;
-    }
-}
-
-div.box {
-
-    .box-content {
-        background-color: rgba(255, 255, 255, 0.5);
-        padding: 17px 22px;
-
-        &.error-box {
-            background-color: #FFF0F1;
-            color: $red;
-            max-width: 400px;
-        }
-
-        &.with-users {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            height: 304px;
-
-            .scrollable {
-                width: 100%;
-                height: 100%;
-                overflow-y: scroll;
-                padding-right: 100px;
-                box-sizing: content-box;
-
-                .user-entry {
-                    position: relative;
-                    margin-bottom: 10px;
-                
-                    .username {
-                        font-weight: $semi-bold;
-                        @include centerer(false, true);
-                        left: 70px; // avatar width 60px
-                        max-width: calc(85% - 70px);
-                    }
-
-                    .status {
-                        color: $black-light;
-                        @include centerer(false, true);
-                        right: 0;
-
-                        &.invite {
-                            text-decoration: underline;
-
-                            &:hover {
-                                cursor: pointer;
-                            }
-                        }
-                    }
-
-                    &:last-of-type {
-                        margin-bottom: 0;
-                    }
-
-                    .accept {
-                        position: absolute;
-                        top: 9px;
-                        right: 0;
-                        color: $green;
-                    }
-
-                    .reject {
-                        position: absolute;
-                        bottom: 9px;
-                        right: 0;
-                        color: $red;
-                    }
-                }
-
-                .loading {
-                    position: relative;
-                    width: inherit;
-                    height: inherit;
-
-                    .loader-wrapper {
-                        position: absolute;
-                        top: 45%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-
-                        .loader {
-                            color: $grey-light;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-.game-end {
-    .below-text {
-       color: $black-light;
-       text-align: center;
-       margin-top: 16px;
-    }
-}
-
-
-
-.user-filter {
-    margin-left: 10px;
-    margin-bottom: 8px;
-
-    p {
-        display:inline-block;
-        margin-right: 10px;
-        cursor: pointer;
-        color: $black-light;
-
-        &:first-of-type {
-            position: relative;
-            padding-right: 10px;
-
-            &:after {
-                content:"";
-                background: $black-light;
-                position: absolute;
-                bottom: 0;
-                right: 0;
-                height: 100%;
-                width: 1px;
-            }
-        }
-
-        &:hover {
-            opacity: 0.8;
-        }
-
-        &.active {
-            text-decoration: underline;
-        }
-    }
-}
-
-
 
 .loader,
 .loader:before,
@@ -358,66 +132,6 @@ div.box {
     }
 }
 
-.manage-friends {
-
-    .friends-filter {
-        margin-bottom: 32px;;
-    }
-
-    .friend-request {
-         p {
-             margin-left: 10px;
-             margin-bottom: 8px;
-         }
-    }
-}
-
-.link-below-box {
-    text-align: center;
-    margin-top: 16px;
-
-    p {
-        text-decoration: underline;
-    }
-}
-
-.alert {
-    width: auto;
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 999999;
-
-    .invitation {
-
-        position: relative;
-
-        .text {
-            margin-bottom: 8px;
-            max-width: 250px;
-
-            .host-name {
-                font-weight: $semi-bold;
-            }
-        }
-
-        .btn-wrapper {
-            overflow: hidden;
-
-            .accept {
-                float: left;
-                color: $green;
-            }
-
-            .reject {
-                float: left;
-                color: $red;
-                margin-right: 16px;
-            }
-        }
-    }
-}
-
 .counter {
     display: table-cell;
     vertical-align: middle;
@@ -443,25 +157,6 @@ div.box {
     }
 }
 
-.overlay {
-    z-index: 999999;
-    min-height: 100vh;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-
-    .close {
-        position: fixed;
-        top: $content-margin;
-        right: $content-margin;
-
-        a {
-            font-size: 22px;
-            cursor: pointer;
-            color: white;
-        }
-    }
-}
-
 .fixed {
     position: fixed;
     width: 100%;
@@ -470,79 +165,3 @@ div.box {
     overflow-y: scroll;
 }
 
-
-.card-overview {    
-    width: 45%;
-    min-height: 100vh;
-    max-width: 450px;
-    margin: 0 auto;
-    position: relative;
-   
-    .card-container {
-        width: 100%;
-        @include centerer;
-        display: flex;
-        flex-wrap: wrap;
-
-        .card {
-            width: calc(25% - 3/4*16px);
-            height: auto;
-            box-sizing: border-box;
-            margin-right: 16px;
-            margin-bottom: 16px;
-            transition: all 0.2s ease-in-out;
-    
-            &:nth-of-type(4n) {
-                margin-right: 0px;
-            }
-
-            &:last-of-type {
-                margin-bottom: 0;
-            }
-
-            &:hover {
-                cursor: pointer;
-                transform: scale(1.08)
-            }
-        }
-    }
-}
-
-
-.turn-message {
-
-    p {
-        font-size: 75px;
-
-        span {
-            font-weight: $semi-bold;
-        }
-    }
-}
-
-.instruction,
-.about {
-    width: 90%;
-    max-width: 550px;
-    margin: auto;
-    padding-top: 32px;
-
-    h1 {
-        color: white;
-        margin-bottom: 20px;
-    }
-
-    p {
-        color: white;
-        margin-bottom: 32px;
-        line-height: 1.4;
-
-        span {
-            font-weight: $semi-bold;
-        }
-    }
-
-    img {
-        max-width: 100%;
-    }
-}
