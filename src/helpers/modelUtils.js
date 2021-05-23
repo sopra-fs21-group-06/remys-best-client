@@ -28,14 +28,17 @@ export const createField = (id, left, top, color, size, borderWidth, isColorShow
     });
 };
 
+const DELIMITER = "#"
+
 const Marble = (id, fieldKey, color, isPreviewMarble) => {
-    let _id = id;
+    let _id = String(id);
     let _fieldKey = String(fieldKey);
     let _color = color;
     let _isMovable = false;
     let _isVisible = true;
     let _isSelected = false;
     let _isPreviewMarble = isPreviewMarble;
+    let _hasPreviewMarble = false;
 
     return ({
         getId: () => _id,
@@ -49,7 +52,10 @@ const Marble = (id, fieldKey, color, isPreviewMarble) => {
         getIsSelected: () => _isSelected,
         setIsSelected: (isSelected) => _isSelected = isSelected,
         getIsPreviewMarble: () => _isPreviewMarble,
-        getIsCorrespondingPreviewMarble: (originMarbleId) => _isPreviewMarble && _id === originMarbleId + "_preview",
+        getIsCorrespondingPreviewMarble: (originMarbleId) => _isPreviewMarble && _id === originMarbleId + DELIMITER + "preview",
+        getIsCorrespondingOriginMarble: (previewMarbleId) => !_isPreviewMarble && _id === previewMarbleId.split(DELIMITER)[0],
+        getHasPreviewMarble: () => _hasPreviewMarble,
+        setHasPreviewMarble: (hasPreviewMarble) => _hasPreviewMarble = hasPreviewMarble,
     });
 };
 
@@ -58,7 +64,7 @@ export const createMarble = (id, fieldKey, color) => {
 };
 
 export const createPreviewMarble = (originMarbleId, fieldKey, color) => {
-    return Marble(originMarbleId + "_preview", fieldKey, color, true)
+    return Marble(String(originMarbleId) + DELIMITER + "preview", fieldKey, color, true)
 };
 
 export const createChannel = (name, callback) => {
@@ -124,6 +130,7 @@ export const createUser = (username, email, status, category) => {
         getUsername: () => _username,
         getEmail: () => _email,
         getStatus: () => _status,
+        setStatus: (status) => _status = status,
         getCategory: () => _category,
         getInvite: () => _invite,
         setInvite: (invite) => _invite = invite,

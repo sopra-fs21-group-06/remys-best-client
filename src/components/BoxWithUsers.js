@@ -18,13 +18,15 @@ class BoxWithUsers extends React.Component {
     }
 
     render() {
-        let {withFilter, users, isSubmitting, title, withInvitation, refreshUsers} = this.props
+        let {withFilter, users, isSubmitting, title, refreshUsers, withInvitation} = this.props
         let {filteredCategory} = this.state
         let {FRIENDS, SENT, RECEIVED} = userCategories
 
-        let usersToShow = users.filter(user => {
-            return user.getCategory() === filteredCategory
-        });
+        if(withFilter) {
+            users = users.filter(user => {
+                return user.getCategory() === filteredCategory
+            });
+        }
 
         return (
             <div>
@@ -51,13 +53,13 @@ class BoxWithUsers extends React.Component {
                                 </div>
                             </div>
                         : 
-                        usersToShow.map(user => {
+                        users.map(user => {
                             return (
                                 <UserEntry 
                                     key={user.getUsername()} 
                                     user={user} 
-                                    withInvitation={withInvitation}
                                     refreshUsers={refreshUsers}
+                                    withInvitation={withInvitation}
                                 />
                             );
                         })}

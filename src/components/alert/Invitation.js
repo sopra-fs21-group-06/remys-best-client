@@ -5,24 +5,18 @@ import sessionManager from "../../helpers/sessionManager"
 class Invitation extends React.Component {
 
     reject() {
-        // TODO? send rejection (send rejection to server?)
+        this.props.websocketContext.sockClient.send(`/app/gamesession-request/${this.props.gameSessionId}/reject`);
         this.props.closeAlert()
     }
 
     accept() {
-        // TODO? send acception (send acception to server?)
-        this.props.closeAlert()
+        // will be accepted in /create-new-game
         sessionManager.setGameSessionId(this.props.gameSessionId)
         this.props.history.push('/create-new-game')
     }
 
     render() {
         let {countdown, hostName} = this.props
-
-        if(parseInt(countdown) <= 0) {
-            console.log(parseInt(countdown))
-            this.props.closeAlert()
-        }
 
         return (
             <Box borderRadius="16" counter={countdown}>

@@ -1,14 +1,8 @@
-export const viewLinks = {
-    BASIC: {
-        headerLink: {
-            to: "/instruction",
-            name: "Instruction"
-        },
-        footerLink: {
-            to: "/about",
-            name: "About"
-        }
-    }
+export const linksMode = {
+    UNAUTH: "UNAUTH",
+	AUTH: "AUTH",
+	IN_GAME: "IN_GAME",
+	IN_GAME_SESSION: "IN_GAME_SESSION"
 }
 
 export const roundModes = {
@@ -52,14 +46,15 @@ export const handModes = {
 export const userCategories = {
 	FRIENDS: "Friends",
 	SENT: "Sent",
-	RECEIVED : "Received"
+	RECEIVED: "Received",
+	INVITED: "Invited",
+	ACCEPTED: "Accepted"
 }
 
 export const userStatus = {
 	FREE: "Free",
+	BUSY: "Busy",
 	INVITE: "Invite",
-	SENT: "Sent",
-	RECEIVED : "Received"
 }
 
 export const cardImages = {

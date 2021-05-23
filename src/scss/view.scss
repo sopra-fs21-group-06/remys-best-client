@@ -1,10 +1,18 @@
 .view {
     padding-bottom: 100px;
 
-    .dog {
+    &.ingame-view {
+        padding-bottom: 0;
+    }
+
+    .dog-container {
         width: 90px;
         display: block;
         margin: 40px auto;
+
+        .dog {
+            width: 100%;
+        }
     }
 
     h1  {
@@ -89,9 +97,11 @@
 
     .navigation-link {
         position: absolute;
+        z-index: 20;
 
         a {
             font-size: 22px;
+            cursor: pointer;
         }
 
         &.header-link {

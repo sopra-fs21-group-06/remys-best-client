@@ -7,18 +7,34 @@
 
     &.BLUE-bottom {
         @include rotate-bg(0deg);
+
+        .played-card-pile {
+            @include rotate-bg(0deg);
+        }
     }
 
     &.GREEN-bottom {
         @include rotate-bg(90deg);
+
+        .played-card-pile {
+            @include rotate-bg(90deg);
+        }
     }
 
     &.RED-bottom {
         @include rotate-bg(180deg);
+
+        .played-card-pile {
+            @include rotate-bg(180deg);
+        }
     }
 
     &.YELLOW-bottom {
         @include rotate-bg(-90deg);
+
+        .played-card-pile {
+            @include rotate-bg(-90deg);
+        }
     }
     
     .wood {
@@ -76,7 +92,11 @@
             }
 
             &.preview {
-                opacity: 0.7;
+                opacity: 0.5;
+            }
+
+            &.hidden {
+                display: none;
             }
         }
     }

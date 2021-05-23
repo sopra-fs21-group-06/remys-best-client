@@ -3,8 +3,6 @@ import { api, handleError } from "../helpers/api";
 import { ServerError, ValidatedClearableInput} from "../helpers/formUtils"
 import BoxWithUsers from "./BoxWithUsers"
 import debounce from 'lodash.debounce'
-import { withWebsocketContext } from './context/WebsocketProvider';
-import sessionManager from "../helpers/sessionManager";
 import { createUser } from "../helpers/modelUtils";
 import { userCategories, userStatus } from "../helpers/constants";
 
@@ -20,11 +18,9 @@ class FriendsFilter extends React.Component {
         };
 
         this.allUsers = []
-        this.gameSessionId = sessionManager.getGameSessionId();
 
         this.handleOnChange = this.handleOnChange.bind(this)
         this.handleClearValue = this.handleClearValue.bind(this)
-        this.invite = this.invite.bind(this)
         this.refreshUsers = this.refreshUsers.bind(this)
     }
 
@@ -42,9 +38,12 @@ class FriendsFilter extends React.Component {
             this.fetchAndTransformReceived()
         ]);
 
-        let allUsers = friendUsers.concat(sentUsers).concat(receivedUsers)
-        this.allUsers = allUsers
-        return allUsers
+        if(friendUsers && sentUsers && receivedUsers) {
+            let allUsers = friendUsers.concat(sentUsers).concat(receivedUsers)
+            this.allUsers = allUsers
+            return allUsers
+        }
+        return []
     }
 
     updateFilteredUsers(filteredUsers) {
@@ -70,7 +69,6 @@ class FriendsFilter extends React.Component {
             const response = await api.get(`/myfriends`);
             this.setState({ serverError: null })
             return response.data.friends.map(friend => {
-                console.log("friend: " + friend.username)
                 return createUser(friend.username, "friend@friend.ch", friend.status, userCategories.FRIENDS)
             })
         } catch (error) {
@@ -83,7 +81,6 @@ class FriendsFilter extends React.Component {
             const response = await api.get(`/friendrequests/sent`);
             this.setState({ serverError: null })
             return response.data.map(sent => {
-                console.log("sent: " + sent.receiverName)
                 return createUser(sent.receiverName, "sent@sent.ch", null, userCategories.SENT)
             })
         } catch (error) {
@@ -96,7 +93,6 @@ class FriendsFilter extends React.Component {
             const response = await api.get(`/friendrequests/received`);
             this.setState({ serverError: null })
             return response.data.map(received => {
-                console.log("received: " + received.senderName)
                 return createUser(received.senderName, "received@received.ch", null, userCategories.RECEIVED)
             })
         } catch (error) {
@@ -134,22 +130,9 @@ class FriendsFilter extends React.Component {
         this.updateFilteredUsers(filteredUsers)
     }
 
-    invite(username) {
-        this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/invite`, {username: username});
-    }
-
     render() {
-        let {usernameOrEmail, filteredUsers, serverError, isSubmitting, withInvitation} = this.state
-
-        if(this.props.withInvitation) {
-            filteredUsers = filteredUsers.map(user => {
-                if(user.getStatus() === userStatus.FREE) {
-                    user.setStatus(userStatus.INVITE)
-                    user.setInvite(this.invite(user.getUsername()))
-                }
-                return user
-            })
-        }
+        let {usernameOrEmail, filteredUsers, serverError, isSubmitting} = this.state
+        let {withInvitation} = this.props
 
         return (
             <div>
@@ -166,8 +149,8 @@ class FriendsFilter extends React.Component {
                     withFilter 
                     users={filteredUsers} 
                     isSubmitting={isSubmitting} 
-                    withInvitation={withInvitation}
                     refreshUsers={this.refreshUsers}
+                    withInvitation={withInvitation}
                 />
                 <div className="link-below-box"><p onClick={() => this.refreshUsers()}className="clickable">Refresh</p></div>
              </div>
@@ -175,4 +158,4 @@ class FriendsFilter extends React.Component {
     }
 }
 
-export default withWebsocketContext(FriendsFilter);
+export default FriendsFilter;

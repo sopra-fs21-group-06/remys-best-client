@@ -1,12 +1,11 @@
 import React from 'react';
-import {Link, withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import Board from "../../components/ingame/Board";
 import MyHand from "../../components/ingame/hand/MyHand";
 import Hand from "../../components/ingame/hand/Hand";
 import dogCard from "../../img/dog-card.png"
 import HandContainer from "../../components/ingame/hand/HandContainer";
-import View from "../View";
-import { cardImages, gameEndModes, roundModes, viewLinks } from "../../helpers/constants";
+import { cardImages, roundModes } from "../../helpers/constants";
 import Facts from "../../components/ingame/Facts";
 import Notifications from "../../components/ingame/Notifications";
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
@@ -17,7 +16,9 @@ import sessionManager from "../../helpers/sessionManager";
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
-import { api } from '../../helpers/api';
+import { api, handleError } from '../../helpers/api';
+import InGameView from '../InGameView';
+import ErrorMessage from '../../components/alert/ErrorMessage';
 
 class Game extends React.Component {
 
@@ -57,8 +58,7 @@ class Game extends React.Component {
         createChannel(`/topic/game/${this.gameId}/turn`, (msg) => this.handleTurnChangedMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/throwaway`, (msg) => this.handleThrowAwayMessage(msg)),
         createChannel(`/topic/game/${this.gameId}/played`, (msg) => this.handlePlayedMessage(msg)),
-        createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg)),
-        createChannel(`/topic/game/${this.gameId}/game-end`, (msg) => this.handlePlayerDisconnection(msg))
+        createChannel(`/user/queue/game/${this.gameId}/cards`, (msg) => this.handleCardsReceivedMessage(msg))
       ]
     }
 
@@ -97,25 +97,27 @@ class Game extends React.Component {
       }
     }
 
+    // the display of the current turn message is triggered in handleThrowAwayMessage and handlePlayedMessage
     handleTurnChangedMessage(msg) {
+      let currentTurnPlayerName = this.state.currentTurnPlayerName
       let playerName = msg.playerName
       let mode
+
       if(this.isMyPlayerName(playerName)) {
         mode = roundModes.MY_TURN
-        playerName = "your"
       } else {
         mode = roundModes.IDLE
-        playerName += "'s"
-      }
-
-      if(this.state.currentTurnPlayerName === null) {
-        this.props.foregroundContext.displayCurrentTurnMessage(playerName)
       }
 
       this.setState({ 
         mode: mode,
         currentTurnPlayerName: playerName
-      })
+      }, () => {
+        // at the beginning of a round, TODO round switches??
+        if(currentTurnPlayerName === null) {
+          this.displayCurrentTurnMessage(playerName)
+        }
+      })      
     }
 
     handleThrowAwayMessage(msg) {
@@ -126,10 +128,11 @@ class Game extends React.Component {
 
       player.getHandRef().current.removeAllCards()
 
-      player.getHandRef().current.alignCards(cardsToThrowAway)
-      setTimeout(function(){ 
-          this.boardRef.current.throwInAllCards(player, cardsToThrowAway);
-      }.bind(this), 500);
+      let actions = [];
+      actions.push(() => this.boardRef.current.throwInAllCards(player, cardsToThrowAway))
+      actions.push(() => this.displayCurrentTurnMessage())
+
+      this.executeFunctionsSequentially(actions)
     }
 
     handlePlayedMessage(msg) {
@@ -150,33 +153,28 @@ class Game extends React.Component {
         player.getHandRef().current.removeRandomCard()
       }
 
-      setTimeout(function(){ 
-          this.boardRef.current.throwInCard(player, cardToPlay);
-      }.bind(this), 500);
+      let actions = [];
+      actions.push(() => this.boardRef.current.throwInCard(player, cardToPlay))
+      actions.push(() => marblesToMove.forEach(marbleToMove => {
+        this.boardRef.current.moveMarble(marbleToMove.marbleId, marbleToMove.targetFieldKey);
+      }))
 
-      setTimeout(function() { 
-        marblesToMove.forEach(marbleToMove => {
-          this.boardRef.current.moveMarble(marbleToMove.marbleId, marbleToMove.targetFieldKey);
-        })
-      }.bind(this), 1500);
+      if(marblesToSendHome.length !== 0) {
+        actions.push(() => marblesToSendHome.forEach(marbleToSendHome => {
+          this.boardRef.current.moveMarble(marbleToSendHome.marbleId, marbleToSendHome.targetFieldKey);
+        }))
+      }
 
+      actions.push(() => this.displayCurrentTurnMessage())
 
-      // TODO NOT WORKING
-      if(marblesToSendHome !== undefined) {
-        setTimeout(function() { 
-          marblesToSendHome.forEach(marbleToSendHome => {
-            this.boardRef.current.moveMarble(marbleToSendHome.marbleId, marbleToSendHome.targetFieldKey);
-          })
-        }.bind(this), 2500);
+      this.executeFunctionsSequentially(actions)
+    }
 
-        setTimeout(function() { 
-          this.props.foregroundContext.displayCurrentTurnMessage(this.state.currentTurnPlayerName)
-        }.bind(this), 3500);
-
-      } else {
-        setTimeout(function() { 
-          this.props.foregroundContext.displayCurrentTurnMessage(this.state.currentTurnPlayerName)
-        }.bind(this), 2500);
+    executeFunctionsSequentially(functions) {
+      for(let i = 0; i < functions.length; i++) {
+        setTimeout(() => { 
+          functions[i]()
+        }, 500 + (i*1200));
       }
     }
 
@@ -187,7 +185,6 @@ class Game extends React.Component {
       
       this.getMyHandRef().current.addCards(myCards)
 
-      // TODO how to decide if it's the card from my partner?
       if(myCards.length > 1) {
         let cardAmount = myCards.length;
         this.leftHandRef.current.addCards(this.generateOtherCards(cardAmount))
@@ -196,16 +193,6 @@ class Game extends React.Component {
       } else {
         // card from partner received
         this.setState({ mode: roundModes.IDLE})
-      }
-    }
-
-    handlePlayerDisconnection(msg) {
-      if(msg.aborted!=null) {
-        this.props.history.push({pathname: '/game-end', state: {usernameWhichHasLeft: msg.aborted, mode:'aborted'}})
-      } else if(this.getMyPlayerName in msg.won){
-        this.props.history.push({pathname: '/game-end', state: { mode:'won'}})
-      } else{
-        this.props.history.push({pathname: '/game-end', state: { mode:'lost'}})
       }
     }
 
@@ -250,54 +237,82 @@ class Game extends React.Component {
       this.setState({ mode: mode})
     }
 
+    displayCurrentTurnMessage() {
+      let currentTurnPlayerName = this.state.currentTurnPlayerName
+
+      if(this.isMyPlayerName(currentTurnPlayerName)) {
+        currentTurnPlayerName = "your"
+      } else {
+        currentTurnPlayerName += "'s"
+      }
+
+      this.props.foregroundContext.displayCurrentTurnMessage(currentTurnPlayerName)
+    }
+
     async requestMoves() {
         let raisedCard = this.myHandContainerRef.current.getRaisedCard();
-        const response = await api.get(`/game/${this.gameId}/moves`, { params: { code: raisedCard.getCode() } });
-        this.myHandContainerRef.current.updateMoves(response.data.moves);
+        try {
+          const response = await api.get(`/game/${this.gameId}/moves`, { params: { code: raisedCard.getCode() } });
+          this.myHandContainerRef.current.updateMoves(response.data.moves);
+        } catch (error) {
+          this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+        }
     }
 
     async requestPossibleMarbles(moveName) {
-        this.myHandContainerRef.current.updateSelectedMoveName(moveName);
+        try {
+            this.myHandContainerRef.current.updateSelectedMoveName(moveName);
         
-        let raisedCard = this.myHandContainerRef.current.getRaisedCard();
-        let sevenMoves = this.boardRef.current.getSevenMoves();
+            let raisedCard = this.myHandContainerRef.current.getRaisedCard();
+            let sevenMoves = this.boardRef.current.getSevenMoves();
 
-        const requestBody = JSON.stringify({
-            code: raisedCard.getCode(),
-            moveName: moveName,
-            sevenMoves: sevenMoves
-        });
-        const response = await api.post(`/game/${this.gameId}/possible-marbles`, requestBody);
+            const requestBody = JSON.stringify({
+                code: raisedCard.getCode(),
+                moveName: moveName,
+                sevenMoves: sevenMoves
+            });
+            const response = await api.post(`/game/${this.gameId}/possible-marbles`, requestBody);
 
-        this.boardRef.current.updatePossibleMarbles(response.data.marbles);
-        this.myHandContainerRef.current.resetMoves()
+            this.boardRef.current.updateMovableMarbles(response.data.marbles);
+            this.myHandContainerRef.current.resetMoves()
+        } catch (error) {
+            this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+        }
     }
 
     async requestPossibleTargetFields() {
-      let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
-      let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
-      let marbleId = this.boardRef.current.getMarbleToPlay().getId();
-      let sevenMoves = this.boardRef.current.getSevenMoves();
+      try {
+          let cardToPlay = this.myHandContainerRef.current.getRaisedCard();
+          let moveNameToPlay = this.myHandContainerRef.current.getMoveNameToPlay();
+          let marbleId = this.boardRef.current.getMarbleToPlay().getId();
+          let sevenMoves = this.boardRef.current.getSevenMoves();
 
-      const requestBody = JSON.stringify({
-          code: cardToPlay.getCode(), 
-          moveName: moveNameToPlay, 
-          marbleId: marbleId,
-          sevenMoves: sevenMoves
-      });
+          const requestBody = JSON.stringify({
+              code: cardToPlay.getCode(), 
+              moveName: moveNameToPlay, 
+              marbleId: marbleId,
+              sevenMoves: sevenMoves
+          });
 
-      const response = await api.post(`/game/${this.gameId}/possible-target-fields`, requestBody);
+          const response = await api.post(`/game/${this.gameId}/possible-target-fields`, requestBody);
 
-      let possibleTargetFieldKeys = response.data.targetFieldKeys
-      this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
+          let possibleTargetFieldKeys = response.data.targetFieldKeys
+          this.boardRef.current.updatePossibleTargetFields(possibleTargetFieldKeys)
+      } catch (error) {
+          this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+      }
     }
 
     async throwAway() {
-      const response = await api.get(`/game/${this.gameId}/throw-away`);
-      let playableCardCodes = response.data
+      try {
+        const response = await api.get(`/game/${this.gameId}/throw-away`);
+        let playableCardCodes = response.data
 
-      if(playableCardCodes.length > 0) {
-        this.myHandContainerRef.current.handlePlayableCards(playableCardCodes);
+        if(playableCardCodes.length > 0) {
+          this.myHandContainerRef.current.handlePlayableCards(playableCardCodes);
+        }
+      } catch (error) {
+        this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
       }
     }
 
@@ -336,21 +351,13 @@ class Game extends React.Component {
     }
 
     sendReadyMessage() {
-     this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/ready`, {});
+     this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/ready`);
     }
 
     render() {
-      let gameEnd = {
-        pathname: '/game-end',
-        state: { 
-          mode: gameEndModes.ABORTED,
-          usernameWhichHasLeft: "Andrina"
-        }
-      }
-
       return (
         <WebsocketConsumer channels={this.channels} connectionCallback={() => this.sendReadyMessage()}>
-          <View className="game" withFooterHidden withDogImgHidden linkMode={viewLinks.BASIC}>
+          <InGameView className="game">
             <main>
                 <Facts facts={this.state.facts} />
                 <Notifications notifications={this.state.notifications} />
@@ -384,9 +391,8 @@ class Game extends React.Component {
                 <HandContainer position="partner">
                   <Hand ref={this.partnerHandRef} />
                 </HandContainer>
-                <Link to={gameEnd}>Game aborted</Link>
             </main>
-          </View>     
+          </InGameView>     
         </WebsocketConsumer>
       );
     }

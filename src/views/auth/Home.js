@@ -1,14 +1,16 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants";
 import NavigationBox from "../../components/NavigationBox"
+import sessionManager from "../../helpers/sessionManager";
 import { withBackgroundContext } from '../../components/context/BackgroundProvider';
 import { withForegroundContext } from '../../components/context/ForegroundProvider';
 import { withWebsocketContext } from '../../components/context/WebsocketProvider';
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import Invitation from '../../components/alert/Invitation';
 import { createChannel } from '../../helpers/modelUtils';
+import { api, handleError } from '../../helpers/api';
+import AuthView from '../AuthView';
+import ErrorMessage from '../../components/alert/ErrorMessage';
 
 class Home extends React.Component {
 
@@ -18,9 +20,11 @@ class Home extends React.Component {
       username: localStorage.getItem("username"),
     };
 
+    this.invitationRef = React.createRef();
+
     this.channels = [
-      createChannel(`/user/queue/invitation`, (msg) => this.handleInvitationMessage(msg)),
-      createChannel(`/user/queue/countdown`, (msg) => this.handleCountdownMessage(msg)),
+      createChannel(`/user/queue/home/invitation`, (msg) => this.handleInvitationMessage(msg)),
+      createChannel(`/user/queue/home/invitation/countdown`, (msg) => this.handleCountdownMessage(msg)),
     ]
   }
 
@@ -29,38 +33,54 @@ class Home extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.websocketContext.sockClient.send('/app/home/unregister', {});
+    if(this.invitationRef.current) {
+      this.invitationRef.current.reject()
+    }
+    this.props.websocketContext.sockClient.send('/app/home/unregister');
   }
 
   register() {
-    this.props.websocketContext.sockClient.send('/app/home/register', {});
+    this.props.websocketContext.sockClient.send('/app/home/register');
   }
 
   handleInvitationMessage(msg) {
     this.props.foregroundContext.openAlert(<Invitation 
+      ref={this.invitationRef}
       hostName={msg.hostName}
       gameSessionId={msg.gameSessionId}
-      closeAlert={this.props.foregroundContext.closeAlert} />
+      closeAlert={this.props.foregroundContext.closeAlert} 
+      websocketContext={this.props.websocketContext}
+      history={this.props.history}
+      />
     );
+    this.props.foregroundContext.setAlertCountdown(null)
   }
 
   handleCountdownMessage(msg) {
-    this.props.foregroundContext.setCountdown(parseInt(msg.currentCounter))
+    let countdown = parseInt(msg.currentCounter)
+
+    if(countdown <= 0 && this.invitationRef.current) {
+      this.invitationRef.current.reject()
+    } else {
+      this.props.foregroundContext.setAlertCountdown(countdown)
+    }
   }
 
   async onClickCreateNewGame() {
-    /*
-    const response = await api.get(`/create-gamesession`);
-    let gameSessionId = response.data.gameSessionId
-    sessionManager.setGameSessionId(gameSessionId)*/
-    this.props.history.push('/create-new-game')
+    try {
+      const response = await api.get(`/create-gamesession`);
+      let gameSessionId = response.data.gameSessionId
+      sessionManager.setGameSessionId(gameSessionId)
+      this.props.history.push('/create-new-game')
+    } catch (error) {
+      this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+    }
   }
 
-  // todo view withBasicLinks topLeftLink={} bottomRightLink={}
   render() {
     return (
       <WebsocketConsumer channels={this.channels} connectionCallback={() => this.register()}>
-        <View title={"Welcome back, " + this.state.username}  linkMode={viewLinks.BASIC}>
+        <AuthView title={"Welcome back, " + this.state.username}>
           <main className="large side-by-side">
               <div className="col">
                 <p className="above-box">How do you want to play Brändi Dog?</p>
@@ -90,7 +110,7 @@ class Home extends React.Component {
                 />
               </div>
             </main>
-        </View>
+        </AuthView>
       </WebsocketConsumer>
     );
   }

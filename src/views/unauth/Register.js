@@ -1,18 +1,17 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import RegisterForm from '../../components/form/RegisterForm';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants"
+import UnauthView from '../UnauthView';
 
 class Register extends React.Component {
 
   render() {
     return (
-      <View className="register" title="Create your account" linkMode={viewLinks.BASIC}>
+      <UnauthView className="register" title="Create your account">
           <main className="small">
             <RegisterForm />
           </main>
-      </View>
+      </UnauthView>
     );
   }
 }

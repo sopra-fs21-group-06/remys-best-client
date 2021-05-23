@@ -1,45 +1,37 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants";
 import sessionManager from "../../helpers/sessionManager";
+import AuthView from '../AuthView';
 
 class GameEnd extends React.Component {
 
   constructor() {
     super();
-    this.state = {
-      username: localStorage.getItem("username")
-    };
-    sessionManager.setGameId(null)
+    this.myUsername = localStorage.getItem("username")
   }
 
   render() {
-    let {mode, usernameWhichHasLeft} = this.props.location.state;
+    let {gameEndMessage} = this.props.location.state;
     var title, text;
 
-    switch(mode) {
-      case "won":
-          title = "Congrats, you won!"; 
-          text = "Good game! Thanks for playing Brändi Dog Online with us. You wanna play again?";
-          break;
-      case "lost":
-          title = "Sorry, you lost!"; 
-          text = "No one is born a master! Thanks for playing Brändi Dog Online with us. You wanna play again?";
-          break;
-      case "aborted":
-          title = `${usernameWhichHasLeft} left the game!`;
-          text = `We are sorry! The game has been aborted because ${usernameWhichHasLeft} left the game. You wanna play again?`;
-          break;
-    } 
+    if(gameEndMessage.aborted != null) {
+      title = `${gameEndMessage.aborted} left the game!`;
+      text = `We are sorry! The game has been aborted because ${gameEndMessage.aborted} left the game. You wanna play again?`;
+    } else if(gameEndMessage.won.find(username => this.myUsername === username) !== undefined){
+      title = "Congrats, you won!"; 
+      text = "Good game! Thanks for playing Brändi Dog Online with us. You wanna play again?";
+    } else{ 
+      title = "Sorry, you lost!"; 
+      text = "No one is born a master! Thanks for playing Brändi Dog Online with us. You wanna play again?";
+    }
 
     return (
-      <View className="game-end" title={title}  linkMode={viewLinks.BASIC}>
+      <AuthView className="game-end" title={title}>
         <main className="small">
             <p>{text}</p>      
             <p className="below-text"><Link to="/home">Leave and return to Home</Link></p>
           </main>
-      </View>
+      </AuthView>
     );
   }
 }

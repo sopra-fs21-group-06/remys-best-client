@@ -7,8 +7,10 @@ import Field from './Field';
 import { ThrowIn } from '../transitions/ThrowIn';
 import { TransitionGroup } from 'react-transition-group';
 import Card from "./hand/Card";
-import { api } from '../../helpers/api';
+import { api, handleError } from '../../helpers/api';
 import sessionManager from "../../helpers/sessionManager";
+import { withForegroundContext } from '../context/ForegroundProvider';
+import ErrorMessage from "../alert/ErrorMessage";
 
 class Board extends React.Component {
 
@@ -36,51 +38,49 @@ class Board extends React.Component {
         })
     }
 
-    updatePossibleMarbles(marbles) {
-        this.updateMovableMarbles(marbles)
-    }
-
     updateMovableMarbles(movableMarbles) {
-        let newMarbles = [];
+        let movableMarblesWithPreviewMarble = []
+        let marbles = this.getMarblesWithoutPreviewMarbles()
 
-        if(movableMarbles.length == 0) {
-            newMarbles = this.state.marbles.map(marble => {
-                marble.setIsMovable(false)
-                return marble;
-            });
-        } else {
-            let movableMarbleIds = movableMarbles.map(marble => {return marble.marbleId})
-            newMarbles = this.state.marbles.map(marble => {
-                if(movableMarbleIds.includes(marble.getId())) {
-                    marble.setIsMovable(true)
+        let movableMarbleIds = movableMarbles.map(marble => {return String(marble.marbleId)})
+        marbles = marbles.map(marble => {
+            let marbleId = marble.getId()
+            if(movableMarbleIds.includes(marbleId)) {
+                if(marble.getHasPreviewMarble()) {
+                    movableMarblesWithPreviewMarble.push(marble)
+                    marble.setIsMovable(false)
                     return marble;
-                } 
-                marble.setIsMovable(false)
+                }
+                marble.setIsMovable(true)
                 return marble;
-            });
-        }
+            } 
+            marble.setIsMovable(false)
+            return marble;
+        });
 
-        this.setState({marbles: newMarbles});
+        let previewMarbles = this.getOnlyPreviewMarbles()
+        previewMarbles = previewMarbles.map(previewMarble => {
+            let movablePreviewMarble = movableMarblesWithPreviewMarble.find(movableOriginMarble => previewMarble.getIsCorrespondingPreviewMarble(movableOriginMarble.getId()))
+            if(movablePreviewMarble) {
+                previewMarble.setIsMovable(true)
+                return previewMarble
+            }       
+            previewMarble.setIsMovable(false)
+            return previewMarble
+        })
+
+        this.setState({marbles: marbles.concat(previewMarbles)});
     }
 
     updatePossibleTargetFields(possibleTargetFieldKeys) {
-        let newFields = [];
-
-        if(possibleTargetFieldKeys.length == 0) {
-            newFields = this.state.fields.map(field => {
-                field.setIsPossibleTargetField(false)
+        let newFields = this.state.fields.map(field => {
+            if(possibleTargetFieldKeys.includes(field.getKey())) {
+                field.setIsPossibleTargetField(true)
                 return field;
-            });
-        } else {
-            newFields = this.state.fields.map(field => {
-                if(possibleTargetFieldKeys.includes(field.getKey())) {
-                    field.setIsPossibleTargetField(true)
-                    return field;
-                } 
-                field.setIsPossibleTargetField(false)
-                return field;
-            });
-        }
+            } 
+            field.setIsPossibleTargetField(false)
+            return field;
+        });
 
         this.setState({fields: newFields});
     }
@@ -189,7 +189,6 @@ class Board extends React.Component {
                 ],
             }, async () => {
                 let remainingSevenMoves = await this.requestRemainingSevenMoves()
-                console.log(remainingSevenMoves)
                 this.setState({
                     remainingSevenMoves: remainingSevenMoves
                 }, () => {
@@ -206,16 +205,25 @@ class Board extends React.Component {
     }
 
     async requestRemainingSevenMoves() {
-        const requestBody = JSON.stringify({
-            sevenMoves: this.state.sevenMoves
-        });
-        const response = await api.post(`/game/${this.gameId}/remaining-seven-moves`, requestBody);
+        try {
+            const requestBody = JSON.stringify({
+                sevenMoves: this.state.sevenMoves
+            });
+            const response = await api.post(`/game/${this.gameId}/remaining-seven-moves`, requestBody);
 
-        return parseInt(response.data.remainingSevenMoves)
+            return parseInt(response.data.remainingSevenMoves)
+        } catch (error) {
+            this.props.foregroundContext.showAlert(<ErrorMessage text={handleError(error)}/>, 5000)
+        }
     }
 
     getMarbleToPlay() {
-        return this.state.marbles.find(marble => marble.getIsSelected());
+        let marbleToPlay = this.state.marbles.find(marble => marble.getIsSelected());
+        if(marbleToPlay.getIsPreviewMarble()) {
+            let originMarble = this.getOriginMarble(marbleToPlay.getId())
+            return originMarble
+        }
+        return marbleToPlay
     }
 
     getTargetField() {
@@ -230,15 +238,31 @@ class Board extends React.Component {
         return this.state.sevenMoves
     }
 
+    getOriginMarble(previewMarbleId) {
+        return this.state.marbles.find(marble => marble.getIsCorrespondingOriginMarble(previewMarbleId));
+    }
+
+    getPreviewMarble(originMarbleId) {
+        return this.state.marbles.find(marble => marble.getIsCorrespondingPreviewMarble(originMarbleId));
+    }
+
+    getMarblesWithoutPreviewMarbles() {
+        return this.state.marbles.filter(marble => !marble.getIsPreviewMarble())
+    }
+
+    getOnlyPreviewMarbles() {
+        return this.state.marbles.filter(marble => marble.getIsPreviewMarble())
+    }
+
     addOrUpdatePreviewMarble(marbleToPlay, targetFieldKey) {
         let originMarbleId = marbleToPlay.getId() 
-        let previewMarble = this.state.marbles.find(marble => marble.getIsCorrespondingPreviewMarble(originMarbleId));
+        let previewMarble = this.getPreviewMarble(originMarbleId)
 
         // update
         if(previewMarble) {
             this.setState(prevState => {
                 const marbles = prevState.marbles.map(marble => {
-                    if (marble.getId() == previewMarble) {
+                    if (marble.getId() == previewMarble.getId()) {
                         marble.setFieldKey(targetFieldKey);
                     } 
                     return marble;
@@ -249,13 +273,21 @@ class Board extends React.Component {
         // add
         else {
             previewMarble = createPreviewMarble(originMarbleId, targetFieldKey, marbleToPlay.getColor())
-            this.setState({ marbles: [...this.state.marbles, previewMarble] })
+            let marbles = this.state.marbles.map(marble => {
+                if(marble.getId() === originMarbleId) {
+                    marble.setHasPreviewMarble(true)
+                }
+                return marble
+            })
+            marbles.push(previewMarble)
+            this.setState({ marbles: marbles });
         }
     }
 
     resetAll() {
         this.resetMovableMarbles()
         this.resetSelectedMarble()
+        this.resetPossibleTargetFields()
         this.resetSevenMoves()
     }
 
@@ -267,8 +299,16 @@ class Board extends React.Component {
         this.selectMarble(null);
     }
 
+    resetPossibleTargetFields() {
+        this.updatePossibleTargetFields([]);
+    }
+
     resetSevenMoves() {
-        let marblesWithoutPreviewMarbles = this.state.marbles.filter(marble => !marble.getIsPreviewMarble())
+        let marblesWithoutPreviewMarbles = this.getMarblesWithoutPreviewMarbles()
+        marblesWithoutPreviewMarbles.map(marble => {
+            marble.setHasPreviewMarble(false)
+            return marble
+        })
         this.setState({ 
             sevenMoves: [], 
             remainingSevenMoves: 7,
@@ -323,4 +363,4 @@ class Board extends React.Component {
     }
 }
 
-export default Board;
+export default withForegroundContext(Board);

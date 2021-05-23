@@ -35,6 +35,11 @@ export const withFormValidation = (initialValues, rules, handlers, FormSkeleton)
       this.clearValue = this.clearValue.bind(this)
       this.validate = this.validate.bind(this)
       this.validations = rules
+
+    }
+
+    componentDidMount() {
+       this.clearAllValues()
     }
 
     async validateAllFields() {
@@ -76,6 +81,10 @@ export const withFormValidation = (initialValues, rules, handlers, FormSkeleton)
 
         }, resolve());
       });
+    }
+
+    clearAllValues() {
+      Object.keys(this.state.values).forEach(value => this.clearValue(value));
     }
 
     clearValue(value) {

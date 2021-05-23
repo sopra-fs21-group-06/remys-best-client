@@ -1,5 +1,5 @@
 import React from "react";
-import { lightenOrDarkenColor, getKeyByValue } from '../../helpers/remysBestUtils';
+import { lightenOrDarkenColor } from '../../helpers/remysBestUtils';
 import { PickUpAndDrop } from '../transitions/PickUpAndDrop';
 
 class Marble extends React.Component {
@@ -26,6 +26,7 @@ class Marble extends React.Component {
         let isMovable = marble.getIsMovable();
         let isVisible = marble.getIsVisible();
         let isPreviewMarble = marble.getIsPreviewMarble();
+        let hasPreviewMarble = marble.getHasPreviewMarble();
         let isOnTargetField = field.getIsPossibleTargetField()
 
         let styles = {
@@ -41,7 +42,7 @@ class Marble extends React.Component {
             <PickUpAndDrop in={isVisible}>
                 <div 
                     onClick={this.getOnClick(isMovable, isOnTargetField, marble, field)} 
-                    className={`marble ${colorName}` + (isMovable ? ' movable' : '') + (isOnTargetField ? ' clickable' : '') + (isPreviewMarble ? ' preview' : '')} 
+                    className={`marble ${colorName}` + (isMovable ? ' movable' : '') + (isOnTargetField ? ' clickable' : '') + (isPreviewMarble ? ' preview' : '') + (hasPreviewMarble ? ' hidden' : '')} 
                     style={styles}>
                 </div>
             </PickUpAndDrop>

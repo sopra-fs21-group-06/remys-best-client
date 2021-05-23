@@ -1,7 +1,5 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Box from '../../components/Box';
 import avatar from '../../img/avatar.png'
@@ -9,6 +7,7 @@ import { withWebsocketContext } from '../../components/context/WebsocketProvider
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import { createChannel } from '../../helpers/modelUtils';
 import sessionManager from "../../helpers/sessionManager";
+import AuthView from '../AuthView';
 
 class WaitingRoom extends React.Component {
 
@@ -25,11 +24,11 @@ class WaitingRoom extends React.Component {
   }
   
   componentWillUnmount() {
-    this.props.websocketContext.sockClient.send('/app/waiting-room/unregister', {});
+    this.props.websocketContext.sockClient.send('/app/waiting-room/unregister');
   }
 
   register() {
-    this.props.websocketContext.sockClient.send('/app/waiting-room/register', {});
+    this.props.websocketContext.sockClient.send('/app/waiting-room/register');
   }
 
   handleWaitingRoomMessage(msg) {
@@ -62,7 +61,7 @@ class WaitingRoom extends React.Component {
   render() {
     return (
       <WebsocketConsumer channels={this.channels} connectionCallback={() => this.register()}>
-        <View className="waiting-room" title="Waiting Room"  linkMode={viewLinks.BASIC}>
+        <AuthView className="waiting-room" title="Waiting Room">
           <main className="small">
               <p className="above-box">As soon as four players are ready, a new game will automatically be started. You could also be picked from an existing game session to fill up their game</p>      
               <div className="queue">
@@ -75,7 +74,7 @@ class WaitingRoom extends React.Component {
                 <p className="below-players"><Link to="/home">Leave and return to Home</Link></p>
               </div>
             </main>
-        </View>
+        </AuthView>
       </WebsocketConsumer>
     );
   }

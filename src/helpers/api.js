@@ -14,12 +14,12 @@ api.interceptors.request.use((request) => {
 export const handleError = error => {
   const response = error.response;
 
-  if (response && !!`${response.status}`.match(/^[4|5]\d{2}$/)) {
+  if (response && !!`${response.status}`.match(/^[4]\d{2}$/)) {
     return response.data.message;
   } else {
     if (error.message.match(/Network Error/)) {
       return 'The server could not be reached';
     }
-    return error.message;
+    return "Sorry, a server error occurred.";
   }
 };

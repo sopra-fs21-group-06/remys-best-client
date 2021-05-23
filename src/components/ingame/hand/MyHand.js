@@ -7,7 +7,7 @@ import sessionManager from "../../../helpers/sessionManager";
 import checkmark from '../../../img/checkmark.png';
 import arrowRight from '../../../img/arrow-right.png';
 import { withForegroundContext } from '../../context/ForegroundProvider';
-import CardOverview from '../../CardOverview';
+import CardOverview from '../../overlay/CardOverview';
 
 class MyHand extends React.Component {
 
@@ -28,10 +28,13 @@ class MyHand extends React.Component {
     }
 
     handleRaiseCard(card) {
+        if(card === null && this.state.raisedCard === null) {
+            return
+        }
+
         if(card === null || this.state.raisedCard === card) {
-            this.setState({raisedCard: null});
-            this.resetMoves();
-            this.resetSelectedMoveName();
+            this.setState({raisedCard: null}, () => this.props.reset());
+
         } else {
             this.setState({raisedCard: card}, () => {
                 if(this.props.mode === roundModes.MY_TURN) {
@@ -97,8 +100,6 @@ class MyHand extends React.Component {
     isSevenRaised() {
         let raisedCard = this.getRaisedCard();
         let raisedCardValue = raisedCard.getCode().slice(0, 1)
-
-        console.log(raisedCardValue)
 
         if(raisedCardValue === "7") {
             return true

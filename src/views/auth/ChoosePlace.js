@@ -1,7 +1,5 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import View from "../View";
-import { viewLinks } from "../../helpers/constants";
 import Avatar from "../../components/Avatar"
 import Board from "../../components/ingame/Board";
 import Box from "../../components/Box";
@@ -11,6 +9,7 @@ import { withWebsocketContext } from '../../components/context/WebsocketProvider
 import WebsocketConsumer from '../../components/context/WebsocketConsumer';
 import avatar from '../../img/avatar.png';
 import sessionManager from "../../helpers/sessionManager";
+import InGameView from '../InGameView';
 
 class ChoosePlace extends React.Component {
 
@@ -24,7 +23,7 @@ class ChoosePlace extends React.Component {
     this.avatarColorNames = [colors.BLUE.name, colors.GREEN.name, colors.RED.name, colors.YELLOW.name]
     this.gameId = sessionManager.getGameId();
     this.channels = [
-      createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg)),
+      createChannel(`/topic/game/${this.gameId}/colors`, (msg) => this.handleChoosePlaceMessage(msg))
     ]
   }
 
@@ -47,7 +46,7 @@ class ChoosePlace extends React.Component {
   }
 
   getMyPlayer(players) {
-    let myPlayername = localStorage.getItem("username") // TODO improvement?
+    let myPlayername = localStorage.getItem("username")
     return players.find(player => player.playerName == myPlayername)
   }
 
@@ -61,8 +60,6 @@ class ChoosePlace extends React.Component {
     let myPlayer = this.getMyPlayer(players)
     let myPartner;
 
-
-    // TODO compute team mate on backend?
     if(myPlayer.color == colors.BLUE.name) {
       myPartner = players.find(player => player.color == colors.RED.name)
     } else if(myPlayer.color == colors.GREEN.name) {
@@ -83,7 +80,7 @@ class ChoosePlace extends React.Component {
   render() {
     return (
       <WebsocketConsumer channels={this.channels}>
-        <View className="choose-place" withDogImgHidden linkMode={viewLinks.BASIC}>
+        <InGameView className="choose-place" >
           <main>
               <div className="col-left">
                 <div className="above-box">
@@ -94,7 +91,7 @@ class ChoosePlace extends React.Component {
                   {this.state.players.map(player => {
                       return (
                           <p key={player.playerName}>
-                            <span>{player.playerName}</span> – {player.color ? player.color : "not chosen yet"} 
+                            <span>{this.isMyPlayer(player.playerName) ? "You" : player.playerName}</span> – {player.color ? player.color : "not chosen yet"} 
                             {player.color && this.isMyPlayer(player.playerName) ? <span className="remove" onClick={() => this.handleChangeColor(null)}></span> : null}
                           </p>
                       );
@@ -119,7 +116,7 @@ class ChoosePlace extends React.Component {
                 </div>
               </div>
             </main>
-        </View>
+        </InGameView>
       </WebsocketConsumer>
     );
   }
