@@ -41,11 +41,10 @@ class UserEntry extends React.Component {
     }
 
     inviteUserToGameSession(user) {
-        user.setStatus(userStatus.BUSY)
+        user.setStatus("Invited")
         this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/invite`, {username: user.getUsername()});
     }
 
-    // TODO myfriends -> on fetch  status = invited in user feedback bacakend side (15s then again to free)
     render() {
         let {user, withInvitation} = this.props
 
@@ -58,7 +57,7 @@ class UserEntry extends React.Component {
         return (
             <div className="user-entry">
                 <Avatar img={avatar} />
-                <p className="username">{user.getUsername()}</p>
+                <p className="username">{user.getUsername() === localStorage.getItem("username") ? "You" : user.getUsername()}</p>
                 <p className="email">{user.getEmail()}</p>
                 {user.getCategory() === userCategories.RECEIVED ? 
                     <React.Fragment>

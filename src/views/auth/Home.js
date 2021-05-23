@@ -23,8 +23,8 @@ class Home extends React.Component {
     this.invitationRef = React.createRef();
 
     this.channels = [
-      createChannel(`/user/queue/invitation`, (msg) => this.handleInvitationMessage(msg)),
-      createChannel(`/user/queue/countdown`, (msg) => this.handleCountdownMessage(msg)),
+      createChannel(`/user/queue/home/invitation`, (msg) => this.handleInvitationMessage(msg)),
+      createChannel(`/user/queue/home/invitation/countdown`, (msg) => this.handleCountdownMessage(msg)),
     ]
   }
 
@@ -36,11 +36,11 @@ class Home extends React.Component {
     if(this.invitationRef.current) {
       this.invitationRef.current.reject()
     }
-    this.props.websocketContext.sockClient.send('/app/home/unregister', {});
+    this.props.websocketContext.sockClient.send('/app/home/unregister');
   }
 
   register() {
-    this.props.websocketContext.sockClient.send('/app/home/register', {});
+    this.props.websocketContext.sockClient.send('/app/home/register');
   }
 
   handleInvitationMessage(msg) {

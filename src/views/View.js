@@ -16,9 +16,10 @@ class View extends React.Component {
   constructor(){
     super();
     this.gameId = sessionManager.getGameId();
-    this.leaveGameIfUrlChangedManually = this.leaveGameIfUrlChangedManually.bind(this);
+    this.gameSessionId = sessionManager.getGameSessionId();
+    this.onUrlChangedManually = this.onUrlChangedManually.bind(this);
   }
-
+  
   componentDidMount() {
     let documentTitle = "Brändi Dog Online"
     let username = localStorage.getItem("username")
@@ -38,17 +39,33 @@ class View extends React.Component {
     this.props.foregroundContext.openOverlay(<About />);
   }
 
+  onUrlChangedManually() {
+    this.leaveGameIfUrlChangedManually()
+    this.leaveGameSessionIfUrlChangedManually()
+  }
+
   leaveGameIfUrlChangedManually() {
-    // handle leave in game view via changing the url manually
     if(!this.props.inGame && sessionManager.getGameId() !== null) {
       this.handleLeaveGame()
     }
   }
 
+  leaveGameSessionIfUrlChangedManually() {
+    if(!this.props.inGameSession && sessionManager.getGameSessionId() !== null) {
+      this.handleLeaveGameSession()
+    }
+  }
+
   handleLeaveGame() {
-    this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/leave`, {})
+    this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/leave`)
     sessionManager.setGameId(null)
     sessionManager.setGameViewPage(null);
+  }
+
+  handleLeaveGameSession() {
+    // same as in CreateNewGame.js componentWillUnmount()
+    this.props.websocketContext.sockClient.send(`/app/game/${this.gameSessionId}/leave`)
+    sessionManager.setGameSessionId(null)
   }
 
   async logout() {
@@ -68,6 +85,8 @@ class View extends React.Component {
   getFooterLink() {
     if(this.props.linksMode === linksMode.IN_GAME) {
       return <Link to="/home" onClick={() => this.handleLeaveGame()}>Leave</Link>
+    } else if(this.props.linksMode === linksMode.IN_GAME_SESSION) {
+      return <Link to="/home" onClick={() => this.handleLeaveGameSession()}>Leave</Link>
     } else if(this.props.linksMode === linksMode.AUTH) {
       return <a onClick={() => this.logout()}>Logout</a>
     } else {
@@ -79,7 +98,7 @@ class View extends React.Component {
     let { withDogImgHidden, withFooterHidden, className, inGame, title} = this.props;
 
     return (
-      <WebsocketConsumer connectionCallback={this.leaveGameIfUrlChangedManually}>
+      <WebsocketConsumer connectionCallback={this.onUrlChangedManually}>
         <div className={"view " + (inGame ? 'ingame-view' : '')} id="view">
           <div className={"navigation-link header-link"}>
               <a onClick={() => this.openInstruction()}>Instruction</a>

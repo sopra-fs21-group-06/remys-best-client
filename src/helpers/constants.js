@@ -1,7 +1,8 @@
 export const linksMode = {
     UNAUTH: "UNAUTH",
 	AUTH: "AUTH",
-	IN_GAME: "IN_GAME"
+	IN_GAME: "IN_GAME",
+	IN_GAME_SESSION: "IN_GAME_SESSION"
 }
 
 export const roundModes = {

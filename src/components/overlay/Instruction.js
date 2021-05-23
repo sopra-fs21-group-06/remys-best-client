@@ -91,11 +91,11 @@ class Instruction extends React.Component {
 
         <h1>Card values</h1>
         <p>
-          <span>Joker</span> – User however you wish<br/>
+          <span>Joker</span> – Use however you wish<br/>
           <span>Ace</span> – Go to start, 1 forwards, 11 forwards<br/>
           <span>King</span> – Go to start, 13 forwards<br/>
           <span>Queen</span> – 12 forwards<br/>
-          <span>Jack</span> – Exchange with opponent's or partner's marble<br/>
+          <span>Jack</span> – Exchange your marble with opponent's or partner's marble<br/>
           <span>Seven</span> – Split seven moves<br/>
           <span>Four</span> – 4 backwards, 4 forwards<br/>
           <span>All others</span> – The corresponding card amount forwards<br/>

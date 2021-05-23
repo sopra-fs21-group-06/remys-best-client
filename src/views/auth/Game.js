@@ -351,7 +351,7 @@ class Game extends React.Component {
     }
 
     sendReadyMessage() {
-     this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/ready`, {});
+     this.props.websocketContext.sockClient.send(`/app/game/${this.gameId}/ready`);
     }
 
     render() {

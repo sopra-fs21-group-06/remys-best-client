@@ -10,6 +10,7 @@ import { userCategories } from '../../helpers/constants';
 import View from '../View';
 import { linksMode } from '../../helpers/constants';
 import ErrorMessage from '../../components/alert/ErrorMessage';
+import { withForegroundContext } from '../../components/context/ForegroundProvider';
 
 class CreateNewGame extends React.Component {
 
@@ -20,6 +21,7 @@ class CreateNewGame extends React.Component {
       currentPlayers: [],
     };
 
+    this.friendsFilterRef = React.createRef();
     this.gameSessionId = sessionManager.getGameSessionId();
     this.channels = [
       createChannel(`/topic/gamesession/${this.gameSessionId}/gamesession-end`, (msg) => this.handleGameSessionEndMessage(msg)),
@@ -27,18 +29,53 @@ class CreateNewGame extends React.Component {
       createChannel(`/topic/gamesession/${this.gameSessionId}/countdown`, (msg) => this.handleCountdownMessage(msg)),
       createChannel(`/topic/gamesession/${this.gameSessionId}/accepted`,(msg) => this.handleAcceptedUserMessage(msg)),
       createChannel(`/user/queue/gamesession/${this.gameSessionId}/ready`, (msg) => this.handleGameReadyMessage(msg)),
-      createChannel(`/gamesession/error/invite`, (msg) => this.handleErrorMessage(msg)),
-      createChannel(`/gamesession/error/fill-up`, (msg) => this.handleErrorMessage(msg)),
+      createChannel(`/user/queue/gamesession/error/invite`, (msg) => this.handleErrorMessage(msg)),
+      createChannel(`/user/queue/gamesession/error/fill-up`, (msg) => this.handleErrorMessage(msg)),
     ]
+    this.onConnectionEstablished = this.onConnectionEstablished.bind(this)
   }
 
+  componentDidMount() {
+    window.addEventListener('beforeunload', this.handleUnload);
+  }
+
+
   componentWillUnmount() {
-    this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/leave`, {});
+    window.removeEventListener('beforeunload', this.handleUnload);
+
+    // same as in View handleLeaveGameSession()
+    this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/leave`);
     sessionManager.setGameSessionId(null);
   }
 
+  onConnectionEstablished() {
+    this.accept(); // accept upon entering the view
+    this.handleReload();
+  }
+
+  accept() {
+    this.props.websocketContext.sockClient.send(`/app/gamesession-request/${this.gameSessionId}/accept`);
+  }
+
+  handleReload() {
+    if(sessionManager.getGameSessionId() === null) {
+      this.props.history.push('/home')
+    }
+  }
+
+  handleUnload(event) {
+    const e = event || window.event;
+    // Cancel the event
+    e.preventDefault();
+    if (e) {
+      e.returnValue = ''; // Legacy method for cross browser support
+    }
+    sessionManager.setGameSessionId(null);
+    return ''; // Legacy method for cross browser support
+  }
+
   handleGameSessionEndMessage(msg) {
-    this.props.history.push({pathname: '/game-end', state: {gameEndMessage: msg}})
+    this.props.history.push({pathname: '/game-end', state: {gameEndMessage: {aborted: msg.username}}})
   }
 
   handleInvitedUserMessage(msg) {
@@ -49,11 +86,7 @@ class CreateNewGame extends React.Component {
     let currentPlayersWithoutInvitedOnes = this.state.currentPlayers.filter(player => {
       return player.getCategory() !== userCategories.INVITED
     })
-
-    console.log("currentPlayersWithoutInvitedOnes")
-    console.log(currentPlayersWithoutInvitedOnes)
-    console.log(currentPlayersWithoutInvitedOnes.concat(invitedUsers))
-
+   
     this.setState({currentPlayers: currentPlayersWithoutInvitedOnes.concat(invitedUsers)});
   }
 
@@ -70,26 +103,28 @@ class CreateNewGame extends React.Component {
   }
 
   handleAcceptedUserMessage(msg){
-    let acceptedUsers = msg.users.map(acceptedUser => {
+    let acceptedUsers = msg.acceptedUsers.map(acceptedUser => {
       return createUser(acceptedUser.username, "friend@friend.ch", "Accepted", userCategories.ACCEPTED)
     })
     let currentPlayersWithoutAcceptedOnes = this.state.currentPlayers.filter(player => {
       return player.getCategory() !== userCategories.ACCEPTED
     })
 
-    console.log("currentPlayersWithoutAcceptedOnes");
-    console.log(currentPlayersWithoutAcceptedOnes);
-    console.log(acceptedUsers);
     this.setState({currentPlayers: currentPlayersWithoutAcceptedOnes.concat(acceptedUsers)});
+
+    // reload friends filter states
+    this.friendsFilterRef.current.refreshUsers()
   }
 
   handleErrorMessage(msg){
     let errorMessage = msg.msg
     this.props.foregroundContext.showAlert(<ErrorMessage text={errorMessage}/>, 5000) 
+    // reload friends filter states
+    this.friendsFilterRef.current.refreshUsers()
   }
 
   fillUpWithRandomPlayers() {
-    this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/fill-up`,{});
+    this.props.websocketContext.sockClient.send(`/app/gamesession/${this.gameSessionId}/fill-up`);
   }
 
   handleGameReadyMessage(msg){
@@ -98,15 +133,14 @@ class CreateNewGame extends React.Component {
   }
 
   render() {
-    console.log(this.state.currentPlayers);
     return (
-      <WebsocketConsumer channels={this.channels}>
-        <View className="create-new-game" title="Create new game" linksMode={linksMode.IN_GAME}>
+      <WebsocketConsumer channels={this.channels} connectionCallback={this.onConnectionEstablished}>
+        <View className="create-new-game" title="Create new game" linksMode={linksMode.IN_GAME_SESSION} inGameSession>
             <main className="large side-by-side">
               <div className="col">
                 <p className="above-box">Only friends which are on the home screen can be invited. If you are not friends just send a friend request and wait for the response.</p>
                 <div className="friends-filter">
-                  <FriendsFilter withInvitation />
+                  <FriendsFilter withInvitation ref={this.friendsFilterRef}/>
                 </div>
               </div>
               <div className="col">
@@ -125,4 +159,4 @@ class CreateNewGame extends React.Component {
   }
 }
 
-export default withRouter(withWebsocketContext(CreateNewGame));
+export default withRouter(withForegroundContext(withWebsocketContext(CreateNewGame)));

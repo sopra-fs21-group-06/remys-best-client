@@ -179,7 +179,6 @@ class Board extends React.Component {
             let targetFieldKey = targetField.getKey()
             let marbleToPlay = this.getMarbleToPlay()
 
-            console.log(`handle seven (selected target field)`)
             this.addOrUpdatePreviewMarble(marbleToPlay, targetFieldKey)
             let sevenMove = {marbleId: marbleToPlay.getId(), targetFieldKey: targetFieldKey}
 
@@ -190,7 +189,6 @@ class Board extends React.Component {
                 ],
             }, async () => {
                 let remainingSevenMoves = await this.requestRemainingSevenMoves()
-                console.log(`remainingSevenMoves from backend: ${remainingSevenMoves}`)
                 this.setState({
                     remainingSevenMoves: remainingSevenMoves
                 }, () => {

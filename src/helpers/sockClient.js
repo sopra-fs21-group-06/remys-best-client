@@ -14,8 +14,11 @@ export const createSockClient = () => {
     }
 
     const send = (destination, body) => {
+        if(!body) {
+            body = {};
+        }
         body.token = localStorage.getItem('token');
-        state.stomp.send(destination, {}, JSON.stringify(body ? body : {}));
+        state.stomp.send(destination, {}, JSON.stringify(body));
     }
 
     const stripResponse = (response) => {
