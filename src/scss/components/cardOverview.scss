@@ -1,0 +1,36 @@
+.card-overview {
+    width: 45%;
+    min-height: 100vh;
+    max-width: 450px;
+    margin: 0 auto;
+    position: relative;
+
+    .card-container {
+        width: 100%;
+        @include centerer;
+        display: flex;
+        flex-wrap: wrap;
+
+        .card {
+            width: calc(25% - 3/4*16px);
+            height: auto;
+            box-sizing: border-box;
+            margin-right: 16px;
+            margin-bottom: 16px;
+            transition: all 0.2s ease-in-out;
+
+            &:nth-of-type(4n) {
+                margin-right: 0px;
+            }
+
+            &:last-of-type {
+                margin-bottom: 0;
+            }
+
+            &:hover {
+                cursor: pointer;
+                transform: scale(1.08)
+            }
+        }
+    }
+}

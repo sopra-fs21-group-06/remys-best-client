@@ -1,6 +1,6 @@
 import React from "react";
-import { lightenOrDarkenColor } from '../../helpers/remysBestUtils';
-import { PickUpAndDrop } from '../transitions/PickUpAndDrop';
+import { lightenOrDarkenColor } from '../../../helpers/remysBestUtils';
+import { PickUpAndDrop } from '../../transitions/PickUpAndDrop';
 
 class Marble extends React.Component {
 

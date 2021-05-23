@@ -1,0 +1,34 @@
+.user-filter {
+    margin-left: 10px;
+    margin-bottom: 8px;
+
+    p {
+        display: inline-block;
+        margin-right: 10px;
+        cursor: pointer;
+        color: $black-light;
+
+        &:first-of-type {
+            position: relative;
+            padding-right: 10px;
+
+            &:after {
+                content: "";
+                background: $black-light;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                height: 100%;
+                width: 1px;
+            }
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        &.active {
+            text-decoration: underline;
+        }
+    }
+}

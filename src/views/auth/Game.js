@@ -1,6 +1,6 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom';
-import Board from "../../components/ingame/Board";
+import Board from "../../components/ingame/board/Board";
 import MyHand from "../../components/ingame/hand/MyHand";
 import Hand from "../../components/ingame/hand/Hand";
 import dogCard from "../../img/dog-card.png"

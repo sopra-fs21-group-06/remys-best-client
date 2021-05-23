@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import Avatar from "../../components/Avatar"
-import Board from "../../components/ingame/Board";
+import Board from "../../components/ingame/board/Board";
 import Box from "../../components/Box";
 import { colors } from "../../helpers/constants";
 import { createChannel } from '../../helpers/modelUtils';
