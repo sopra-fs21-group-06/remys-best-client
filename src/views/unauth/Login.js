@@ -15,7 +15,7 @@ class Login extends React.Component {
               <br/>
               <p>The cards you draw determine how you move forward. You are supported by your team partner and sent home by the other party. The winner is the team that cleverly teams up and is the first to bring the marbles to the finish zone.</p>
               <br/>
-              <p>Sign up an play Brändi Dog online!</p>
+              <p>Sign up and play Brändi Dog online!</p>
             </div>
             <div className="col">
               <h1>Sign in to your account</h1>
