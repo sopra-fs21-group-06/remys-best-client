@@ -120,6 +120,7 @@ class MyHand extends React.Component {
         this.resetMoves()
         this.resetSelectedMoveName()
         this.resetIsMarbleAndTargetFieldChosen()
+        this.props.myHandRef.current.resetMarkedCardsAsPlayable()
     }
 
     resetRaiseCard() {
