@@ -94,7 +94,6 @@ div.clickable {
     position: relative;
     overflow: hidden;
     @include fullscreen;
-    height: 100vh;
 }
 
 .loader,
