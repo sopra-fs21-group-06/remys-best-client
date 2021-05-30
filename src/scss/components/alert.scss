@@ -11,7 +11,8 @@
 
         .text {
             margin-bottom: 8px;
-            max-width: 250px;
+            max-width: 350px;
+            text-align: center;
 
             .host-name {
                 font-weight: $semi-bold;
